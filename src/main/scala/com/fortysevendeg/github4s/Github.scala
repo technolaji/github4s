@@ -1,28 +1,29 @@
 package com.fortysevendeg.github4s
 
-import cats.free.Free
+import cats.data.{OptionT, XorT}
 import cats.{ApplicativeError, Monad, ~>}
-import com.fortysevendeg.github4s.Github.GithubIO
+import com.fortysevendeg.github4s.GithubResponses.{GHResult, GHException}
+import com.fortysevendeg.github4s.GithubTypes.{GHResponse, GHIO}
 import com.fortysevendeg.github4s.app._
-import com.fortysevendeg.github4s.free.algebra.UserOps
-import com.fortysevendeg.github4s.free.domain.Collaborator
 
-class Github(implicit U : UserOps[GitHub4s]) {
 
-  def getUser(username : String): GithubIO[Option[Collaborator]] = U.getUser(username)
+case class GithubConfig(accessToken : Option[String] = None, extraHeaders : Map[String, String] = Map.empty:Map[String, String])
 
-}
 
 object Github {
 
-  type GithubIO[A] = Free[GitHub4s, A]
+  lazy val users = new GHUsers()
+  lazy val repos = new GHRepos()
 
-  def apply() = new Github
 
-  implicit class GithubIOSyntax[A](gio : Free[GitHub4s, A]) {
 
-    def exec[M[_]](implicit M: Monad[M], I : (GitHub4s ~> M), A: ApplicativeError[M, Throwable]) = gio foldMap I
+  implicit class GithubIOSyntaxXOR[A](gio : GHIO[GHResponse[A]]) {
+
+    def exec[M[_]](implicit C : GithubConfig, M: Monad[M], I : (GitHub4s ~> M), A: ApplicativeError[M, Throwable]): M[GHResponse[A]] = gio foldMap I
+
+    def liftGH: XorT[GHIO, GHException, GHResult[A]] = XorT[GHIO, GHException, GHResult[A]](gio)
 
   }
+
 
 }

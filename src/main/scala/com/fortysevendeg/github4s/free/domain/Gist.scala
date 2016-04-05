@@ -5,4 +5,4 @@ case class Gist (
     description: String,
     owner: Collaborator,
     public: Boolean
-)
+) extends GithubEntity

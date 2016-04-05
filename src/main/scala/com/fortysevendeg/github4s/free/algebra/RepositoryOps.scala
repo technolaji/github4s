@@ -1,14 +1,21 @@
 package com.fortysevendeg.github4s.free.algebra
 
 import cats.free.{Free, Inject}
-import com.fortysevendeg.github4s.free.domain.Repository
+import com.fortysevendeg.github4s.GithubTypes.GHResponse
+import com.fortysevendeg.github4s.free.domain.{Commit, Repository}
 
 /** Repositories ops ADT
   */
 sealed trait RepositoryOp[A]
-final case class ListYourRepos() extends RepositoryOp[List[Repository]]
-final case class ListUserRepos() extends RepositoryOp[List[Repository]]
-final case class ListOrganizationRepos() extends RepositoryOp[List[Repository]]
+final case class GetRepo(owner: String, repo: String) extends RepositoryOp[GHResponse[Repository]]
+final case class ListCommits(
+    owner: String,
+    repo: String,
+    sha: Option[String] = None,
+    path: Option[String] = None,
+    author: Option[String] = None,
+    since: Option[String] = None,
+    until: Option[String] = None) extends RepositoryOp[GHResponse[List[Commit]]]
 
 
 /** Exposes Repositories operations as a Free monadic algebra that may be combined with other Algebras via
@@ -16,11 +23,20 @@ final case class ListOrganizationRepos() extends RepositoryOp[List[Repository]]
   */
 class RepositoryOps[F[_]](implicit I: Inject[RepositoryOp, F]) {
 
-  def listYourRepos: Free[F, List[Repository]] = Free.inject[RepositoryOp, F](ListYourRepos())
+  def getRepo(
+      owner: String,
+      repo: String): Free[F, GHResponse[Repository]] =
+    Free.inject[RepositoryOp, F](GetRepo(owner, repo))
 
-  def listUserRepos: Free[F, List[Repository]] = Free.inject[RepositoryOp, F](ListUserRepos())
-
-  def listOrganizationRepos: Free[F, List[Repository]] = Free.inject[RepositoryOp, F](ListOrganizationRepos())
+  def listCommits(
+      owner: String,
+      repo: String,
+      sha: Option[String] = None,
+      path: Option[String] = None,
+      author: Option[String] = None,
+      since: Option[String] = None,
+      until: Option[String] = None): Free[F, GHResponse[List[Commit]]] =
+    Free.inject[RepositoryOp, F](ListCommits(owner, repo, sha, path, author, since, until))
 
 }
 
