@@ -72,12 +72,9 @@ val api = Github
 //printResponse(r4)
 
 //Repo >> List Commits
-//val r5 = api.repos.listCommits("scala-exercises", "scala-exercises", None, Some("site/build.sbt")).exec[Id]
-//getLinks(r5)
-//val st = getNext(r5)
-
-
-
+val r5 = api.repos.listCommits("scala-exercises", "scala-exercises", None, Some("site/build.sbt")).exec[Id]
+getLinks(r5)
+val st = getNext(r5)
 ////Monadic composition
 //val ops = for {
 //  a <- api.users.get("rafaparadela").liftGH
@@ -85,10 +82,6 @@ val api = Github
 //} yield a.login + b.login
 //
 //val s = ops.value.exec[Id]
-
-
-
-
 def getLinks[A](response: GHResponse[A]): Option[String] = response match {
   case Xor.Right(GHListResult(result, status, headers, d)) => headers.get("link").map(_.toString)
   case Xor.Right(GHItemResult(result, status, headers)) => headers.get("link").map(_.toString)
@@ -96,12 +89,8 @@ def getLinks[A](response: GHResponse[A]): Option[String] = response match {
 }
 def getNext[A](response: GHResponse[A])(implicit O : RequestOps[GitHub4s]): Option[String] = response match {
   case Xor.Right(r:GHListResult[List[Commit]]) => {
-    val a = O.nextList(r).get
-  println("A: " + a)
     import TestIdInterpreters._
-    val c = a.exec[Id]
-
-    Option(printResponse(c))
+    O.nextList(r).map(_.exec[Id]).map(printResponse(_))
   }
   case _ => None
 }

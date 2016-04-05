@@ -18,10 +18,24 @@ class RequestOps[F[_]](implicit I: Inject[RequestOp, F]) {
 
   def next[A](url: String, decoder: Decoder[A]): Free[F, GHResponse[A]] = Free.inject[RequestOp, F](Next[A](url, decoder))
 
-  def nextList[A](result: GHListResult[A]): Option[Free[F, GHResponse[A]]] = result match {
-    case GHListResult(_, _, _, decoder) => //TODO check link
-      Option(next[A]("https://api.github.com/repositories/23613922/commits?path=site%2Fbuild.sbt&per_page=10&page=2", decoder))
+  def nextList[A](result: GHListResult[A]): Option[Free[F, GHResponse[A]]] = followLink[A](result, "next")
+
+  def followLink[A](result: GHListResult[A], rel: String): Option[Free[F, GHResponse[A]]] = result match {
+    case GHListResult(_, _, headers, decoder) => {
+
+      for {
+        linkHeader <- headers.get("link")
+        nextLink <- linkHeader.map(extractLink).toMap.get(rel)
+      } yield next[A](nextLink, decoder)
+    }
     case _ => None
+  }
+
+  private def extractLink(rawLink : String): (String, String) = {
+    val Array(rawUrl, rawRel) = rawLink.split(";")
+    val url = rawUrl.substring(1, rawUrl.length - 1)
+    val rel = rawRel.split("\"").last
+    (rel, url)
   }
 
 

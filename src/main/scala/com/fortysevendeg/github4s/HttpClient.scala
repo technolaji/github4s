@@ -33,6 +33,7 @@ class HttpClient(baseURL: String = "https://api.github.com") {
         })
         .option(HttpOptions.connTimeout(connTimeoutMs))
         .option(HttpOptions.readTimeout(readTimeoutMs))
+        .params(Map("per_page" -> "2"))
         .params(data)
         .asString match {
       case r if r.isSuccess => {
