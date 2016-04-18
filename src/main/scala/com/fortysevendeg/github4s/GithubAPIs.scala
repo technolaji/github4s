@@ -1,6 +1,6 @@
 package com.fortysevendeg.github4s
 
-import com.fortysevendeg.github4s.GithubTypes.{GHResponse, GHIO}
+import com.fortysevendeg.github4s.GithubResponses.{GHResponse, GHIO}
 import com.fortysevendeg.github4s.app._
 import com.fortysevendeg.github4s.free.algebra.{RepositoryOps, RepositoryOp, UserOps}
 import com.fortysevendeg.github4s.free.domain.{Commit, Repository, Collaborator}

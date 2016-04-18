@@ -1,8 +1,7 @@
 package com.fortysevendeg.github4s.free.algebra
 
 import cats.free.{Free, Inject}
-import com.fortysevendeg.github4s.GithubResponses.GHListResult
-import com.fortysevendeg.github4s.GithubTypes.GHResponse
+import com.fortysevendeg.github4s.GithubResponses._
 import io.circe.Decoder
 
 /** Requests ops ADT

@@ -2,8 +2,7 @@ package com.fortysevendeg.github4s
 
 import cats.data.{OptionT, XorT}
 import cats.{ApplicativeError, Monad, ~>}
-import com.fortysevendeg.github4s.GithubResponses.{GHResult, GHException}
-import com.fortysevendeg.github4s.GithubTypes.{GHResponse, GHIO}
+import com.fortysevendeg.github4s.GithubResponses._
 import com.fortysevendeg.github4s.app._
 
 

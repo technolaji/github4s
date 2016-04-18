@@ -1,13 +1,11 @@
 package com.fortysevendeg.github4s.api
 
-import com.fortysevendeg.github4s.GithubTypes._
+import com.fortysevendeg.github4s.GithubResponses.GHResponse
 import com.fortysevendeg.github4s.free.domain.{Commit, Repository, Collaborator}
 import com.fortysevendeg.github4s.{GithubConfig, HttpClient}
-
+import io.circe.generic.auto._
 
 object Repos {
-
-  import io.circe.generic.auto._
 
   protected val httpClient = new HttpClient()
 
@@ -23,5 +21,4 @@ object Repos {
       since: Option[String] = None,
       until: Option[String] = None)(implicit C : GithubConfig): GHResponse[List[Commit]] =
     httpClient.get[List[Commit]](s"repos/$owner/$repo/commits", Map("path"->"site/build.sbt"))
-
 }

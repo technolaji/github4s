@@ -1,6 +1,6 @@
 package com.fortysevendeg.github4s.api
 
-import com.fortysevendeg.github4s.GithubTypes.GHResponse
+import com.fortysevendeg.github4s.GithubResponses.GHResponse
 import com.fortysevendeg.github4s.{GithubConfig, HttpClient}
 import com.fortysevendeg.github4s.free.domain.Collaborator
 

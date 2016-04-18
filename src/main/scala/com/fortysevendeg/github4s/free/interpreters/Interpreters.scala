@@ -60,7 +60,7 @@ trait Interpreters[M[_]] {
     def apply[A](fa: RequestOp[A]): M[A] = fa match {
       case Next(url: String, decoder: Decoder[A]) ⇒ {
         //implicit val d: Decoder[A] = decoder
-        App.pureEval(Eval.later(httpClient.getAPelo(url, decoder)))
+        App.pureEval(Eval.later(httpClient.getByUrl(url, decoder)))
       }
     }
   }

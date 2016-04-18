@@ -1,7 +1,7 @@
 package com.fortysevendeg.github4s.free.algebra
 
 import cats.free.{Free, Inject}
-import com.fortysevendeg.github4s.GithubTypes.GHResponse
+import com.fortysevendeg.github4s.GithubResponses.GHResponse
 import com.fortysevendeg.github4s.free.domain.{Commit, Repository}
 
 /** Repositories ops ADT

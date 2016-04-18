@@ -1,7 +1,6 @@
 import cats.data.{XorT, Xor}
 import cats.{Id, ApplicativeError, Applicative}
-import com.fortysevendeg.github4s.GithubResponses.{GHItemResult, GHListResult}
-import com.fortysevendeg.github4s.GithubTypes.{GHIO, GHResponse}
+import com.fortysevendeg.github4s.GithubResponses._
 import com.fortysevendeg.github4s.app._
 import com.fortysevendeg.github4s.free.algebra.{RequestOps, RepositoryOps}
 import com.fortysevendeg.github4s.free.domain.Commit
@@ -44,7 +43,6 @@ implicit val config = GithubConfig(accessToken = Some("493b69d7141ef5baae6784378
 val api = Github
 
 
-
 //Users >> Get User
 //val r1 = api.users.get("raulraja").exec[Id]
 //printResponse(r1)
@@ -71,10 +69,18 @@ val api = Github
 //val r4 = api.repos.get("scala-exercises", "scala-exercises").exec[Id]
 //printResponse(r4)
 
+
+
+
+
 //Repo >> List Commits
 val r5 = api.repos.listCommits("scala-exercises", "scala-exercises", None, Some("site/build.sbt")).exec[Id]
-getLinks(r5)
 val st = getNext(r5)
+
+
+
+
+
 ////Monadic composition
 //val ops = for {
 //  a <- api.users.get("rafaparadela").liftGH
@@ -82,11 +88,18 @@ val st = getNext(r5)
 //} yield a.login + b.login
 //
 //val s = ops.value.exec[Id]
+
+
+
 def getLinks[A](response: GHResponse[A]): Option[String] = response match {
   case Xor.Right(GHListResult(result, status, headers, d)) => headers.get("link").map(_.toString)
   case Xor.Right(GHItemResult(result, status, headers)) => headers.get("link").map(_.toString)
   case Xor.Left(e) => Some(e.getMessage)
 }
+
+
+
+
 def getNext[A](response: GHResponse[A])(implicit O : RequestOps[GitHub4s]): Option[String] = response match {
   case Xor.Right(r:GHListResult[List[Commit]]) => {
     import TestIdInterpreters._
@@ -94,6 +107,16 @@ def getNext[A](response: GHResponse[A])(implicit O : RequestOps[GitHub4s]): Opti
   }
   case _ => None
 }
+
+
+
+
+
+
+
+
+
+
 def printResponse[A](response: GHResponse[A]): String = response match {
   case Xor.Right(GHListResult(result, status, headers, d)) => result.toString
   case Xor.Right(GHItemResult(result, status, headers)) => result.toString
