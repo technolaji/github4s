@@ -28,7 +28,7 @@ trait Interpreters[M[_]] {
   def repositoryOpsInterpreter(implicit A: ApplicativeError[M, Throwable], C : GithubConfig): RepositoryOp ~> M = new (RepositoryOp ~> M) {
     def apply[A](fa: RepositoryOp[A]): M[A] = fa match {
       case GetRepo(owner, repo) ⇒ A.pureEval(Eval.later(Repos.get(owner, repo)))
-      case ListCommits(owner, repo, sha, path, author, since, until) ⇒ A.pureEval(Eval.later(Repos.listCommits(owner, repo, sha, path, author, since, until)))
+      case ListCommits(owner, repo, sha, path, author, since, until, pagination) ⇒ A.pureEval(Eval.later(Repos.listCommits(owner, repo, sha, path, author, since, until, pagination)))
     }
   }
 
@@ -41,7 +41,7 @@ trait Interpreters[M[_]] {
     def apply[A](fa: UserOp[A]): M[A] = fa match {
       case GetUser(username) ⇒ A.pureEval(Eval.later(Users.get(username)))
       case GetAuthUser() ⇒ A.pureEval(Eval.later(Users.getAuth))
-      case GetUsers(since) ⇒ A.pureEval(Eval.later(Users.getUsers(since)))
+      case GetUsers(since, pagination) ⇒ A.pureEval(Eval.later(Users.getUsers(since, pagination)))
     }
   }
 

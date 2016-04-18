@@ -90,13 +90,11 @@ val st = getNext(r5)
 //val s = ops.value.exec[Id]
 
 
-
 def getLinks[A](response: GHResponse[A]): Option[String] = response match {
   case Xor.Right(GHListResult(result, status, headers, d)) => headers.get("link").map(_.toString)
   case Xor.Right(GHItemResult(result, status, headers)) => headers.get("link").map(_.toString)
   case Xor.Left(e) => Some(e.getMessage)
 }
-
 
 
 
@@ -107,7 +105,6 @@ def getNext[A](response: GHResponse[A])(implicit O : RequestOps[GitHub4s]): Opti
   }
   case _ => None
 }
-
 
 
 

@@ -1,6 +1,7 @@
 package com.fortysevendeg.github4s
 
 import com.fortysevendeg.github4s.GithubResponses.GHResponse
+import com.fortysevendeg.github4s.free.domain.Pagination
 import io.circe.Decoder
 import scalaj.http._
 
@@ -77,11 +78,14 @@ class HttpClient {
 
   }
 
-
-  def get[A](method: String, params: Map[String, String] = Map.empty)(implicit C: GithubConfig, D: Decoder[A]): GHResponse[A] =
+  def get[A](
+      method: String,
+      params: Map[String, String] = Map.empty,
+      pagination: Option[Pagination] = None)
+      (implicit C: GithubConfig, D: Decoder[A]): GHResponse[A] =
     GithubResponses.toEntity(HttpRequestBuilder(buildURL(method))
         .withAuth(C.accessToken)
-        .withParams(params)
+        .withParams(params ++ pagination.fold(Map.empty[String, String])(p => Map("page" -> p.page.toString, "per_page" -> p.per_page.toString)))
         .run, D)
 
   def getByUrl[A](url: String, d: Decoder[A])(implicit C: GithubConfig): GHResponse[A] =
@@ -113,6 +117,8 @@ class HttpClient {
 
   private val connTimeoutMs: Int = 1000
   private val readTimeoutMs: Int = 5000
+  val defaultPage: Int = 1
+  val defaultPerPage: Int = 30
 
   private def buildURL(method: String) = s"https://api.github.com/$method"
 

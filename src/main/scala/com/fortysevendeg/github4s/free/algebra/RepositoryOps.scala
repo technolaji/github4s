@@ -2,7 +2,7 @@ package com.fortysevendeg.github4s.free.algebra
 
 import cats.free.{Free, Inject}
 import com.fortysevendeg.github4s.GithubResponses.GHResponse
-import com.fortysevendeg.github4s.free.domain.{Commit, Repository}
+import com.fortysevendeg.github4s.free.domain.{Pagination, Commit, Repository}
 
 /** Repositories ops ADT
   */
@@ -15,7 +15,8 @@ final case class ListCommits(
     path: Option[String] = None,
     author: Option[String] = None,
     since: Option[String] = None,
-    until: Option[String] = None) extends RepositoryOp[GHResponse[List[Commit]]]
+    until: Option[String] = None,
+    pagination: Option[Pagination] = None) extends RepositoryOp[GHResponse[List[Commit]]]
 
 
 /** Exposes Repositories operations as a Free monadic algebra that may be combined with other Algebras via
@@ -35,8 +36,9 @@ class RepositoryOps[F[_]](implicit I: Inject[RepositoryOp, F]) {
       path: Option[String] = None,
       author: Option[String] = None,
       since: Option[String] = None,
-      until: Option[String] = None): Free[F, GHResponse[List[Commit]]] =
-    Free.inject[RepositoryOp, F](ListCommits(owner, repo, sha, path, author, since, until))
+      until: Option[String] = None,
+      pagination: Option[Pagination] = None): Free[F, GHResponse[List[Commit]]] =
+    Free.inject[RepositoryOp, F](ListCommits(owner, repo, sha, path, author, since, until, pagination))
 
 }
 

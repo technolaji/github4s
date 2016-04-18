@@ -1,7 +1,7 @@
 package com.fortysevendeg.github4s.api
 
 import com.fortysevendeg.github4s.GithubResponses.GHResponse
-import com.fortysevendeg.github4s.free.domain.{Commit, Repository, Collaborator}
+import com.fortysevendeg.github4s.free.domain.{Pagination, Commit, Repository, Collaborator}
 import com.fortysevendeg.github4s.{GithubConfig, HttpClient}
 import io.circe.generic.auto._
 
@@ -19,6 +19,16 @@ object Repos {
       path: Option[String] = None,
       author: Option[String] = None,
       since: Option[String] = None,
-      until: Option[String] = None)(implicit C : GithubConfig): GHResponse[List[Commit]] =
-    httpClient.get[List[Commit]](s"repos/$owner/$repo/commits", Map("path"->"site/build.sbt"))
+      until: Option[String] = None,
+      pagination: Option[Pagination] = None)(implicit C : GithubConfig): GHResponse[List[Commit]] =
+    httpClient.get[List[Commit]](s"repos/$owner/$repo/commits", Map(
+       "sha" -> sha,
+       "path" -> path,
+       "author" -> author,
+       "since" -> since,
+       "until" -> until).collect {
+       case (key, Some(value)) => key -> value
+     }, pagination)
+
+
 }
