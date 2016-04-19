@@ -21,22 +21,21 @@ class RequestOps[F[_]](implicit I: Inject[RequestOp, F]) {
 
   def followLink[A](result: GHListResult[A], rel: String): Option[Free[F, GHResponse[A]]] = result match {
     case GHListResult(_, _, headers, decoder) => {
-
       for {
         linkHeader <- headers.get("link")
-        nextLink <- linkHeader.map(extractLink).toMap.get(rel)
+        nextLink <- extractLink(linkHeader).get(rel)
       } yield next[A](nextLink, decoder)
     }
     case _ => None
   }
 
-  private def extractLink(rawLink : String): (String, String) = {
-    val Array(rawUrl, rawRel) = rawLink.split(";")
-    val url = rawUrl.substring(1, rawUrl.length - 1)
-    val rel = rawRel.split("\"").last
-    (rel, url)
-  }
-
+  private def extractLink(rawLink : IndexedSeq[String]): Map[String, String] =
+    rawLink.flatMap(_.split(",").map(l => {
+        val Array(rawUrl, rawRel) = l.split(";")
+        val url = rawUrl.substring(1, rawUrl.length - 1)
+        val rel = rawRel.split("\"").last
+        (rel, url)
+      }).toMap).toMap
 
 }
 

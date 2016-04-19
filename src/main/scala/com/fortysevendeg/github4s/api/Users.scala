@@ -3,11 +3,10 @@ package com.fortysevendeg.github4s.api
 import com.fortysevendeg.github4s.GithubResponses.GHResponse
 import com.fortysevendeg.github4s.{GithubConfig, HttpClient}
 import com.fortysevendeg.github4s.free.domain.{Pagination, Collaborator}
+import io.circe.generic.auto._
 
 
 object Users {
-
-  import io.circe.generic.auto._
 
   protected val httpClient = new HttpClient()
 

@@ -21,6 +21,7 @@ object Repos {
       since: Option[String] = None,
       until: Option[String] = None,
       pagination: Option[Pagination] = None)(implicit C : GithubConfig): GHResponse[List[Commit]] =
+
     httpClient.get[List[Commit]](s"repos/$owner/$repo/commits", Map(
        "sha" -> sha,
        "path" -> path,
