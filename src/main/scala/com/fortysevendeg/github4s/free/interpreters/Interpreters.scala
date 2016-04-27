@@ -50,6 +50,7 @@ trait Interpreters[M[_]] {
   def authOpsInterpreter(implicit A: ApplicativeError[M, Throwable], C : GithubConfig): AuthOp ~> M = new (AuthOp ~> M) {
     def apply[A](fa: AuthOp[A]): M[A] = fa match {
       case NewAuth(username, password, scopes, note, client_id, client_secret) ⇒ A.pureEval(Eval.later(Auth.newAuth(username, password, scopes, note, client_id, client_secret)))
+      case AuthorizeUrl(client_id, redirect_uri, scopes) => A.pureEval(Eval.later(Auth.authorizeUrl(client_id, redirect_uri, scopes)))
     }
   }
 

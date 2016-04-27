@@ -42,4 +42,10 @@ class GHAuth(implicit O : AuthOps[GitHub4s]){
       client_id: String,
       client_secret: String): GHIO[GHResponse[Authorization]] =
     O.newAuth(username, password, scopes, note, client_id, client_secret)
+
+  def authorizeUrl(
+      client_id: String,
+      redirect_uri: String,
+      scopes: List[String]): GHIO[GHResponse[Authorize]] =
+    O.authorizeUrl(client_id, redirect_uri, scopes)
 }
