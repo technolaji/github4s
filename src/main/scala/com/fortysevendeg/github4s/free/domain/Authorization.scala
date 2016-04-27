@@ -19,3 +19,10 @@ case class OAuthToken(
   access_token: String,
   token_type: String,
   scope: String)
+
+case class NewOAuthRequest(
+  client_id: String,
+  client_secret: String,
+  code: String,
+  redirect_uri: String,
+  state: String)

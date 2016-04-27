@@ -16,6 +16,7 @@ object Auth {
   protected val httpClient = new HttpClient()
 
   val authorizeUrl = "https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s&scope=%s&state=%s"
+  val accessTokenUrl = "https://github.com/login/oauth/access_token"
 
   /**
     * Call to request a new authorization given a basic authentication, the returned object Authorization includes an
@@ -62,13 +63,24 @@ object Auth {
   }
 
 
+  /**
+    * Requests an access token based on the code retrieved in the first step of the oAuth process
+    * @param client_id
+    * @param client_secret
+    * @param code
+    * @param redirect_uri
+    * @param state
+    * @return
+    */
   def getAccessToken(
       client_id: String,
       client_secret: String,
       code: String,
       redirect_uri: String,
-      state: String): GHResponse[OAuthToken] = ???
-  )
+      state: String): GHResponse[OAuthToken] = httpClient.postOAuth[OAuthToken](
+    url = accessTokenUrl,
+    data = NewOAuthRequest(client_id, client_secret, code, redirect_uri, state).asJson.noSpaces)
+
 
 
 }

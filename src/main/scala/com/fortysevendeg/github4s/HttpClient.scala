@@ -129,6 +129,15 @@ class HttpClient {
         .withData(data)
         .run, D)
 
+  def postOAuth[A](
+      url: String,
+      data: String)
+      (implicit D: Decoder[A]): GHResponse[A] =
+    GithubResponses.toEntity(HttpRequestBuilder(url)
+        .withHeaders(Map("Accept" -> "application/json"))
+        .withData(data)
+        .run, D)
+
   def delete(method: String)(implicit C: GithubConfig): GHResponse[Unit] =
     GithubResponses.toEmpty(HttpRequestBuilder(buildURL(method))
         .deleteMethod
