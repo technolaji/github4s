@@ -52,6 +52,8 @@ object GithubResponses {
     case r => UnexpectedException(s"Failed invoking get with status : ${r.code}, body : \n ${r.body}").left[GHResult[Unit]]
   }
 
+  def toEntityString(s: String): GHResponse[String] = Xor.Right(GHItemResult(s, 0, Map.empty))
+
   private def toLowerCase(headers: Map[String, IndexedSeq[String]]): Map[String, IndexedSeq[String]] = headers.map(e => (e._1.toLowerCase, e._2))
 
 

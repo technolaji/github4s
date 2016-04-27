@@ -2,7 +2,7 @@ package com.fortysevendeg.github4s.free.interpreters
 
 import cats.{ApplicativeError, ~>, Eval}
 import com.fortysevendeg.github4s.{HttpClient, GithubConfig}
-import com.fortysevendeg.github4s.api.Repos
+import com.fortysevendeg.github4s.api.{Auth, Repos}
 import com.fortysevendeg.github4s.app.{C01, C02, GitHub4s}
 import com.fortysevendeg.github4s.free.algebra._
 import io.circe.Decoder
@@ -16,7 +16,7 @@ trait Interpreters[M[_]] {
   ): GitHub4s ~> M = {
     val repositoryAndUserInterpreter: C01 ~> M = repositoryOpsInterpreter or userOpsInterpreter
     val c01nterpreter: C02 ~> M = requestOpsInterpreter or repositoryAndUserInterpreter
-    val all: GitHub4s ~> M = gistOpsInterpreter or c01nterpreter
+    val all: GitHub4s ~> M = authOpsInterpreter or c01nterpreter
     all
   }
 
@@ -45,12 +45,11 @@ trait Interpreters[M[_]] {
     }
   }
 
-  /** Lifts Gist Ops to an effect capturing Monad such as Task via natural transformations
+  /** Lifts Auth Ops to an effect capturing Monad such as Task via natural transformations
     */
-  def gistOpsInterpreter(implicit A: ApplicativeError[M, Throwable], C : GithubConfig): GistOp ~> M = new (GistOp ~> M) {
-    def apply[A](fa: GistOp[A]): M[A] = fa match {
-      case GetGists() ⇒ A.pureEval(Eval.defer(???))
-      case GetAuthGists() ⇒ A.pureEval(Eval.defer(???))
+  def authOpsInterpreter(implicit A: ApplicativeError[M, Throwable], C : GithubConfig): AuthOp ~> M = new (AuthOp ~> M) {
+    def apply[A](fa: AuthOp[A]): M[A] = fa match {
+      case NewAuth(username, password, scopes, note, client_id, client_secret) ⇒ A.pureEval(Eval.later(Auth.newAuth(username, password, scopes, note, client_id, client_secret)))
     }
   }
 

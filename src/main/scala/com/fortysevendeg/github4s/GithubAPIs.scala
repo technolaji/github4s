@@ -2,8 +2,8 @@ package com.fortysevendeg.github4s
 
 import com.fortysevendeg.github4s.GithubResponses.{GHResponse, GHIO}
 import com.fortysevendeg.github4s.app._
-import com.fortysevendeg.github4s.free.algebra.{RepositoryOps, RepositoryOp, UserOps}
-import com.fortysevendeg.github4s.free.domain.{Pagination, Commit, Repository, Collaborator}
+import com.fortysevendeg.github4s.free.algebra.{AuthOps, RepositoryOps, UserOps}
+import com.fortysevendeg.github4s.free.domain._
 
 class GHUsers(implicit O : UserOps[GitHub4s]){
 
@@ -30,4 +30,16 @@ class GHRepos(implicit O : RepositoryOps[GitHub4s]){
       pagination: Option[Pagination] = None): GHIO[GHResponse[List[Commit]]] =
     O.listCommits(owner, repo, sha, path, author, since, until, pagination)
 
+}
+
+class GHAuth(implicit O : AuthOps[GitHub4s]){
+
+  def newAuth(
+      username: String,
+      password: String,
+      scopes: List[String],
+      note: String,
+      client_id: String,
+      client_secret: String): GHIO[GHResponse[Authorization]] =
+    O.newAuth(username, password, scopes, note, client_id, client_secret)
 }

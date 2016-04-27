@@ -13,7 +13,7 @@ object Github {
 
   lazy val users = new GHUsers()
   lazy val repos = new GHRepos()
-
+  lazy val auth = new GHAuth()
 
 
   implicit class GithubIOSyntaxXOR[A](gio : GHIO[GHResponse[A]]) {

@@ -108,6 +108,27 @@ class HttpClient {
         .withHeaders(Map("Content-Length" -> "0"))
         .run)
 
+  def post[A](
+      method: String,
+      headers: Map[String, String] = Map.empty,
+      data: String)
+      (implicit C: GithubConfig, D: Decoder[A]): GHResponse[A] =
+    GithubResponses.toEntity(HttpRequestBuilder(buildURL(method))
+        .withAuth(C.accessToken)
+        .withHeaders(headers)
+        .withData(data)
+        .run, D)
+
+  def postAuth[A](
+      method: String,
+      headers: Map[String, String] = Map.empty,
+      data: String)
+      (implicit D: Decoder[A]): GHResponse[A] =
+    GithubResponses.toEntity(HttpRequestBuilder(buildURL(method))
+        .withHeaders(headers)
+        .withData(data)
+        .run, D)
+
   def delete(method: String)(implicit C: GithubConfig): GHResponse[Unit] =
     GithubResponses.toEmpty(HttpRequestBuilder(buildURL(method))
         .deleteMethod
