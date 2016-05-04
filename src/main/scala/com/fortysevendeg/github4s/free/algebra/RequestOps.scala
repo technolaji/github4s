@@ -7,7 +7,7 @@ import io.circe.Decoder
 /** Requests ops ADT
   */
 sealed trait RequestOp[A]
-final case class Next[A](url: String, decoder: Decoder[A]) extends RequestOp[GHResponse[A]]
+final case class Next[A](url: String, decoder: Decoder[A], accessToken: Option[String] = None) extends RequestOp[GHResponse[A]]
 
 
 /** Exposes Requests operations as a Free monadic algebra that may be combined with other Algebras via
@@ -15,7 +15,7 @@ final case class Next[A](url: String, decoder: Decoder[A]) extends RequestOp[GHR
   */
 class RequestOps[F[_]](implicit I: Inject[RequestOp, F]) {
 
-  def next[A](url: String, decoder: Decoder[A]): Free[F, GHResponse[A]] = Free.inject[RequestOp, F](Next[A](url, decoder))
+  def next[A](url: String, decoder: Decoder[A], accessToken: Option[String] = None): Free[F, GHResponse[A]] = Free.inject[RequestOp, F](Next[A](url, decoder, accessToken))
 
   def nextList[A](result: GHListResult[A]): Option[Free[F, GHResponse[A]]] = followLink[A](result, "next")
 

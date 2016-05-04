@@ -7,9 +7,9 @@ import com.fortysevendeg.github4s.free.domain.{Pagination, Collaborator}
 /** Users ops ADT
   */
 sealed trait UserOp[A]
-final case class GetUser(username: String) extends UserOp[GHResponse[Collaborator]]
-final case class GetAuthUser() extends UserOp[GHResponse[Collaborator]]
-final case class GetUsers(since: Int, pagination: Option[Pagination] = None) extends UserOp[GHResponse[List[Collaborator]]]
+final case class GetUser(username: String, accessToken: Option[String] = None) extends UserOp[GHResponse[Collaborator]]
+final case class GetAuthUser(accessToken: Option[String] = None) extends UserOp[GHResponse[Collaborator]]
+final case class GetUsers(since: Int, pagination: Option[Pagination] = None, accessToken: Option[String] = None) extends UserOp[GHResponse[List[Collaborator]]]
 
 
 /** Exposes Users operations as a Free monadic algebra that may be combined with other Algebras via
@@ -17,11 +17,11 @@ final case class GetUsers(since: Int, pagination: Option[Pagination] = None) ext
   */
 class UserOps[F[_]](implicit I: Inject[UserOp, F]) {
 
-  def getUser(username: String): Free[F, GHResponse[Collaborator]] = Free.inject[UserOp, F](GetUser(username))
+  def getUser(username: String, accessToken: Option[String] = None): Free[F, GHResponse[Collaborator]] = Free.inject[UserOp, F](GetUser(username, accessToken))
 
-  def getAuthUser: Free[F, GHResponse[Collaborator]] = Free.inject[UserOp, F](GetAuthUser())
+  def getAuthUser(accessToken: Option[String] = None): Free[F, GHResponse[Collaborator]] = Free.inject[UserOp, F](GetAuthUser(accessToken))
 
-  def getUsers(since: Int, pagination: Option[Pagination] = None): Free[F, GHResponse[List[Collaborator]]] = Free.inject[UserOp, F](GetUsers(since, pagination))
+  def getUsers(since: Int, pagination: Option[Pagination] = None, accessToken: Option[String] = None): Free[F, GHResponse[List[Collaborator]]] = Free.inject[UserOp, F](GetUsers(since, pagination, accessToken))
 
 }
 

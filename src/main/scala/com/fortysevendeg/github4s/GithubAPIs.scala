@@ -5,22 +5,22 @@ import com.fortysevendeg.github4s.app._
 import com.fortysevendeg.github4s.free.algebra.{AuthOps, RepositoryOps, UserOps}
 import com.fortysevendeg.github4s.free.domain._
 
-class GHUsers(implicit O : UserOps[GitHub4s]){
+class GHUsers(accessToken : Option[String] = None)(implicit O : UserOps[GitHub4s]){
 
-  def get(username : String): GHIO[GHResponse[Collaborator]] = O.getUser(username)
+  def get(username : String): GHIO[GHResponse[Collaborator]] = O.getUser(username, accessToken)
 
-  def getAuth: GHIO[GHResponse[Collaborator]] = O.getAuthUser
+  def getAuth: GHIO[GHResponse[Collaborator]] = O.getAuthUser(accessToken)
 
-  def getUsers(since : Int, pagination: Option[Pagination] = None): GHIO[GHResponse[List[Collaborator]]] = O.getUsers(since, pagination)
+  def getUsers(since: Int, pagination: Option[Pagination] = None): GHIO[GHResponse[List[Collaborator]]] = O.getUsers(since, pagination, accessToken)
 
 }
 
-class GHRepos(implicit O : RepositoryOps[GitHub4s]){
+class GHRepos(accessToken : Option[String] = None)(implicit O : RepositoryOps[GitHub4s]){
 
   def get(owner : String, repo: String): GHIO[GHResponse[Repository]] = O.getRepo(owner, repo)
 
   def listCommits(
-      owner : String,
+      owner: String,
       repo: String,
       sha: Option[String] = None,
       path: Option[String] = None,
@@ -32,7 +32,7 @@ class GHRepos(implicit O : RepositoryOps[GitHub4s]){
 
 }
 
-class GHAuth(implicit O : AuthOps[GitHub4s]){
+class GHAuth(accessToken : Option[String] = None)(implicit O : AuthOps[GitHub4s]){
 
   def newAuth(
       username: String,

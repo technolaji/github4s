@@ -79,42 +79,44 @@ class HttpClient {
   }
 
   def get[A](
+      accessToken: Option[String] = None,
       method: String,
       params: Map[String, String] = Map.empty,
       pagination: Option[Pagination] = None)
-      (implicit C: GithubConfig, D: Decoder[A]): GHResponse[A] =
+      (implicit D: Decoder[A]): GHResponse[A] =
     GithubResponses.toEntity(HttpRequestBuilder(buildURL(method))
-        .withAuth(C.accessToken)
+        .withAuth(accessToken)
         .withParams(params ++ pagination.fold(Map.empty[String, String])(p => Map("page" -> p.page.toString, "per_page" -> p.per_page.toString)))
         .run, D)
 
-  def getByUrl[A](url: String, d: Decoder[A])(implicit C: GithubConfig): GHResponse[A] =
+  def getByUrl[A](accessToken: Option[String] = None, url: String, d: Decoder[A]): GHResponse[A] =
     GithubResponses.toEntity(HttpRequestBuilder(url)
-        .withAuth(C.accessToken)
+        .withAuth(accessToken)
         .run, d)
 
 
-  def patch[A](method: String, data: String)(implicit C: GithubConfig, D: Decoder[A]): GHResponse[A] =
+  def patch[A](accessToken: Option[String] = None, method: String, data: String)(implicit D: Decoder[A]): GHResponse[A] =
     GithubResponses.toEntity(HttpRequestBuilder(buildURL(method))
         .patchMethod
-        .withAuth(C.accessToken)
+        .withAuth(accessToken)
         .withData(data)
         .run, D)
 
-  def put(method: String)(implicit C: GithubConfig): GHResponse[Unit] =
+  def put(accessToken: Option[String] = None, method: String): GHResponse[Unit] =
     GithubResponses.toEmpty(HttpRequestBuilder(buildURL(method))
         .putMethod
-        .withAuth(C.accessToken)
+        .withAuth(accessToken)
         .withHeaders(Map("Content-Length" -> "0"))
         .run)
 
   def post[A](
+      accessToken: Option[String] = None,
       method: String,
       headers: Map[String, String] = Map.empty,
       data: String)
-      (implicit C: GithubConfig, D: Decoder[A]): GHResponse[A] =
+      (implicit D: Decoder[A]): GHResponse[A] =
     GithubResponses.toEntity(HttpRequestBuilder(buildURL(method))
-        .withAuth(C.accessToken)
+        .withAuth(accessToken)
         .withHeaders(headers)
         .withData(data)
         .run, D)
@@ -138,10 +140,10 @@ class HttpClient {
         .withData(data)
         .run, D)
 
-  def delete(method: String)(implicit C: GithubConfig): GHResponse[Unit] =
+  def delete(accessToken: Option[String] = None, method: String): GHResponse[Unit] =
     GithubResponses.toEmpty(HttpRequestBuilder(buildURL(method))
         .deleteMethod
-        .withAuth(C.accessToken)
+        .withAuth(accessToken)
         .run)
 
 

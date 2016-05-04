@@ -24,7 +24,7 @@ object GithubResponses {
   final case class GHListResult[A](value: A, statusCode: Int, headers: Map[String, IndexedSeq[String]], decoder: Decoder[A]) extends GHResult[A]
 
 
-  sealed abstract class GHException(msg : String, cause : Option[Throwable] = None) extends Exception(msg) {
+  sealed abstract class GHException(msg : String, cause : Option[Throwable] = None) extends Throwable(msg) {
     cause foreach initCause
   }
 

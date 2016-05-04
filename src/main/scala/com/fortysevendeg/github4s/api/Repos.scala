@@ -9,10 +9,11 @@ object Repos {
 
   protected val httpClient = new HttpClient()
 
-  def get(owner: String, repo: String)(implicit C : GithubConfig): GHResponse[Repository] =
-    httpClient.get[Repository](s"repos/$owner/$repo")
+  def get(accessToken: Option[String] = None, owner: String, repo: String): GHResponse[Repository] =
+    httpClient.get[Repository](accessToken, s"repos/$owner/$repo")
 
   def listCommits(
+      accessToken: Option[String] = None,
       owner: String,
       repo: String,
       sha: Option[String] = None,
@@ -20,9 +21,9 @@ object Repos {
       author: Option[String] = None,
       since: Option[String] = None,
       until: Option[String] = None,
-      pagination: Option[Pagination] = None)(implicit C : GithubConfig): GHResponse[List[Commit]] =
+      pagination: Option[Pagination] = None): GHResponse[List[Commit]] =
 
-    httpClient.get[List[Commit]](s"repos/$owner/$repo/commits", Map(
+    httpClient.get[List[Commit]](accessToken, s"repos/$owner/$repo/commits", Map(
        "sha" -> sha,
        "path" -> path,
        "author" -> author,
