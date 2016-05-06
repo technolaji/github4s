@@ -18,7 +18,7 @@ trait IdInstances {
 
     override def flatMap[A, B](fa: Id[A])(f: A ⇒ Id[B]): Id[B] = I.flatMap(fa)(f)
 
-    override def product[A, B](fa: Id[A], fb: Id[B]): Id[(A, B)] = I.product(fa, fb)
+    //override def product[A, B](fa: Id[A], fb: Id[B]): Id[(A, B)] = I.product(fa, fb)
 
     override def raiseError[A](e: Throwable): Id[A] =
       throw e

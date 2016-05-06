@@ -8,6 +8,8 @@ import scalaj.http._
 
 class HttpClient {
 
+  val defaultPagination = Pagination(1, 1000)
+
   sealed trait HttpVerb {
     def verb: String
   }

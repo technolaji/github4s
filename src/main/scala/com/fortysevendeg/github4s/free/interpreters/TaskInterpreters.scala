@@ -3,11 +3,8 @@ package com.fortysevendeg.github4s.free.interpreters
 import cats.{Eval, Monad, MonadError}
 import scalaz.concurrent.Task
 
-
 trait TaskInstances {
-
-  implicit def taskMonadError(
-      implicit T: Monad[Task]): MonadError[Task, Throwable] = new MonadError[Task, Throwable] {
+  implicit val taskMonad: Monad[Task] with MonadError[Task, Throwable] = new Monad[Task] with MonadError[Task, Throwable] {
 
     def pure[A](x: A): Task[A] = Task.now(x)
 

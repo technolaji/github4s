@@ -7,7 +7,11 @@ import com.fortysevendeg.github4s.free.domain.{Pagination, Commit, Repository}
 /** Repositories ops ADT
   */
 sealed trait RepositoryOp[A]
-final case class GetRepo(owner: String, repo: String) extends RepositoryOp[GHResponse[Repository]]
+final case class GetRepo(
+    owner: String,
+    repo: String,
+    accessToken: Option[String] = None) extends RepositoryOp[GHResponse[Repository]]
+
 final case class ListCommits(
     owner: String,
     repo: String,
@@ -16,7 +20,8 @@ final case class ListCommits(
     author: Option[String] = None,
     since: Option[String] = None,
     until: Option[String] = None,
-    pagination: Option[Pagination] = None) extends RepositoryOp[GHResponse[List[Commit]]]
+    pagination: Option[Pagination] = None,
+    accessToken: Option[String] = None) extends RepositoryOp[GHResponse[List[Commit]]]
 
 
 /** Exposes Repositories operations as a Free monadic algebra that may be combined with other Algebras via
@@ -26,8 +31,9 @@ class RepositoryOps[F[_]](implicit I: Inject[RepositoryOp, F]) {
 
   def getRepo(
       owner: String,
-      repo: String): Free[F, GHResponse[Repository]] =
-    Free.inject[RepositoryOp, F](GetRepo(owner, repo))
+      repo: String,
+      accessToken: Option[String] = None): Free[F, GHResponse[Repository]] =
+    Free.inject[RepositoryOp, F](GetRepo(owner, repo, accessToken))
 
   def listCommits(
       owner: String,
@@ -37,8 +43,9 @@ class RepositoryOps[F[_]](implicit I: Inject[RepositoryOp, F]) {
       author: Option[String] = None,
       since: Option[String] = None,
       until: Option[String] = None,
-      pagination: Option[Pagination] = None): Free[F, GHResponse[List[Commit]]] =
-    Free.inject[RepositoryOp, F](ListCommits(owner, repo, sha, path, author, since, until, pagination))
+      pagination: Option[Pagination] = None,
+      accessToken: Option[String] = None): Free[F, GHResponse[List[Commit]]] =
+    Free.inject[RepositoryOp, F](ListCommits(owner, repo, sha, path, author, since, until, pagination, accessToken))
 
 }
 

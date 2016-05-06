@@ -2,7 +2,7 @@ package com.fortysevendeg.github4s.api
 
 import com.fortysevendeg.github4s.GithubResponses.GHResponse
 import com.fortysevendeg.github4s.{GithubConfig, HttpClient}
-import com.fortysevendeg.github4s.free.domain.{Pagination, Collaborator}
+import com.fortysevendeg.github4s.free.domain.{Pagination, User}
 import io.circe.generic.auto._
 
 
@@ -10,12 +10,15 @@ object Users {
 
   protected val httpClient = new HttpClient()
 
-  def get(username: String)(implicit C : GithubConfig): GHResponse[Collaborator] = httpClient.get[Collaborator](s"users/$username")
+  def get(accessToken: Option[String] = None, username: String): GHResponse[User] = httpClient.get[User](accessToken, s"users/$username")
 
-  def getAuth(implicit C : GithubConfig): GHResponse[Collaborator] = httpClient.get[Collaborator]("user")
+  def getAuth(accessToken: Option[String] = None): GHResponse[User] = httpClient.get[User](accessToken, "user")
 
-  def getUsers(since: Int, pagination: Option[Pagination] = None)
-      (implicit C : GithubConfig): GHResponse[List[Collaborator]] = httpClient.get[List[Collaborator]]("users", Map("since" -> since.toString), pagination)
+  def getUsers(
+      accessToken: Option[String] = None,
+      since: Int,
+      pagination: Option[Pagination] = None) : GHResponse[List[User]] =
+    httpClient.get[List[User]](accessToken, "users", Map("since" -> since.toString), pagination)
 
 
 }

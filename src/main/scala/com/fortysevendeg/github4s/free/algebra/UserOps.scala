@@ -2,14 +2,14 @@ package com.fortysevendeg.github4s.free.algebra
 
 import cats.free.{Free, Inject}
 import com.fortysevendeg.github4s.GithubResponses._
-import com.fortysevendeg.github4s.free.domain.{Pagination, Collaborator}
+import com.fortysevendeg.github4s.free.domain.{Pagination, User}
 
 /** Users ops ADT
   */
 sealed trait UserOp[A]
-final case class GetUser(username: String, accessToken: Option[String] = None) extends UserOp[GHResponse[Collaborator]]
-final case class GetAuthUser(accessToken: Option[String] = None) extends UserOp[GHResponse[Collaborator]]
-final case class GetUsers(since: Int, pagination: Option[Pagination] = None, accessToken: Option[String] = None) extends UserOp[GHResponse[List[Collaborator]]]
+final case class GetUser(username: String, accessToken: Option[String] = None) extends UserOp[GHResponse[User]]
+final case class GetAuthUser(accessToken: Option[String] = None) extends UserOp[GHResponse[User]]
+final case class GetUsers(since: Int, pagination: Option[Pagination] = None, accessToken: Option[String] = None) extends UserOp[GHResponse[List[User]]]
 
 
 /** Exposes Users operations as a Free monadic algebra that may be combined with other Algebras via
@@ -17,11 +17,11 @@ final case class GetUsers(since: Int, pagination: Option[Pagination] = None, acc
   */
 class UserOps[F[_]](implicit I: Inject[UserOp, F]) {
 
-  def getUser(username: String, accessToken: Option[String] = None): Free[F, GHResponse[Collaborator]] = Free.inject[UserOp, F](GetUser(username, accessToken))
+  def getUser(username: String, accessToken: Option[String] = None): Free[F, GHResponse[User]] = Free.inject[UserOp, F](GetUser(username, accessToken))
 
-  def getAuthUser(accessToken: Option[String] = None): Free[F, GHResponse[Collaborator]] = Free.inject[UserOp, F](GetAuthUser(accessToken))
+  def getAuthUser(accessToken: Option[String] = None): Free[F, GHResponse[User]] = Free.inject[UserOp, F](GetAuthUser(accessToken))
 
-  def getUsers(since: Int, pagination: Option[Pagination] = None, accessToken: Option[String] = None): Free[F, GHResponse[List[Collaborator]]] = Free.inject[UserOp, F](GetUsers(since, pagination, accessToken))
+  def getUsers(since: Int, pagination: Option[Pagination] = None, accessToken: Option[String] = None): Free[F, GHResponse[List[User]]] = Free.inject[UserOp, F](GetUsers(since, pagination, accessToken))
 
 }
 

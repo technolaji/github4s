@@ -7,11 +7,11 @@ import com.fortysevendeg.github4s.free.domain._
 
 class GHUsers(accessToken : Option[String] = None)(implicit O : UserOps[GitHub4s]){
 
-  def get(username : String): GHIO[GHResponse[Collaborator]] = O.getUser(username, accessToken)
+  def get(username : String): GHIO[GHResponse[User]] = O.getUser(username, accessToken)
 
-  def getAuth: GHIO[GHResponse[Collaborator]] = O.getAuthUser(accessToken)
+  def getAuth: GHIO[GHResponse[User]] = O.getAuthUser(accessToken)
 
-  def getUsers(since: Int, pagination: Option[Pagination] = None): GHIO[GHResponse[List[Collaborator]]] = O.getUsers(since, pagination, accessToken)
+  def getUsers(since: Int, pagination: Option[Pagination] = None): GHIO[GHResponse[List[User]]] = O.getUsers(since, pagination, accessToken)
 
 }
 
