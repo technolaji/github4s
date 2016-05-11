@@ -54,6 +54,17 @@ object GithubResponses {
 
   private def toLowerCase(headers: Map[String, IndexedSeq[String]]): Map[String, IndexedSeq[String]] = headers.map(e => (e._1.toLowerCase, e._2))
 
+  implicit class GHEntity[A](result: GHResult[A]) {
+    def entity[A] = result match {
+      case GHListResult(r, _, _, _) => r
+      case GHItemResult(r, _, _) => r
+    }
 
+    def statusCode[A] = result match {
+      case GHListResult(_, sc, _, _) => sc
+      case GHItemResult(_, sc, _) => sc
+    }
+
+  }
 
 }

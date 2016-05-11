@@ -59,6 +59,7 @@ class AuthOps[F[_]](implicit I: Inject[AuthOp, F]) {
 
 }
 
+
 /** Default implicit based DI factory from which instances of the AuthOps may be obtained
   */
 object AuthOps {

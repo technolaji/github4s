@@ -2,7 +2,7 @@ package com.fortysevendeg.github4s.api
 
 import com.fortysevendeg.github4s.GithubResponses.GHResponse
 import com.fortysevendeg.github4s.free.domain.{Pagination, Commit, Repository, User}
-import com.fortysevendeg.github4s.{Decoders, GithubConfig, HttpClient}
+import com.fortysevendeg.github4s.{Decoders, HttpClient}
 import io.circe.generic.auto._
 
 object Repos {

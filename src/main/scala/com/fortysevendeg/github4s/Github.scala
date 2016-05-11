@@ -5,10 +5,6 @@ import cats.{MonadError, ~>}
 import com.fortysevendeg.github4s.GithubResponses._
 import com.fortysevendeg.github4s.app._
 
-
-case class GithubConfig(accessToken : Option[String] = None)
-
-
 class Github(accessToken : Option[String] = None) {
 
   lazy val users = new GHUsers(accessToken)

@@ -1,7 +1,7 @@
 package com.fortysevendeg.github4s.api
 
 import com.fortysevendeg.github4s.GithubResponses.GHResponse
-import com.fortysevendeg.github4s.{GithubConfig, HttpClient}
+import com.fortysevendeg.github4s.HttpClient
 import com.fortysevendeg.github4s.free.domain.{Pagination, User}
 import io.circe.generic.auto._
 

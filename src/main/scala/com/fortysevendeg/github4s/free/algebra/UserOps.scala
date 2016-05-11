@@ -25,6 +25,7 @@ class UserOps[F[_]](implicit I: Inject[UserOp, F]) {
 
 }
 
+
 /** Default implicit based DI factory from which instances of the UserOps may be obtained
   */
 object UserOps {

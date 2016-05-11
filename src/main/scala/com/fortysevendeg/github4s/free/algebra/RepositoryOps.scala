@@ -49,6 +49,7 @@ class RepositoryOps[F[_]](implicit I: Inject[RepositoryOp, F]) {
 
 }
 
+
 /** Default implicit based DI factory from which instances of the RepositoryOps may be obtained
   */
 object RepositoryOps {

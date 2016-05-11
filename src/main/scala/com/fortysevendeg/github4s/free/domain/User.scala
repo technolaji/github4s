@@ -5,5 +5,5 @@ case class User(
     login: String,
     avatar_url: String,
     html_url: String,
-    name: String,
-    email: String)
+    name: Option[String] = None,
+    email: Option[String] = None)

@@ -1,7 +1,7 @@
 package com.fortysevendeg.github4s.free.interpreters
 
 import cats.{MonadError, ApplicativeError, ~>, Eval}
-import com.fortysevendeg.github4s.{HttpClient, GithubConfig}
+import com.fortysevendeg.github4s.HttpClient
 import com.fortysevendeg.github4s.api.{Auth, Repos}
 import com.fortysevendeg.github4s.app.{COGH01, COGH02, GitHub4s}
 import com.fortysevendeg.github4s.free.algebra._
