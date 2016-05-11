@@ -2,7 +2,7 @@ organization := "com.fortysevendeg"
 
 name := "github4s"
 
-version := "0.1-SNAPSHOT"
+version := "0.1"
 
 scalaVersion := "2.11.8"
 
