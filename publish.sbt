@@ -4,7 +4,7 @@ organizationHomepage := Some(new URL("http://47deg.com"))
 
 publishMavenStyle := true
 
-startYear := Some(2015)
+startYear := Some(2016)
 
 description := "GitHub API wrapper written in Scala"
 
