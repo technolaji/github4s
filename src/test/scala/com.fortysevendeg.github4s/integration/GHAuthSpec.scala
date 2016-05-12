@@ -10,7 +10,7 @@ import org.scalatest._
 
 class GHAuthSpec extends FlatSpec with Matchers with XorMatchers with XorValues with TestUtils {
 
-  "Auth >> NewAuth"  should "return error on Left when invalid credential is provided" in {
+  "Auth >> NewAuth" should "return error on Left when invalid credential is provided" in {
     val response = Github().auth.newAuth(validUsername, invalidPassword, validScopes, validNote, validClientId, invalidClientSecret).exec[Id]
     response shouldBe left
   }
