@@ -17,3 +17,5 @@ libraryDependencies ++= Seq(
   "com.ironcorelabs" %% "cats-scalatest" % "1.1.2" % "test",
   "org.mockito" % "mockito-all" % "1.8.4"
 )
+
+licenses := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
