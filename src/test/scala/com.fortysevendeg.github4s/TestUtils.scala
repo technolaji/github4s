@@ -2,9 +2,7 @@ package com.fortysevendeg.github4s
 
 import org.scalatest.mock.MockitoSugar
 
-import scalaj.http.{HttpResponse, HttpRequest}
-
-trait TestUtils extends MockitoSugar with ResponsesJSON {
+trait TestUtils extends MockitoSugar {
 
   val accessToken = sys.props.get("token")
 
@@ -28,17 +26,5 @@ trait TestUtils extends MockitoSugar with ResponsesJSON {
   val okStatusCode = 200
   val unauthorizedStatusCode = 401
   val notFoundStatusCode = 404
-
-
-
-  val getRepoHttpSuccessResponse  = httpRes(getRepoJson, okStatusCode)
-  val listCommitsSuccessResponse  = httpRes(listCommitsJson, okStatusCode)
-  val newAuthorizationSuccessResponse  = httpRes(newAuthorizationJson, okStatusCode)
-
-  val badCredentialHttpResponse = httpRes(badCredentialsJson, unauthorizedStatusCode)
-  val notFoundHttpResponse  = httpRes(notFoundJson, notFoundStatusCode)
-
-
-  def httpRes(body: String, code: Int) = HttpResponse[String](body, code, headers = Map.empty)
 
 }
