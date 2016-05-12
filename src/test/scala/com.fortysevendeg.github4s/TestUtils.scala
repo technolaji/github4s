@@ -1,8 +1,6 @@
 package com.fortysevendeg.github4s
 
-import org.scalatest.mock.MockitoSugar
-
-trait TestUtils extends MockitoSugar {
+trait TestUtils {
 
   val accessToken = sys.props.get("token")
 
