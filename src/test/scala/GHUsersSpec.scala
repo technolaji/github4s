@@ -12,7 +12,7 @@ class GHUsersSpec extends FlatSpec with Matchers with XorMatchers with XorValues
   "Users >> Get" should "return the expected login for a valid username" in {
     val response = Github().users.get(validUsername).exec[Id]
     response shouldBe right
-    response.value.entity.login shouldBe validUsername
+    response.value.value.login shouldBe validUsername
     response.value.statusCode shouldBe statusCodeOK
   }
 
@@ -29,14 +29,14 @@ class GHUsersSpec extends FlatSpec with Matchers with XorMatchers with XorValues
   "Users >> GetUsers" should "return users for a valid since value" in {
     val response = Github().users.getUsers(validSinceInt).exec[Id]
     response shouldBe right
-    response.value.entity.nonEmpty shouldBe true
+    response.value.value.nonEmpty shouldBe true
     response.value.statusCode shouldBe statusCodeOK
   }
 
   it should "return error on Left when a invalid since value is provided" in {
     val response = Github().users.getUsers(invalidSinceInt).exec[Id]
     response shouldBe right
-    response.value.entity.nonEmpty shouldBe true
+    response.value.value.nonEmpty shouldBe true
     response.value.statusCode shouldBe statusCodeOK
   }
 

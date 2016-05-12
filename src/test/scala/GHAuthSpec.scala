@@ -16,7 +16,7 @@ class GHAuthSpec extends FlatSpec with Matchers with XorMatchers with XorValues 
   "Auth >> AuthorizeUrl" should "return the expected URL for valid username" in {
     val response = Github().auth.authorizeUrl(validClientId, validRedirectUri, validScopes).exec[Id]
     response shouldBe right
-    response.value.entity.url.contains(validRedirectUri) shouldBe true
+    response.value.value.url.contains(validRedirectUri) shouldBe true
     response.value.statusCode shouldBe statusCodeOK
   }
 

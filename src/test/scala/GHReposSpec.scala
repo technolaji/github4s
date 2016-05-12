@@ -11,7 +11,7 @@ class GHReposSpec extends FlatSpec with Matchers with XorMatchers with XorValues
   "Repos >> Get" should "return the expected name when valid repo is provided" in {
     val response = Github().repos.get(validRepoOwner, validRepoName).exec[Id]
     response shouldBe right
-    response.value.entity.name shouldBe validRepoName
+    response.value.value.name shouldBe validRepoName
     response.value.statusCode shouldBe statusCodeOK
   }
 
@@ -23,7 +23,7 @@ class GHReposSpec extends FlatSpec with Matchers with XorMatchers with XorValues
   "Repos >> ListCommits" should "return the expected login for a valid username" in {
     val response = Github().repos.listCommits(validRepoOwner, validRepoName).exec[Id]
     response shouldBe right
-    response.value.entity.nonEmpty shouldBe true
+    response.value.value.nonEmpty shouldBe true
     response.value.statusCode shouldBe statusCodeOK
   }
 

@@ -89,20 +89,14 @@ class HttpClient {
     GithubResponses.toEntity(HttpRequestBuilder(buildURL(method))
         .withAuth(accessToken)
         .withParams(params ++ pagination.fold(Map.empty[String, String])(p => Map("page" -> p.page.toString, "per_page" -> p.per_page.toString)))
-        .run, D)
-
-  def getByUrl[A](accessToken: Option[String] = None, url: String, d: Decoder[A]): GHResponse[A] =
-    GithubResponses.toEntity(HttpRequestBuilder(url)
-        .withAuth(accessToken)
-        .run, d)
-
+        .run)
 
   def patch[A](accessToken: Option[String] = None, method: String, data: String)(implicit D: Decoder[A]): GHResponse[A] =
     GithubResponses.toEntity(HttpRequestBuilder(buildURL(method))
         .patchMethod
         .withAuth(accessToken)
         .withData(data)
-        .run, D)
+        .run)
 
   def put(accessToken: Option[String] = None, method: String): GHResponse[Unit] =
     GithubResponses.toEmpty(HttpRequestBuilder(buildURL(method))
@@ -121,7 +115,7 @@ class HttpClient {
         .withAuth(accessToken)
         .withHeaders(headers)
         .withData(data)
-        .run, D)
+        .run)
 
   def postAuth[A](
       method: String,
@@ -131,7 +125,7 @@ class HttpClient {
     GithubResponses.toEntity(HttpRequestBuilder(buildURL(method))
         .withHeaders(headers)
         .withData(data)
-        .run, D)
+        .run)
 
   def postOAuth[A](
       url: String,
@@ -140,7 +134,7 @@ class HttpClient {
     GithubResponses.toEntity(HttpRequestBuilder(url)
         .withHeaders(Map("Accept" -> "application/json"))
         .withData(data)
-        .run, D)
+        .run)
 
   def delete(accessToken: Option[String] = None, method: String): GHResponse[Unit] =
     GithubResponses.toEmpty(HttpRequestBuilder(buildURL(method))
