@@ -1,8 +1,9 @@
+[![Build Status](https://travis-ci.org/47deg/github4s.svg?branch=master)](https://travis-ci.org/47deg/github4s)
+
 Github4s
 =============
 
 **Github4s** is a GitHub API wrapper written in Scala.
-
 
 
 # License
