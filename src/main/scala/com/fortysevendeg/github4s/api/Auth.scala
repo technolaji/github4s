@@ -3,7 +3,7 @@ package com.fortysevendeg.github4s.api
 import java.util.UUID
 
 import cats.data.Xor
-import com.fortysevendeg.github4s.GithubResponses.{GHItemResult, GHResponse}
+import com.fortysevendeg.github4s.GithubResponses.{GHResult, GHResponse}
 import com.fortysevendeg.github4s.free.domain._
 import com.fortysevendeg.github4s.HttpClient
 import io.circe.generic.auto._
@@ -21,6 +21,7 @@ object Auth {
   /**
     * Call to request a new authorization given a basic authentication, the returned object Authorization includes an
     * access token
+ *
     * @param username
     * @param password
     * @param scopes
@@ -56,7 +57,7 @@ object Auth {
       scopes: List[String]): GHResponse[Authorize] = {
     val state = UUID.randomUUID().toString
     Xor.Right(
-      GHItemResult(
+      GHResult(
         value = Authorize(authorizeUrl.format(client_id, redirect_uri, scopes.mkString(","), state), state),
         statusCode = 200,
         headers = Map.empty))
@@ -65,6 +66,7 @@ object Auth {
 
   /**
     * Requests an access token based on the code retrieved in the first step of the oAuth process
+ *
     * @param client_id
     * @param client_secret
     * @param code

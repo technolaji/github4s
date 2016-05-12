@@ -3,7 +3,7 @@ package com.fortysevendeg.github4s.free.interpreters
 import cats.{MonadError, ApplicativeError, ~>, Eval}
 import com.fortysevendeg.github4s.HttpClient
 import com.fortysevendeg.github4s.api.{Auth, Repos}
-import com.fortysevendeg.github4s.app.{COGH01, COGH02, GitHub4s}
+import com.fortysevendeg.github4s.app.{COGH01, GitHub4s}
 import com.fortysevendeg.github4s.free.algebra._
 import io.circe.Decoder
 
@@ -13,9 +13,8 @@ trait Interpreters[M[_]] {
       implicit
       A: MonadError[M, Throwable]
   ): GitHub4s ~> M = {
-    val repositoryAndUserInterpreter: COGH01 ~> M = repositoryOpsInterpreter or userOpsInterpreter
-    val c01nterpreter: COGH02 ~> M = requestOpsInterpreter or repositoryAndUserInterpreter
-    val all: GitHub4s ~> M = authOpsInterpreter or c01nterpreter
+    val c01interpreter: COGH01 ~> M = repositoryOpsInterpreter or userOpsInterpreter
+    val all: GitHub4s ~> M = authOpsInterpreter or c01interpreter
     all
   }
 
@@ -51,17 +50,6 @@ trait Interpreters[M[_]] {
       case NewAuth(username, password, scopes, note, client_id, client_secret) ⇒ A.pureEval(Eval.later(Auth.newAuth(username, password, scopes, note, client_id, client_secret)))
       case AuthorizeUrl(client_id, redirect_uri, scopes) => A.pureEval(Eval.later(Auth.authorizeUrl(client_id, redirect_uri, scopes)))
       case GetAccessToken(client_id, client_secret, code, redirect_uri, state) => A.pureEval(Eval.later(Auth.getAccessToken(client_id, client_secret, code, redirect_uri, state)))
-    }
-  }
-
-  /** Lifts Request Ops to an effect capturing Monad such as Task via natural transformations
-    */
-  def requestOpsInterpreter(implicit App: ApplicativeError[M, Throwable]): RequestOp ~> M = new (RequestOp ~> M) {
-    def apply[A](fa: RequestOp[A]): M[A] = fa match {
-      case Next(url: String, decoder: Decoder[A], accessToken) ⇒ {
-        //implicit val d: Decoder[A] = decoder
-        App.pureEval(Eval.later(httpClient.getByUrl(accessToken, url, decoder)))
-      }
     }
   }
 
