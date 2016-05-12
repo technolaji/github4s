@@ -6,6 +6,8 @@ import scalaj.http.{HttpResponse, HttpRequest}
 
 trait TestUtils extends MockitoSugar with ResponsesJSON {
 
+  val accessToken = sys.props.get("token")
+
   val validUsername = "rafaparadela"
   val invalidUsername = "GHInvalidaUserName"
   val invalidPassword = "invalidPassword"

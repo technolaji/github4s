@@ -35,15 +35,6 @@ object GithubResponses {
 
   def toEntity[A](response: HttpResponse[String], d: Decoder[A]): GHResponse[A] = {
 
-    println("######################")
-    println("######################")
-    println("######################")
-    println("######################")
-    println("######################")
-    println("######################")
-    println(response.body)
-    println("######################")
-
     response match {
       case r if r.isSuccess => {
         implicit val D: Decoder[A] = d
