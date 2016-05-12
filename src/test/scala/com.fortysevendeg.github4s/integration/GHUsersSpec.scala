@@ -15,7 +15,7 @@ class GHUsersSpec extends FlatSpec with Matchers with XorMatchers with XorValues
     val response = Github(accessToken).users.get(validUsername).exec[Id]
     response shouldBe right
     response.value.value.login shouldBe validUsername
-    response.value.statusCode shouldBe statusCodeOK
+    response.value.statusCode shouldBe okStatusCode
   }
 
   it should "return error on Left for invalid username" in {
@@ -32,14 +32,14 @@ class GHUsersSpec extends FlatSpec with Matchers with XorMatchers with XorValues
     val response = Github(accessToken).users.getUsers(validSinceInt).exec[Id]
     response shouldBe right
     response.value.value.nonEmpty shouldBe true
-    response.value.statusCode shouldBe statusCodeOK
+    response.value.statusCode shouldBe okStatusCode
   }
 
   it should "return error on Left when a invalid since value is provided" in {
     val response = Github(accessToken).users.getUsers(invalidSinceInt).exec[Id]
     response shouldBe right
     response.value.value.nonEmpty shouldBe true
-    response.value.statusCode shouldBe statusCodeOK
+    response.value.statusCode shouldBe okStatusCode
   }
 
 }

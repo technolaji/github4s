@@ -15,7 +15,7 @@ class GHReposSpec extends FlatSpec with Matchers with XorMatchers with XorValues
 
     val response = Github(accessToken).repos.get(validRepoOwner, validRepoName).exec[Id]
     response shouldBe right
-    response.value.entity.name shouldBe validRepoName
+    response.value.value.name shouldBe validRepoName
     response.value.statusCode shouldBe okStatusCode
   }
 
@@ -27,7 +27,7 @@ class GHReposSpec extends FlatSpec with Matchers with XorMatchers with XorValues
   "Repos >> ListCommits" should "return the expected list of commits for valid data" in {
     val response = Github(accessToken).repos.listCommits(validRepoOwner, validRepoName).exec[Id]
     response shouldBe right
-    response.value.entity.nonEmpty shouldBe true
+    response.value.value.nonEmpty shouldBe true
     response.value.statusCode shouldBe okStatusCode
   }
 
