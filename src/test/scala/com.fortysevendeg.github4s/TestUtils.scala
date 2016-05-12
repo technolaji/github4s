@@ -1,4 +1,9 @@
+package com.fortysevendeg.github4s
+
 trait TestUtils {
+
+  val accessToken = sys.props.get("token")
+
   val validUsername = "rafaparadela"
   val invalidUsername = "GHInvalidaUserName"
   val invalidPassword = "invalidPassword"
@@ -16,5 +21,8 @@ trait TestUtils {
   val validSinceInt = 100
   val invalidSinceInt = -1
 
-  val statusCodeOK = 200
+  val okStatusCode = 200
+  val unauthorizedStatusCode = 401
+  val notFoundStatusCode = 404
+
 }
