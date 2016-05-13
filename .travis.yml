@@ -4,4 +4,6 @@ scala:
 jdk:
   - oraclejdk8
 script:
-  - sbt -Dtoken=$GITHUB4S_ACCESS_TOKEN test
+  - sbt -Dtoken=$GITHUB4S_ACCESS_TOKEN clean coverage test
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
