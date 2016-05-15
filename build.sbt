@@ -21,19 +21,18 @@ ScalariformKeys.preferences := ScalariformKeys.preferences.value
     .setPreference(SpacesAroundMultiImports,true)
     .setPreference(PreserveSpaceBeforeArguments, false)
     .setPreference(CompactStringConcatenation,false)
-    //.setPreference(NewlineAtEndOfFile, false)
     .setPreference(DanglingCloseParenthesis,Force)
     .setPreference(CompactControlReadability, false)
     .setPreference(AlignParameters, false)
     .setPreference(AlignArguments, true)
     .setPreference(AlignSingleLineCaseStatements, false)
     .setPreference(DoubleIndentClassDeclaration, false)
-    //.setPreference(DoubleIndentMethodDeclaration, true)
     .setPreference(IndentLocalDefs, false)
     .setPreference(MultilineScaladocCommentsStartOnFirstLine, false)
     .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
     .setPreference(RewriteArrowSymbols, true)
 
+enablePlugins(SiteScaladocPlugin)
 
 libraryDependencies ++= Seq(
   "org.typelevel" %% "cats" % "0.4.0",

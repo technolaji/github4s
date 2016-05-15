@@ -10,6 +10,7 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import scalaj.http.HttpConstants._
 
+/** Factory to encapsulate calls related to Auth operations  */
 object Auth {
 
   protected val httpClient = new HttpClient()
@@ -21,13 +22,12 @@ object Auth {
     * Call to request a new authorization given a basic authentication, the returned object Authorization includes an
     * access token
     *
-    * @param username
-    * @param password
-    * @param scopes
-    * @param note
-    * @param client_id
-    * @param client_secret
-    * @return
+    * @param username the username of the user
+    * @param password the password of the user
+    * @param scopes attached to the token
+    * @param note to remind you what the OAuth token is for
+    * @param client_id the 20 character OAuth app client key for which to create the token
+    * @param client_secret the 40 character OAuth app client secret for which to create the token
     */
   def newAuth(
     username: String,
@@ -46,10 +46,9 @@ object Auth {
   /**
     * Generates the authorize url with a random state, both are returned within Authorize object
     *
-    * @param client_id
-    * @param redirect_uri
-    * @param scopes
-    * @return
+    * @param client_id the 20 character OAuth app client key for which to create the token
+    * @param redirect_uri the URL in your app where users will be sent after authorization
+    * @param scopes attached to the token
     */
   def authorizeUrl(
     client_id: String,
@@ -69,12 +68,11 @@ object Auth {
   /**
     * Requests an access token based on the code retrieved in the first step of the oAuth process
     *
-    * @param client_id
-    * @param client_secret
-    * @param code
-    * @param redirect_uri
-    * @param state
-    * @return
+    * @param client_id the 20 character OAuth app client key for which to create the token
+    * @param client_secret the 40 character OAuth app client secret for which to create the token
+    * @param code the code you received as a response to Step 1
+    * @param redirect_uri the URL in your app where users will be sent after authorization
+    * @param state the unguessable random string you optionally provided in Step 1
     */
   def getAccessToken(
     client_id: String,
