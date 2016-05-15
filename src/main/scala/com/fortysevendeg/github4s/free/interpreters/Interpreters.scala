@@ -1,17 +1,17 @@
 package com.fortysevendeg.github4s.free.interpreters
 
-import cats.{MonadError, ApplicativeError, ~>, Eval}
+import cats.{ MonadError, ApplicativeError, ~>, Eval }
 import com.fortysevendeg.github4s.HttpClient
-import com.fortysevendeg.github4s.api.{Auth, Repos}
-import com.fortysevendeg.github4s.app.{COGH01, GitHub4s}
+import com.fortysevendeg.github4s.api.{ Auth, Repos }
+import com.fortysevendeg.github4s.app.{ COGH01, GitHub4s }
 import com.fortysevendeg.github4s.free.algebra._
 import io.circe.Decoder
 
 trait Interpreters[M[_]] {
 
   implicit def interpreters(
-      implicit
-      A: MonadError[M, Throwable]
+    implicit
+    A: MonadError[M, Throwable]
   ): GitHub4s ~> M = {
     val c01interpreter: COGH01 ~> M = repositoryOpsInterpreter or userOpsInterpreter
     val all: GitHub4s ~> M = authOpsInterpreter or c01interpreter
@@ -20,8 +20,8 @@ trait Interpreters[M[_]] {
 
   protected val httpClient = new HttpClient()
 
-
-  /** Lifts Repository Ops to an effect capturing Monad such as Task via natural transformations
+  /**
+    * Lifts Repository Ops to an effect capturing Monad such as Task via natural transformations
     */
   def repositoryOpsInterpreter(implicit A: ApplicativeError[M, Throwable]): RepositoryOp ~> M = new (RepositoryOp ~> M) {
     def apply[A](fa: RepositoryOp[A]): M[A] = fa match {
@@ -30,7 +30,8 @@ trait Interpreters[M[_]] {
     }
   }
 
-  /** Lifts User Ops to an effect capturing Monad such as Task via natural transformations
+  /**
+    * Lifts User Ops to an effect capturing Monad such as Task via natural transformations
     */
   def userOpsInterpreter(implicit A: ApplicativeError[M, Throwable]): UserOp ~> M = new (UserOp ~> M) {
 
@@ -43,16 +44,16 @@ trait Interpreters[M[_]] {
     }
   }
 
-  /** Lifts Auth Ops to an effect capturing Monad such as Task via natural transformations
+  /**
+    * Lifts Auth Ops to an effect capturing Monad such as Task via natural transformations
     */
   def authOpsInterpreter(implicit A: ApplicativeError[M, Throwable]): AuthOp ~> M = new (AuthOp ~> M) {
     def apply[A](fa: AuthOp[A]): M[A] = fa match {
       case NewAuth(username, password, scopes, note, client_id, client_secret) ⇒ A.pureEval(Eval.later(Auth.newAuth(username, password, scopes, note, client_id, client_secret)))
-      case AuthorizeUrl(client_id, redirect_uri, scopes) => A.pureEval(Eval.later(Auth.authorizeUrl(client_id, redirect_uri, scopes)))
-      case GetAccessToken(client_id, client_secret, code, redirect_uri, state) => A.pureEval(Eval.later(Auth.getAccessToken(client_id, client_secret, code, redirect_uri, state)))
+      case AuthorizeUrl(client_id, redirect_uri, scopes) ⇒ A.pureEval(Eval.later(Auth.authorizeUrl(client_id, redirect_uri, scopes)))
+      case GetAccessToken(client_id, client_secret, code, redirect_uri, state) ⇒ A.pureEval(Eval.later(Auth.getAccessToken(client_id, client_secret, code, redirect_uri, state)))
     }
   }
-
 
 }
 
