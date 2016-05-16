@@ -3,13 +3,12 @@ package com.fortysevendeg.github4s.api
 import java.util.UUID
 
 import cats.data.Xor
-import com.fortysevendeg.github4s.GithubResponses.{GHResult, GHResponse}
+import com.fortysevendeg.github4s.GithubResponses.{ GHResult, GHResponse }
 import com.fortysevendeg.github4s.free.domain._
 import com.fortysevendeg.github4s.HttpClient
 import io.circe.generic.auto._
 import io.circe.syntax._
 import scalaj.http.HttpConstants._
-
 
 object Auth {
 
@@ -21,7 +20,7 @@ object Auth {
   /**
     * Call to request a new authorization given a basic authentication, the returned object Authorization includes an
     * access token
- *
+    *
     * @param username
     * @param password
     * @param scopes
@@ -31,17 +30,18 @@ object Auth {
     * @return
     */
   def newAuth(
-      username: String,
-      password: String,
-      scopes: List[String],
-      note: String,
-      client_id: String,
-      client_secret: String): GHResponse[Authorization] =
+    username: String,
+    password: String,
+    scopes: List[String],
+    note: String,
+    client_id: String,
+    client_secret: String
+  ): GHResponse[Authorization] =
     httpClient.postAuth[Authorization](
-      method = "authorizations",
-      headers = Map("Authorization" -> s"Basic ${base64(s"$username:$password")}"),
-      data = NewAuthRequest(scopes, note, client_id, client_secret).asJson.noSpaces)
-
+      method  = "authorizations",
+      headers = Map("Authorization" → s"Basic ${base64(s"$username:$password")}"),
+      data    = NewAuthRequest(scopes, note, client_id, client_secret).asJson.noSpaces
+    )
 
   /**
     * Generates the authorize url with a random state, both are returned within Authorize object
@@ -52,21 +52,23 @@ object Auth {
     * @return
     */
   def authorizeUrl(
-      client_id: String,
-      redirect_uri: String,
-      scopes: List[String]): GHResponse[Authorize] = {
+    client_id: String,
+    redirect_uri: String,
+    scopes: List[String]
+  ): GHResponse[Authorize] = {
     val state = UUID.randomUUID().toString
     Xor.Right(
       GHResult(
-        value = Authorize(authorizeUrl.format(client_id, redirect_uri, scopes.mkString(","), state), state),
+        value      = Authorize(authorizeUrl.format(client_id, redirect_uri, scopes.mkString(","), state), state),
         statusCode = 200,
-        headers = Map.empty))
+        headers    = Map.empty
+      )
+    )
   }
-
 
   /**
     * Requests an access token based on the code retrieved in the first step of the oAuth process
- *
+    *
     * @param client_id
     * @param client_secret
     * @param code
@@ -75,14 +77,14 @@ object Auth {
     * @return
     */
   def getAccessToken(
-      client_id: String,
-      client_secret: String,
-      code: String,
-      redirect_uri: String,
-      state: String): GHResponse[OAuthToken] = httpClient.postOAuth[OAuthToken](
-    url = accessTokenUrl,
-    data = NewOAuthRequest(client_id, client_secret, code, redirect_uri, state).asJson.noSpaces)
-
-
+    client_id: String,
+    client_secret: String,
+    code: String,
+    redirect_uri: String,
+    state: String
+  ): GHResponse[OAuthToken] = httpClient.postOAuth[OAuthToken](
+    url  = accessTokenUrl,
+    data = NewOAuthRequest(client_id, client_secret, code, redirect_uri, state).asJson.noSpaces
+  )
 
 }

@@ -9,7 +9,6 @@ import io.circe.parser._
 import io.circe.generic.auto._
 import scalaj.http.HttpResponse
 
-
 object GithubResponses {
 
   type GHIO[A] = Free[GitHub4s, A]
@@ -18,26 +17,28 @@ object GithubResponses {
 
   case class GHResult[A](value: A, statusCode: Int, headers: Map[String, IndexedSeq[String]])
 
-  sealed abstract class GHException(msg : String, cause : Option[Throwable] = None) extends Throwable(msg) {
+  sealed abstract class GHException(msg: String, cause: Option[Throwable] = None) extends Throwable(msg) {
     cause foreach initCause
   }
 
-  case class JsonParsingException(msg : String) extends GHException(msg)
+  case class JsonParsingException(msg: String) extends GHException(msg)
 
-  case class UnexpectedException(msg : String) extends GHException(msg)
+  case class UnexpectedException(msg: String) extends GHException(msg)
 
   def toEntity[A](response: HttpResponse[String])(implicit D: Decoder[A]): GHResponse[A] = response match {
-    case r if r.isSuccess => decode[A](r.body)
-        .fold(e => JsonParsingException(e.getMessage).left[GHResult[A]],
-        result => Xor.Right(GHResult(result, r.code, toLowerCase(r.headers))))
-    case r => UnexpectedException(s"Failed invoking get with status : ${r.code}, body : \n ${r.body}").left[GHResult[A]]
+    case r if r.isSuccess ⇒ decode[A](r.body)
+      .fold(
+        e ⇒ JsonParsingException(e.getMessage).left[GHResult[A]],
+        result ⇒ Xor.Right(GHResult(result, r.code, toLowerCase(r.headers)))
+      )
+    case r ⇒ UnexpectedException(s"Failed invoking get with status : ${r.code}, body : \n ${r.body}").left[GHResult[A]]
   }
 
   def toEmpty(response: HttpResponse[String]): GHResponse[Unit] = response match {
-    case r if r.isSuccess => Xor.Right(GHResult(Unit, r.code, toLowerCase(r.headers)))
-    case r => UnexpectedException(s"Failed invoking get with status : ${r.code}, body : \n ${r.body}").left[GHResult[Unit]]
+    case r if r.isSuccess ⇒ Xor.Right(GHResult(Unit, r.code, toLowerCase(r.headers)))
+    case r ⇒ UnexpectedException(s"Failed invoking get with status : ${r.code}, body : \n ${r.body}").left[GHResult[Unit]]
   }
 
-  private def toLowerCase(headers: Map[String, IndexedSeq[String]]): Map[String, IndexedSeq[String]] = headers.map(e => (e._1.toLowerCase, e._2))
+  private def toLowerCase(headers: Map[String, IndexedSeq[String]]): Map[String, IndexedSeq[String]] = headers.map(e ⇒ (e._1.toLowerCase, e._2))
 
 }

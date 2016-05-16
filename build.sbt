@@ -1,3 +1,7 @@
+import scalariform.formatter.preferences._
+import com.typesafe.sbt.SbtScalariform
+import com.typesafe.sbt.SbtScalariform.ScalariformKeys
+
 organization := "com.fortysevendeg"
 
 name := "github4s"
@@ -5,6 +9,29 @@ name := "github4s"
 version := "0.2-SNAPSHOT"
 
 scalaVersion := "2.11.8"
+
+
+SbtScalariform.scalariformSettings
+
+ScalariformKeys.preferences := ScalariformKeys.preferences.value
+    .setPreference(SpacesWithinPatternBinders, true)
+    .setPreference(SpaceBeforeColon, false)
+    .setPreference(SpaceInsideParentheses, false)
+    .setPreference(SpaceInsideBrackets, false)
+    .setPreference(SpacesAroundMultiImports,true)
+    .setPreference(PreserveSpaceBeforeArguments, false)
+    .setPreference(CompactStringConcatenation,false)
+    .setPreference(DanglingCloseParenthesis,Force)
+    .setPreference(CompactControlReadability, false)
+    .setPreference(AlignParameters, false)
+    .setPreference(AlignArguments, true)
+    .setPreference(AlignSingleLineCaseStatements, false)
+    .setPreference(DoubleIndentClassDeclaration, false)
+    .setPreference(IndentLocalDefs, false)
+    .setPreference(MultilineScaladocCommentsStartOnFirstLine, false)
+    .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
+    .setPreference(RewriteArrowSymbols, true)
+
 
 libraryDependencies ++= Seq(
   "org.typelevel" %% "cats" % "0.4.0",

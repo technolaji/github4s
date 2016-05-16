@@ -1,11 +1,11 @@
 package com.fortysevendeg.github4s.free.interpreters
 
-import cats.{Monad, MonadError}
+import cats.{ Monad, MonadError }
 
 trait IdInstances {
   implicit def idMonadError(
-      implicit
-      I: Monad[cats.Id]
+    implicit
+    I: Monad[cats.Id]
   ): MonadError[cats.Id, Throwable] = new MonadError[cats.Id, Throwable] {
 
     import cats.Id

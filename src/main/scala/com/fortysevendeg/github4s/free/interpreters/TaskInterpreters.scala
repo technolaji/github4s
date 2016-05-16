@@ -1,6 +1,6 @@
 package com.fortysevendeg.github4s.free.interpreters
 
-import cats.{Eval, Monad, MonadError}
+import cats.{ Eval, Monad, MonadError }
 import scalaz.concurrent.Task
 
 trait TaskInstances {
