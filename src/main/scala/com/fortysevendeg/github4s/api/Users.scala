@@ -15,12 +15,14 @@ object Users {
     *
     * @param accessToken to identify the authenticated user
     * @param username of the user to retrieve
-    */
+    * @return GHResponse[User] User details
+  */
   def get(accessToken: Option[String] = None, username: String): GHResponse[User] = httpClient.get[User](accessToken, s"users/$username")
 
   /**
     * Get information of the authenticated user
     * @param accessToken to identify the authenticated user
+    * @return GHResponse[User] User details
     */
   def getAuth(accessToken: Option[String] = None): GHResponse[User] = httpClient.get[User](accessToken, "user")
 
@@ -30,6 +32,7 @@ object Users {
     * @param accessToken to identify the authenticated user
     * @param since The integer ID of the last User that you've seen.
     * @param pagination Limit and Offset for pagination
+    * @return GHResponse[List[User] ] List of user's details
     */
   def getUsers(
     accessToken: Option[String] = None,

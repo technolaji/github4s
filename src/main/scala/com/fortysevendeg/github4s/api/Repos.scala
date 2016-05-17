@@ -18,6 +18,7 @@ object Repos {
     * @param accessToken to identify the authenticated user
     * @param owner of the repo
     * @param repo name of the repo
+    * @return GHResponse[Repository] repository details
     */
   def get(accessToken: Option[String] = None, owner: String, repo: String): GHResponse[Repository] =
     httpClient.get[Repository](accessToken, s"repos/$owner/$repo")
@@ -34,6 +35,7 @@ object Repos {
     * @param since Only commits after this date will be returned
     * @param until Only commits before this date will be returned
     * @param pagination Limit and Offset for pagination
+    * @return GHResponse[List[Commit]\] List of commit's details
     */
   def listCommits(
     accessToken: Option[String] = None,

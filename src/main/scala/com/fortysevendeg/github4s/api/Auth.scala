@@ -28,6 +28,7 @@ object Auth {
     * @param note to remind you what the OAuth token is for
     * @param client_id the 20 character OAuth app client key for which to create the token
     * @param client_secret the 40 character OAuth app client secret for which to create the token
+    * @return GHResponse[Authorization] new authorization with access_token
     */
   def newAuth(
     username: String,
@@ -49,6 +50,7 @@ object Auth {
     * @param client_id the 20 character OAuth app client key for which to create the token
     * @param redirect_uri the URL in your app where users will be sent after authorization
     * @param scopes attached to the token
+    * @return GHResponse[Authorize] new state: first step oAuth
     */
   def authorizeUrl(
     client_id: String,
@@ -73,6 +75,7 @@ object Auth {
     * @param code the code you received as a response to Step 1
     * @param redirect_uri the URL in your app where users will be sent after authorization
     * @param state the unguessable random string you optionally provided in Step 1
+    * @return GHResponse[OAuthToken] new access_token: second step oAuth
     */
   def getAccessToken(
     client_id: String,

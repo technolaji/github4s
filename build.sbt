@@ -1,7 +1,6 @@
 import scalariform.formatter.preferences._
 import com.typesafe.sbt.SbtScalariform
 import com.typesafe.sbt.SbtScalariform.ScalariformKeys
-import com.typesafe.sbt.SbtGhPages._
 
 organization := "com.fortysevendeg"
 
@@ -33,11 +32,6 @@ ScalariformKeys.preferences := ScalariformKeys.preferences.value
     .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
     .setPreference(RewriteArrowSymbols, true)
 
-enablePlugins(SiteScaladocPlugin)
-
-ghpages.settings
-
-git.remoteRepo := "git@github.com:47deg/github4s.git"
 
 libraryDependencies ++= Seq(
   "org.typelevel" %% "cats" % "0.4.0",
