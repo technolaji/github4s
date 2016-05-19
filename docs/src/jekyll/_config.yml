@@ -1,0 +1,11 @@
+name: Github4s
+description: "A GitHub API wrapper written in Scala"
+github_owner: 47deg
+baseurl: /github4s
+style: github4s
+docs: true
+
+markdown: redcarpet
+collections:
+  tut:
+    output: true
