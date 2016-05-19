@@ -197,7 +197,7 @@
     </span>
       <p class="shortcomment cmt">Generates the authorize url with a random state, both are returned within Authorize object
 </p><div class="fullcomment"><div class="comment cmt"><p>Generates the authorize url with a random state, both are returned within Authorize object
-</p></div><dl class="paramcmts block"><dt class="param">client_id</dt><dd class="cmt"><p>the 20 character OAuth app client key for which to create the token</p></dd><dt class="param">redirect_uri</dt><dd class="cmt"><p>the URL in your app where users will be sent after authorization</p></dd><dt class="param">scopes</dt><dd class="cmt"><p>attached to the token</p></dd></dl></div>
+</p></div><dl class="paramcmts block"><dt class="param">client_id</dt><dd class="cmt"><p>the 20 character OAuth app client key for which to create the token</p></dd><dt class="param">redirect_uri</dt><dd class="cmt"><p>the URL in your app where users will be sent after authorization</p></dd><dt class="param">scopes</dt><dd class="cmt"><p>attached to the token</p></dd><dt>returns</dt><dd class="cmt"><p>GHResponse[Authorize] new state: first step oAuth</p></dd></dl></div>
     </li><li name="com.fortysevendeg.github4s.api.Auth#authorizeUrl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="authorizeUrl:String"></a>
       <a id="authorizeUrl:String"></a>
@@ -313,7 +313,7 @@
     </span>
       <p class="shortcomment cmt">Requests an access token based on the code retrieved in the first step of the oAuth process
 </p><div class="fullcomment"><div class="comment cmt"><p>Requests an access token based on the code retrieved in the first step of the oAuth process
-</p></div><dl class="paramcmts block"><dt class="param">client_id</dt><dd class="cmt"><p>the 20 character OAuth app client key for which to create the token</p></dd><dt class="param">client_secret</dt><dd class="cmt"><p>the 40 character OAuth app client secret for which to create the token</p></dd><dt class="param">code</dt><dd class="cmt"><p>the code you received as a response to Step 1</p></dd><dt class="param">redirect_uri</dt><dd class="cmt"><p>the URL in your app where users will be sent after authorization</p></dd><dt class="param">state</dt><dd class="cmt"><p>the unguessable random string you optionally provided in Step 1</p></dd></dl></div>
+</p></div><dl class="paramcmts block"><dt class="param">client_id</dt><dd class="cmt"><p>the 20 character OAuth app client key for which to create the token</p></dd><dt class="param">client_secret</dt><dd class="cmt"><p>the 40 character OAuth app client secret for which to create the token</p></dd><dt class="param">code</dt><dd class="cmt"><p>the code you received as a response to Step 1</p></dd><dt class="param">redirect_uri</dt><dd class="cmt"><p>the URL in your app where users will be sent after authorization</p></dd><dt class="param">state</dt><dd class="cmt"><p>the unguessable random string you optionally provided in Step 1</p></dd><dt>returns</dt><dd class="cmt"><p>GHResponse[OAuthToken] new access_token: second step oAuth</p></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <a id="getClass():Class[_]"></a>
@@ -419,7 +419,7 @@
 access token
 </p><div class="fullcomment"><div class="comment cmt"><p>Call to request a new authorization given a basic authentication, the returned object Authorization includes an
 access token
-</p></div><dl class="paramcmts block"><dt class="param">username</dt><dd class="cmt"><p>the username of the user</p></dd><dt class="param">password</dt><dd class="cmt"><p>the password of the user</p></dd><dt class="param">scopes</dt><dd class="cmt"><p>attached to the token</p></dd><dt class="param">note</dt><dd class="cmt"><p>to remind you what the OAuth token is for</p></dd><dt class="param">client_id</dt><dd class="cmt"><p>the 20 character OAuth app client key for which to create the token</p></dd><dt class="param">client_secret</dt><dd class="cmt"><p>the 40 character OAuth app client secret for which to create the token</p></dd></dl></div>
+</p></div><dl class="paramcmts block"><dt class="param">username</dt><dd class="cmt"><p>the username of the user</p></dd><dt class="param">password</dt><dd class="cmt"><p>the password of the user</p></dd><dt class="param">scopes</dt><dd class="cmt"><p>attached to the token</p></dd><dt class="param">note</dt><dd class="cmt"><p>to remind you what the OAuth token is for</p></dd><dt class="param">client_id</dt><dd class="cmt"><p>the 20 character OAuth app client key for which to create the token</p></dd><dt class="param">client_secret</dt><dd class="cmt"><p>the 40 character OAuth app client secret for which to create the token</p></dd><dt>returns</dt><dd class="cmt"><p>GHResponse[Authorization] new authorization with access_token</p></dd></dl></div>
     </li><li name="scala.AnyRef#notify" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notify():Unit"></a>
       <a id="notify():Unit"></a>
