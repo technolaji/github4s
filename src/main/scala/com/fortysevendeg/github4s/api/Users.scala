@@ -16,7 +16,7 @@ object Users {
     * @param accessToken to identify the authenticated user
     * @param username of the user to retrieve
     * @return GHResponse[User] User details
-  */
+    */
   def get(accessToken: Option[String] = None, username: String): GHResponse[User] = httpClient.get[User](accessToken, s"users/$username")
 
   /**
