@@ -1,3 +1,6 @@
+import com.typesafe.sbt.SbtGhPages.ghpages
+import com.typesafe.sbt.SbtGit.git
+
 import scalariform.formatter.preferences._
 import com.typesafe.sbt.SbtScalariform
 import com.typesafe.sbt.SbtScalariform.ScalariformKeys
@@ -11,7 +14,6 @@ lazy val buildSettings = Seq(
   homepage := Option(url("http://47deg.github.io/github4s/")),
   organizationHomepage := Option(new URL("http://47deg.com")),
   scalaVersion := "2.11.8",
-  crossScalaVersions := Seq("2.10.6", "2.11.8"),
   licenses := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 )
 
@@ -59,12 +61,13 @@ lazy val tutDirectoriesSettings = Seq(
 
 lazy val github4sSettings = buildSettings ++ dependencies ++ scalariformSettings
 
-lazy val docsSettings = noPublishSettings ++ tutSettings ++ tutDirectoriesSettings
+lazy val ghpagesSettings = ghpages.settings ++ Seq(git.remoteRepo := "git@github.com:47deg/github4s.git")
+
+lazy val docsSettings = buildSettings ++ noPublishSettings ++ tutSettings ++ tutDirectoriesSettings ++ ghpagesSettings
 
 lazy val github4s = (project in file("."))
     .settings(moduleName := "github4s")
     .settings(github4sSettings:_*)
-    .enablePlugins(SiteScaladocPlugin)
 
 lazy val docs = (project in file("docs"))
     .settings(moduleName := "github4s-docs")
