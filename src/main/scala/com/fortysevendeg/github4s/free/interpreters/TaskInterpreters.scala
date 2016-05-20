@@ -25,4 +25,5 @@ trait TaskInstances {
   }
 }
 
+/** Implicit implementation of the interpreters with Task as target monad   */
 object TaskInterpreters extends Interpreters[Task] with TaskInstances

@@ -5,6 +5,10 @@ import cats.{ MonadError, ~> }
 import com.fortysevendeg.github4s.GithubResponses._
 import com.fortysevendeg.github4s.app._
 
+/**
+  * Represent the Github API wrapper
+  * @param accessToken to identify the authenticated user
+  */
 class Github(accessToken: Option[String] = None) {
 
   lazy val users = new GHUsers(accessToken)
@@ -13,6 +17,7 @@ class Github(accessToken: Option[String] = None) {
 
 }
 
+/** Companion object for [[com.fortysevendeg.github4s.Github]] */
 object Github {
 
   def apply(accessToken: Option[String] = None) = new Github(accessToken)

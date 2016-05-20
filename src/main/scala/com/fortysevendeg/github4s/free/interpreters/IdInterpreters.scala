@@ -32,4 +32,6 @@ trait IdInstances {
     }
   }
 }
+
+/** Implicit implementation of the interpreters with cats.Id as target monad   */
 object IdInterpreters extends Interpreters[cats.Id] with IdInstances
