@@ -1,7 +1,6 @@
 package github4s
 
 import github4s.GithubResponses.GHResponse
-//import github4s.GithubApiConfig._
 import github4s.free.domain.Pagination
 import io.circe.Decoder
 import scalaj.http._
@@ -72,6 +71,19 @@ class HttpClient(implicit config: GithubApiConfig) {
         .params(params)
         .headers(authHeader)
         .headers(headers)
+
+      println("####################################")
+      println("####################################")
+      println("####################################")
+      println("####################################")
+      println("####################################")
+      println("####################################")
+      println("####################################")
+      println("####################################")
+      println("####################################")
+      println(config.getString("github.baseUrl"))
+      println(request)
+      println("####################################")
 
       data match {
         case Some(d) ⇒ request.postData(d).header("content-type", "application/json").asString

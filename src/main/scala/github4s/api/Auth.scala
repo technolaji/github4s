@@ -5,7 +5,7 @@ import java.util.UUID
 import cats.data.Xor
 import github4s.GithubResponses.{ GHResult, GHResponse }
 import github4s.free.domain._
-import github4s.HttpClient
+import github4s.{ GithubApiConfig, HttpClient }
 import io.circe.generic.auto._
 import io.circe.syntax._
 import scalaj.http.HttpConstants._
@@ -13,6 +13,7 @@ import scalaj.http.HttpConstants._
 /** Factory to encapsulate calls related to Auth operations  */
 object Auth {
 
+  implicit val config = new GithubApiConfig
   protected val httpClient = new HttpClient()
 
   val authorizeUrl = "https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s&scope=%s&state=%s"

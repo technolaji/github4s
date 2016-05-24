@@ -1,8 +1,7 @@
 package github4s.free.interpreters
 
 import cats.{ MonadError, ApplicativeError, ~>, Eval }
-import github4s.HttpClient
-import github4s.api.{ Auth, Repos }
+import github4s.api.{ Users, Auth, Repos }
 import github4s.app.{ COGH01, GitHub4s }
 import github4s.free.algebra._
 import io.circe.Decoder
@@ -17,8 +16,6 @@ trait Interpreters[M[_]] {
     val all: GitHub4s ~> M = authOpsInterpreter or c01interpreter
     all
   }
-
-  protected val httpClient = new HttpClient()
 
   /**
     * Lifts Repository Ops to an effect capturing Monad such as Task via natural transformations
@@ -35,12 +32,12 @@ trait Interpreters[M[_]] {
     */
   def userOpsInterpreter(implicit A: ApplicativeError[M, Throwable]): UserOp ~> M = new (UserOp ~> M) {
 
-    import github4s.api.Users
+    val users = new Users()
 
     def apply[A](fa: UserOp[A]): M[A] = fa match {
-      case GetUser(username, accessToken) ⇒ A.pureEval(Eval.later(Users.get(accessToken, username)))
-      case GetAuthUser(accessToken) ⇒ A.pureEval(Eval.later(Users.getAuth(accessToken)))
-      case GetUsers(since, pagination, accessToken) ⇒ A.pureEval(Eval.later(Users.getUsers(accessToken, since, pagination)))
+      case GetUser(username, accessToken) ⇒ A.pureEval(Eval.later(users.get(accessToken, username)))
+      case GetAuthUser(accessToken) ⇒ A.pureEval(Eval.later(users.getAuth(accessToken)))
+      case GetUsers(since, pagination, accessToken) ⇒ A.pureEval(Eval.later(users.getUsers(accessToken, since, pagination)))
     }
   }
 

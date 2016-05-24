@@ -3,9 +3,9 @@ package github4s.integration
 import cats.Id
 import cats.scalatest.{ XorMatchers, XorValues }
 import github4s.Github._
-import github4s.GithubResponses._
 import github4s.free.interpreters.IdInterpreters._
-import github4s.{ Github, TestUtils }
+import github4s.Github
+import github4s.utils.TestUtils
 import org.scalatest._
 
 class GHUsersSpec extends FlatSpec with Matchers with XorMatchers with XorValues with TestUtils {
@@ -34,10 +34,10 @@ class GHUsersSpec extends FlatSpec with Matchers with XorMatchers with XorValues
     response.value.statusCode shouldBe okStatusCode
   }
 
-  it should "return error on Left when a invalid since value is provided" in {
+  it should "return an empty list when a invalid since value is provided" in {
     val response = Github(accessToken).users.getUsers(invalidSinceInt).exec[Id]
     response shouldBe right
-    response.value.value.nonEmpty shouldBe true
+    response.value.value.isEmpty shouldBe true
     response.value.statusCode shouldBe okStatusCode
   }
 
