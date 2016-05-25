@@ -1,6 +1,7 @@
 package github4s.free.interpreters
 
 import cats.{ MonadError, ApplicativeError, ~>, Eval }
+import github4s.GithubDefaultUrls._
 import github4s.api.{ Users, Auth, Repos }
 import github4s.app.{ COGH01, GitHub4s }
 import github4s.free.algebra._

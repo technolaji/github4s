@@ -24,7 +24,6 @@ lazy val dependencies = libraryDependencies ++= Seq(
   "io.circe" %% "circe-core" % "0.3.0",
   "io.circe" %% "circe-generic" % "0.3.0",
   "io.circe" %% "circe-parser" % "0.3.0",
-  "com.typesafe" % "config" % "1.3.0",
   "org.scalatest" %% "scalatest" % "2.2.6" % "test",
   "com.ironcorelabs" %% "cats-scalatest" % "1.1.2" % "test",
   "org.mock-server" % "mockserver-netty" % "3.10.4" % "test"

@@ -3,7 +3,7 @@ package github4s.unit
 import cats.scalatest.{ XorMatchers, XorValues }
 import github4s.api.{ Users, Repos, Auth }
 import github4s.free.domain.Pagination
-import github4s.utils.{ DummyGithubConfig, MockGithubApiServer, TestUtils }
+import github4s.utils.{ DummyGithubUrls, MockGithubApiServer, TestUtils }
 import org.scalatest._
 
 class ApiSpec
@@ -13,7 +13,7 @@ class ApiSpec
   with XorValues
   with TestUtils
   with MockGithubApiServer
-  with DummyGithubConfig {
+  with DummyGithubUrls {
 
   val auth = new Auth
   val repos = new Repos
