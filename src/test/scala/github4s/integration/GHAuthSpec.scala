@@ -4,7 +4,8 @@ import cats.Id
 import cats.scalatest.{ XorMatchers, XorValues }
 import github4s.Github._
 import github4s.free.interpreters.IdInterpreters._
-import github4s.{ Github, TestUtils }
+import github4s.Github
+import github4s.utils.TestUtils
 import org.scalatest._
 
 class GHAuthSpec extends FlatSpec with Matchers with XorMatchers with XorValues with TestUtils {

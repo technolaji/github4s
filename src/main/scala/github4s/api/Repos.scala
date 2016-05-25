@@ -2,15 +2,15 @@ package github4s.api
 
 import github4s.GithubResponses.GHResponse
 import github4s.free.domain.{ Pagination, Commit, Repository, User }
-import github4s.{ Decoders, HttpClient }
+import github4s.{ GithubApiConfig, Decoders, HttpClient }
 import io.circe.generic.auto._
 
 /** Factory to encapsulate calls related to Repositories operations  */
-object Repos {
+class Repos(implicit config: GithubApiConfig) {
 
   import Decoders._
 
-  protected val httpClient = new HttpClient()
+  val httpClient = new HttpClient
 
   /**
     * Get information of a particular repository

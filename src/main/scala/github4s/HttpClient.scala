@@ -5,7 +5,7 @@ import github4s.free.domain.Pagination
 import io.circe.Decoder
 import scalaj.http._
 
-class HttpClient {
+class HttpClient(implicit config: GithubApiConfig) {
 
   val defaultPagination = Pagination(1, 1000)
 
@@ -132,6 +132,7 @@ class HttpClient {
     data: String
   )(implicit D: Decoder[A]): GHResponse[A] =
     GithubResponses.toEntity(HttpRequestBuilder(url)
+      .postMethod
       .withHeaders(Map("Accept" → "application/json"))
       .withData(data)
       .run)
@@ -147,6 +148,6 @@ class HttpClient {
   val defaultPage: Int = 1
   val defaultPerPage: Int = 30
 
-  private def buildURL(method: String) = s"https://api.github.com/$method"
+  private def buildURL(method: String) = config.getString("github.baseUrl") + method
 
 }

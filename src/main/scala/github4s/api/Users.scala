@@ -1,14 +1,14 @@
 package github4s.api
 
 import github4s.GithubResponses.GHResponse
-import github4s.HttpClient
+import github4s.{ GithubApiConfig, HttpClient }
 import github4s.free.domain.{ Pagination, User }
 import io.circe.generic.auto._
 
 /** Factory to encapsulate calls related to Users operations  */
-object Users {
+class Users(implicit config: GithubApiConfig) {
 
-  protected val httpClient = new HttpClient()
+  val httpClient = new HttpClient
 
   /**
     * Get information for a particular user
