@@ -1,5 +1,7 @@
 package github4s.utils
 
+import scalaj.http.HttpConstants._
+
 trait TestUtils {
 
   val accessToken = sys.props.get("token")
@@ -9,10 +11,15 @@ trait TestUtils {
   val invalidUsername = "GHInvalidaUserName"
   val invalidPassword = "invalidPassword"
 
+  def validBasicAuth = s"Basic ${base64(s"$validUsername:")}"
+  def invalidBasicAuth = s"Basic ${base64(s"$validUsername:$invalidPassword")}"
+
   val validScopes = List("public_repo")
   val validNote = "New access token"
   val validClientId = "e8e39175648c9db8c280"
   val invalidClientSecret = "1234567890"
+  val validCode = "code"
+  val invalidCode = "invalid-code"
 
   val validRepoOwner = "47deg"
   val validRepoName = "github4s"

@@ -3,6 +3,8 @@ package github4s.utils
 import org.mockserver.model.HttpRequest._
 import org.mockserver.model.HttpResponse._
 import org.mockserver.model.NottableString._
+import org.mockserver.model.{ Parameter, ParameterBody }
+import org.mockserver.model.JsonBody._
 
 trait MockGithubApiServer extends MockServerService with FakeResponses with TestUtils {
 
@@ -25,6 +27,22 @@ trait MockGithubApiServer extends MockServerService with FakeResponses with Test
     .respond(response.withStatusCode(okStatusCode).withBody(getUsersValidResponse))
 
   mockServer.when(request.withMethod("GET").withPath(s"/users").withQueryStringParameter("since", invalidSinceInt.toString))
-    .respond(response.withStatusCode(okStatusCode).withBody(getUsersEmptyResponse))
+    .respond(response.withStatusCode(okStatusCode).withBody(emptyListResponse))
+
+  //Auth >> new auth
+  mockServer.when(request.withMethod("POST").withPath(s"/authorizations").withHeader("Authorization", validBasicAuth))
+    .respond(response.withStatusCode(okStatusCode).withBody(newAuthValidResponse))
+
+  mockServer.when(request.withMethod("POST").withPath(s"/authorizations").withHeader("Authorization", invalidBasicAuth))
+    .respond(response.withStatusCode(unauthorizedStatusCode).withBody(badCredentialsResponse))
+
+  //Auth >> get access token
+  mockServer.when(request.withMethod("POST").withPath(s"/login/oauth/access_token")
+    .withBody(json(s"{client_id:'',client_secret:'',code:'$validCode',redirect_uri:'',state:''}")))
+    .respond(response.withStatusCode(okStatusCode).withBody(getAccessTokenValidResponse))
+
+  mockServer.when(request.withMethod("POST").withPath(s"/login/oauth/access_token")
+    .withBody(json(s"{client_id:'',client_secret:'',code:'$invalidCode',redirect_uri:'',state:''}")))
+    .respond(response.withStatusCode(okStatusCode).withBody(badVerificationResponse))
 
 }

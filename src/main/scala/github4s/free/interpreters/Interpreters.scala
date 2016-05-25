@@ -45,10 +45,13 @@ trait Interpreters[M[_]] {
     * Lifts Auth Ops to an effect capturing Monad such as Task via natural transformations
     */
   def authOpsInterpreter(implicit A: ApplicativeError[M, Throwable]): AuthOp ~> M = new (AuthOp ~> M) {
+
+    val auth = new Auth()
+
     def apply[A](fa: AuthOp[A]): M[A] = fa match {
-      case NewAuth(username, password, scopes, note, client_id, client_secret) ⇒ A.pureEval(Eval.later(Auth.newAuth(username, password, scopes, note, client_id, client_secret)))
-      case AuthorizeUrl(client_id, redirect_uri, scopes) ⇒ A.pureEval(Eval.later(Auth.authorizeUrl(client_id, redirect_uri, scopes)))
-      case GetAccessToken(client_id, client_secret, code, redirect_uri, state) ⇒ A.pureEval(Eval.later(Auth.getAccessToken(client_id, client_secret, code, redirect_uri, state)))
+      case NewAuth(username, password, scopes, note, client_id, client_secret) ⇒ A.pureEval(Eval.later(auth.newAuth(username, password, scopes, note, client_id, client_secret)))
+      case AuthorizeUrl(client_id, redirect_uri, scopes) ⇒ A.pureEval(Eval.later(auth.authorizeUrl(client_id, redirect_uri, scopes)))
+      case GetAccessToken(client_id, client_secret, code, redirect_uri, state) ⇒ A.pureEval(Eval.later(auth.getAccessToken(client_id, client_secret, code, redirect_uri, state)))
     }
   }
 

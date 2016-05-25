@@ -83,6 +83,8 @@ class HttpClient(implicit config: GithubApiConfig) {
       println("####################################")
       println(config.getString("github.baseUrl"))
       println(request)
+      println(params)
+      println(data)
       println("####################################")
 
       data match {
@@ -145,6 +147,7 @@ class HttpClient(implicit config: GithubApiConfig) {
     data: String
   )(implicit D: Decoder[A]): GHResponse[A] =
     GithubResponses.toEntity(HttpRequestBuilder(url)
+      .postMethod
       .withHeaders(Map("Accept" → "application/json"))
       .withData(data)
       .run)

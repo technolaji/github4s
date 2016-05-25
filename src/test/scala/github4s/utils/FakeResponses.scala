@@ -63,7 +63,49 @@ trait FakeResponses {
       | ]
     """.stripMargin
 
-  val getUsersEmptyResponse =
+  val newAuthValidResponse =
+    """
+      |{
+      |  "id": 32519338,
+      |  "url": "https://api.github.com/authorizations/32519338",
+      |  "app": {
+      |    "name": "Scala-exercises",
+      |    "url": "http://scala-exercises.47deg.com/",
+      |    "client_id": "e8e39175648c9db8c280"
+      |  },
+      |  "token": "1234567890",
+      |  "hashed_token": "1234567890",
+      |  "token_last_eight": "123456789",
+      |  "note": "admin script",
+      |  "note_url": null,
+      |  "created_at": "2016-05-24T22:39:53Z",
+      |  "updated_at": "2016-05-24T22:39:53Z",
+      |  "scopes": [
+      |    "public_repo"
+      |  ],
+      |  "fingerprint": null
+      |}
+    """.stripMargin
+
+  val getAccessTokenValidResponse =
+    """
+      |{
+      |  "access_token": "1234567890",
+      |  "token_type": "bearer",
+      |  "scope": "public_repo"
+      |}
+    """.stripMargin
+
+  val badVerificationResponse =
+    """
+      |{
+      |  "error": "bad_verification_code",
+      |  "error_description": "The code passed is incorrect or expired.",
+      |  "error_uri": "https://developer.github.com/v3/oauth/#bad-verification-code"
+      |}
+    """.stripMargin
+
+  val emptyListResponse =
     """
       |[]
     """.stripMargin
@@ -80,6 +122,14 @@ trait FakeResponses {
     """
       |{
       |  "message": "Requires authentication",
+      |  "documentation_url": "https://developer.github.com/v3"
+      |}
+    """.stripMargin
+
+  val badCredentialsResponse =
+    """
+      |{
+      |  "message": "Bad credentials",
       |  "documentation_url": "https://developer.github.com/v3"
       |}
     """.stripMargin
