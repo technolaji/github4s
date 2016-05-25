@@ -45,4 +45,24 @@ trait MockGithubApiServer extends MockServerService with FakeResponses with Test
     .withBody(json(s"{client_id:'',client_secret:'',code:'$invalidCode',redirect_uri:'',state:''}")))
     .respond(response.withStatusCode(okStatusCode).withBody(badVerificationResponse))
 
+  //Repos >> get repo
+  mockServer.when(request.withMethod("GET").withPath(s"/repos/$validRepoOwner/$validRepoName"))
+    .respond(response.withStatusCode(okStatusCode).withBody(getRepoResponse))
+
+  mockServer.when(request.withMethod("GET").withPath(s"/repos/$validRepoOwner/$invalidRepoName"))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
+
+  //Repos >> list commits
+  mockServer.when(request.withMethod("GET").withPath(s"/repos/$validRepoOwner/$validRepoName/commits")
+    .withQueryStringParameter("page", validPage.toString))
+    .respond(response.withStatusCode(okStatusCode).withBody(listCommitsValidResponse))
+
+  mockServer.when(request.withMethod("GET")
+    .withPath(s"/repos/$validRepoOwner/$validRepoName/commits")
+    .withQueryStringParameter("page", invalidPage.toString))
+    .respond(response.withStatusCode(okStatusCode).withBody(emptyListResponse))
+
+  mockServer.when(request.withMethod("GET").withPath(s"/repos/$validRepoOwner/$invalidRepoName/commits"))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
+
 }

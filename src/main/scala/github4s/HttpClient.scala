@@ -72,21 +72,6 @@ class HttpClient(implicit config: GithubApiConfig) {
         .headers(authHeader)
         .headers(headers)
 
-      println("####################################")
-      println("####################################")
-      println("####################################")
-      println("####################################")
-      println("####################################")
-      println("####################################")
-      println("####################################")
-      println("####################################")
-      println("####################################")
-      println(config.getString("github.baseUrl"))
-      println(request)
-      println(params)
-      println(data)
-      println("####################################")
-
       data match {
         case Some(d) ⇒ request.postData(d).header("content-type", "application/json").asString
         case _ ⇒ request.asString

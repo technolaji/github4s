@@ -25,6 +25,9 @@ trait TestUtils {
   val validRepoName = "github4s"
   val invalidRepoName = "GHInvalidRepoName"
   val validRedirectUri = "http://localhost:9000/_oauth-callback"
+  val validPage = 1
+  val invalidPage = 999
+  val validPerPage = 100
 
   val validSinceInt = 100
   val invalidSinceInt = 999999999

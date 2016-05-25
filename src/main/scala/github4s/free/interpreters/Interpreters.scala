@@ -21,9 +21,12 @@ trait Interpreters[M[_]] {
     * Lifts Repository Ops to an effect capturing Monad such as Task via natural transformations
     */
   def repositoryOpsInterpreter(implicit A: ApplicativeError[M, Throwable]): RepositoryOp ~> M = new (RepositoryOp ~> M) {
+
+    val repos = new Repos()
+
     def apply[A](fa: RepositoryOp[A]): M[A] = fa match {
-      case GetRepo(owner, repo, accessToken) ⇒ A.pureEval(Eval.later(Repos.get(accessToken, owner, repo)))
-      case ListCommits(owner, repo, sha, path, author, since, until, pagination, accessToken) ⇒ A.pureEval(Eval.later(Repos.listCommits(accessToken, owner, repo, sha, path, author, since, until, pagination)))
+      case GetRepo(owner, repo, accessToken) ⇒ A.pureEval(Eval.later(repos.get(accessToken, owner, repo)))
+      case ListCommits(owner, repo, sha, path, author, since, until, pagination, accessToken) ⇒ A.pureEval(Eval.later(repos.listCommits(accessToken, owner, repo, sha, path, author, since, until, pagination)))
     }
   }
 

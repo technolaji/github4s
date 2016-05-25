@@ -6,12 +6,11 @@ import github4s.{ GithubApiConfig, Decoders, HttpClient }
 import io.circe.generic.auto._
 
 /** Factory to encapsulate calls related to Repositories operations  */
-object Repos {
+class Repos(implicit config: GithubApiConfig) {
 
   import Decoders._
 
-  implicit val config = new GithubApiConfig
-  protected val httpClient = new HttpClient()
+  val httpClient = new HttpClient
 
   /**
     * Get information of a particular repository
