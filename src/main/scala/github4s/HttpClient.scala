@@ -72,15 +72,6 @@ class HttpClient(implicit urls: GithubApiUrls) {
         .headers(authHeader)
         .headers(headers)
 
-      println("#########################")
-      println("#########################")
-      println("#########################")
-      println("#########################")
-      println("#########################")
-      println("#########################")
-      println("#########################")
-      println(urls.baseUrl)
-
       data match {
         case Some(d) ⇒ request.postData(d).header("content-type", "application/json").asString
         case _ ⇒ request.asString
