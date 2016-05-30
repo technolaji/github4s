@@ -6,7 +6,23 @@ technologies:
  - database: ["Database", "Lorem ipsum dolor sit amet, conse ctetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolo…"]
 ---
 
-```tut
-1 + 1
+```tut:invisible
+import org.scalatest._
+import Matchers._
+import cats.scalatest.XorMatchers.right
+import cats.scalatest.XorValues
+import cats.scalatest.XorValues._
+import cats.Eval
+import github4s.Github
+import github4s.Github._
+import github4s.Implicits._
+import github4s.Implicits.EvalInterpreters._
+```
+
+```tut:book
+val user1 = Github(Some("1cd0e278f5fab1a98451aee60941719dc69d79f3")).users.get("rafaparadela").exec[Eval].value
+
+user1 shouldBe right
+user1.value.result.login shouldBe "rafaparadela"
 ```
 

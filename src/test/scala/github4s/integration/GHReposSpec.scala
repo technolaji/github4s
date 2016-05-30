@@ -4,7 +4,8 @@ import cats.Id
 import cats.scalatest.{ XorMatchers, XorValues }
 import github4s.Github._
 import github4s.GithubResponses._
-import github4s.free.interpreters.IdInterpreters._
+import github4s.Implicits._
+import github4s.Implicits.IdInterpreters._
 import github4s.Github
 import github4s.utils.TestUtils
 import org.scalatest.{ Matchers, FlatSpec }
@@ -15,7 +16,7 @@ class GHReposSpec extends FlatSpec with Matchers with XorMatchers with XorValues
 
     val response = Github(accessToken).repos.get(validRepoOwner, validRepoName).exec[Id]
     response shouldBe right
-    response.value.value.name shouldBe validRepoName
+    response.value.result.name shouldBe validRepoName
     response.value.statusCode shouldBe okStatusCode
   }
 
@@ -27,7 +28,7 @@ class GHReposSpec extends FlatSpec with Matchers with XorMatchers with XorValues
   "Repos >> ListCommits" should "return the expected list of commits for valid data" in {
     val response = Github(accessToken).repos.listCommits(validRepoOwner, validRepoName).exec[Id]
     response shouldBe right
-    response.value.value.nonEmpty shouldBe true
+    response.value.result.nonEmpty shouldBe true
     response.value.statusCode shouldBe okStatusCode
   }
 

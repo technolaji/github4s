@@ -2,6 +2,82 @@
 layout: docs
 ---
 
-```tut
-2 + 2
+# Get started
+
+WIP: Import
+
+```tut:silent
+import github4s.Github
 ```
+
+WIP: Every Github4s api returns a `Free[GHResponse[A], A]` where `GHResonse[A]` is a type alias for `GHException Xor GHResult[A]`. GHResult contains the result `[A]` given by Github, but also the status code of the response and headers:
+
+```scala
+case class GHResult[A](result: A, statusCode: Int, headers: Map[String, IndexedSeq[String]])
+```
+
+For geting an user
+
+```tut:silent
+val user1 = Github().users.get("rafaparadela")
+```
+
+user1 in this case `Free[GHException Xor GHResult[User], User]` and we can run (`foldMap`) with `exec[M[_]]` where `M[_]` represent any type container that implements `MonadError[M, Throwable]`, for instance `cats.Eval`.
+
+```tut:silent
+import cats.Eval
+import github4s.Github._
+import github4s.Implicits._
+import github4s.Implicits.EvalInterpreters._
+
+val u1 = user1.exec[Eval].value
+```
+
+WIP: As mentioned above `u1` should have an `GHResult[User]` in the right.
+
+```tut:invisible
+import cats.data.Xor
+import github4s.GithubResponses.GHResult
+```
+
+```tut:book
+u1 match {
+  case Xor.Right(GHResult(result, status, headers)) => result.login
+  case Xor.Left(e) => e.getMessage
+}
+```
+
+WIP:  With `Id`
+
+```tut:silent
+import cats.Id
+import github4s.Implicits.IdInterpreters._
+
+val u2 = Github().users.get("raulraja").exec[Id]
+```
+
+WIP: With `Future`
+
+```tut:silent
+import github4s.Implicits.FutureInterpreters._
+import cats.std.future._
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
+import scala.concurrent.Await
+
+val u3 = Github().users.get("dialelo").exec[Future]
+Await.result(u3, 2.seconds)
+```
+
+WIP: With `scalaz.Task`
+
+```tut:silent
+import scalaz.concurrent.Task
+import github4s.scalaz.Implicits._
+import github4s.scalaz.Implicits.TaskInterpreters._
+
+val u4 = Github().users.get("franciscodr").exec[Task]
+u4.attemptRun
+```
+

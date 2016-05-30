@@ -19,7 +19,6 @@ lazy val buildSettings = Seq(
 
 lazy val dependencies = libraryDependencies ++= Seq(
   "org.typelevel" %% "cats" % "0.4.0",
-  "org.scalaz" %% "scalaz-concurrent" % "7.1.4",
   "org.scalaj" %% "scalaj-http" % "2.2.1",
   "io.circe" %% "circe-core" % "0.3.0",
   "io.circe" %% "circe-generic" % "0.3.0",
@@ -64,7 +63,12 @@ lazy val github4sSettings = buildSettings ++ dependencies ++ scalariformSettings
 
 lazy val ghpagesSettings = ghpages.settings ++ Seq(git.remoteRepo := "git@github.com:47deg/github4s.git")
 
-lazy val docsSettings = buildSettings ++ noPublishSettings ++ tutSettings ++ tutDirectoriesSettings ++ ghpagesSettings
+lazy val docsSettings = buildSettings ++ docsDependencies ++ noPublishSettings ++ tutSettings ++ tutDirectoriesSettings ++ ghpagesSettings
+
+lazy val docsDependencies = libraryDependencies ++= Seq(
+  "com.ironcorelabs" %% "cats-scalatest" % "1.1.2" % "test",
+  "org.mock-server" % "mockserver-netty" % "3.10.4" % "test"
+)
 
 lazy val github4s = (project in file("."))
     .settings(moduleName := "github4s")
@@ -74,5 +78,15 @@ lazy val docs = (project in file("docs"))
     .settings(moduleName := "github4s-docs")
     .settings(docsSettings: _*)
     .enablePlugins(JekyllPlugin)
-    .dependsOn(github4s)
+    .dependsOn(scalaz)
 
+lazy val scalazDependencies = libraryDependencies ++= Seq(
+  "org.scalaz" %% "scalaz-concurrent" % "7.1.4"
+)
+
+lazy val scalazSettings = buildSettings ++ scalazDependencies ++ scalariformSettings
+
+lazy val scalaz = (project in file("scalaz"))
+    .settings(moduleName := "github4s-scalaz")
+    .settings(scalazSettings: _*)
+    .dependsOn(github4s)

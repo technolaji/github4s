@@ -15,7 +15,7 @@ object GithubResponses {
 
   type GHResponse[A] = GHException Xor GHResult[A]
 
-  case class GHResult[A](value: A, statusCode: Int, headers: Map[String, IndexedSeq[String]])
+  case class GHResult[A](result: A, statusCode: Int, headers: Map[String, IndexedSeq[String]])
 
   sealed abstract class GHException(msg: String, cause: Option[Throwable] = None) extends Throwable(msg) {
     cause foreach initCause

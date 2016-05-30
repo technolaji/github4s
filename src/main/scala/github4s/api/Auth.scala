@@ -59,7 +59,7 @@ class Auth(implicit urls: GithubApiUrls) {
     val state = UUID.randomUUID().toString
     Xor.Right(
       GHResult(
-        value      = Authorize(authorizeUrl.format(client_id, redirect_uri, scopes.mkString(","), state), state),
+        result     = Authorize(authorizeUrl.format(client_id, redirect_uri, scopes.mkString(","), state), state),
         statusCode = 200,
         headers    = Map.empty
       )
