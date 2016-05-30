@@ -20,7 +20,7 @@ import github4s.Implicits.EvalInterpreters._
 ```
 
 ```tut:book
-val user1 = Github(Some("1cd0e278f5fab1a98451aee60941719dc69d79f3")).users.get("rafaparadela").exec[Eval].value
+val user1 = Github().users.get("rafaparadela").exec[Eval].value
 
 user1 shouldBe right
 user1.value.result.login shouldBe "rafaparadela"
