@@ -1,12 +1,11 @@
 package github4s.scalaz
 
 import cats.MonadError
-import github4s.free.interpreters.Interpreters
 import scalaz.concurrent.Task
 
-object Implicits {
+object implicits {
 
-  implicit val evalMonadError: MonadError[Task, Throwable] = new MonadError[Task, Throwable] {
+  implicit val g4sTaskMonadError: MonadError[Task, Throwable] = new MonadError[Task, Throwable] {
 
     override def pure[A](x: A): Task[A] = Task.now(x)
 
@@ -18,8 +17,5 @@ object Implicits {
 
     override def handleErrorWith[A](fa: Task[A])(f: Throwable ⇒ Task[A]): Task[A] = fa.handleWith({ case x ⇒ f(x) })
   }
-
-  /** Implicit implementation of the interpreters with scalaz.Task as target monad   */
-  object TaskInterpreters extends Interpreters[Task]
 
 }

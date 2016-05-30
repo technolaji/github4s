@@ -27,8 +27,7 @@ user1 in this case `Free[GHException Xor GHResult[User], User]` and we can run (
 ```tut:silent
 import cats.Eval
 import github4s.Github._
-import github4s.Implicits._
-import github4s.Implicits.EvalInterpreters._
+import github4s.implicits._
 
 val u1 = user1.exec[Eval].value
 ```
@@ -51,7 +50,6 @@ WIP:  With `Id`
 
 ```tut:silent
 import cats.Id
-import github4s.Implicits.IdInterpreters._
 
 val u2 = Github().users.get("raulraja").exec[Id]
 ```
@@ -59,7 +57,6 @@ val u2 = Github().users.get("raulraja").exec[Id]
 WIP: With `Future`
 
 ```tut:silent
-import github4s.Implicits.FutureInterpreters._
 import cats.std.future._
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -74,8 +71,7 @@ WIP: With `scalaz.Task`
 
 ```tut:silent
 import scalaz.concurrent.Task
-import github4s.scalaz.Implicits._
-import github4s.scalaz.Implicits.TaskInterpreters._
+import github4s.scalaz.implicits._
 
 val u4 = Github().users.get("franciscodr").exec[Task]
 u4.attemptRun

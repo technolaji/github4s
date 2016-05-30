@@ -7,21 +7,21 @@ import github4s.app.{ COGH01, GitHub4s }
 import github4s.free.algebra._
 import io.circe.Decoder
 
-trait Interpreters[M[_]] {
+trait Interpreters {
 
-  implicit def interpreters(
+  implicit def interpreters[M[_]](
     implicit
     A: MonadError[M, Throwable]
   ): GitHub4s ~> M = {
-    val c01interpreter: COGH01 ~> M = repositoryOpsInterpreter or userOpsInterpreter
-    val all: GitHub4s ~> M = authOpsInterpreter or c01interpreter
+    val c01interpreter: COGH01 ~> M = repositoryOpsInterpreter[M] or userOpsInterpreter[M]
+    val all: GitHub4s ~> M = authOpsInterpreter[M] or c01interpreter
     all
   }
 
   /**
     * Lifts Repository Ops to an effect capturing Monad such as Task via natural transformations
     */
-  def repositoryOpsInterpreter(implicit A: ApplicativeError[M, Throwable]): RepositoryOp ~> M = new (RepositoryOp ~> M) {
+  def repositoryOpsInterpreter[M[_]](implicit A: ApplicativeError[M, Throwable]): RepositoryOp ~> M = new (RepositoryOp ~> M) {
 
     val repos = new Repos()
 
@@ -34,7 +34,7 @@ trait Interpreters[M[_]] {
   /**
     * Lifts User Ops to an effect capturing Monad such as Task via natural transformations
     */
-  def userOpsInterpreter(implicit A: ApplicativeError[M, Throwable]): UserOp ~> M = new (UserOp ~> M) {
+  def userOpsInterpreter[M[_]](implicit A: ApplicativeError[M, Throwable]): UserOp ~> M = new (UserOp ~> M) {
 
     val users = new Users()
 
@@ -48,7 +48,7 @@ trait Interpreters[M[_]] {
   /**
     * Lifts Auth Ops to an effect capturing Monad such as Task via natural transformations
     */
-  def authOpsInterpreter(implicit A: ApplicativeError[M, Throwable]): AuthOp ~> M = new (AuthOp ~> M) {
+  def authOpsInterpreter[M[_]](implicit A: ApplicativeError[M, Throwable]): AuthOp ~> M = new (AuthOp ~> M) {
 
     val auth = new Auth()
 

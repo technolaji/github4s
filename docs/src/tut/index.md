@@ -15,12 +15,11 @@ import cats.scalatest.XorValues._
 import cats.Eval
 import github4s.Github
 import github4s.Github._
-import github4s.Implicits._
-import github4s.Implicits.EvalInterpreters._
+import github4s.implicits._
 ```
 
 ```tut:book
-val user1 = Github().users.get("rafaparadela").exec[Eval].value
+val user1 = Github(Some("8124f41bc6a30c8a110bc0267f0713875e71a364")).users.get("rafaparadela").exec[Eval].value
 
 user1 shouldBe right
 user1.value.result.login shouldBe "rafaparadela"

@@ -6,7 +6,11 @@ import cats.{ Monad, Id, Eval, MonadError }
 import github4s.free.interpreters.Interpreters
 import scala.concurrent.{ ExecutionContext, Future }
 
-object Implicits {
+object implicits extends Interpreters with EvalInstances with IdInstances with FutureInstances {
+
+}
+
+trait EvalInstances {
 
   implicit val evalMonadError: MonadError[Eval, Throwable] = new MonadError[Eval, Throwable] {
 
@@ -30,6 +34,10 @@ object Implicits {
       })
   }
 
+}
+
+trait IdInstances {
+
   implicit def idMonadError(implicit I: Monad[Id]): MonadError[Id, Throwable] = new MonadError[Id, Throwable] {
 
     override def pure[A](x: A): Id[A] = I.pure(x)
@@ -50,14 +58,5 @@ object Implicits {
       }
     }
   }
-
-  /** Implicit implementation of the interpreters with cats.Eval as target monad   */
-  object EvalInterpreters extends Interpreters[Eval]
-
-  /** Implicit implementation of the interpreters with cats.Id as target monad   */
-  object IdInterpreters extends Interpreters[Id]
-
-  /** Implicit implementation of the interpreters with Future as target monad   */
-  object FutureInterpreters extends Interpreters[Future]
 
 }
