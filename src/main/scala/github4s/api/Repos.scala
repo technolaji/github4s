@@ -2,11 +2,11 @@ package github4s.api
 
 import github4s.GithubResponses.GHResponse
 import github4s.free.domain.{ Pagination, Commit, Repository, User }
-import github4s.{ GithubApiConfig, Decoders, HttpClient }
+import github4s.{ GithubApiUrls, Decoders, HttpClient }
 import io.circe.generic.auto._
 
 /** Factory to encapsulate calls related to Repositories operations  */
-class Repos(implicit config: GithubApiConfig) {
+class Repos(implicit urls: GithubApiUrls) {
 
   import Decoders._
 

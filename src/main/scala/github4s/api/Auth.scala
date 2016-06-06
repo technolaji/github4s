@@ -4,18 +4,18 @@ import java.util.UUID
 import cats.data.Xor
 import github4s.GithubResponses.{ GHResult, GHResponse }
 import github4s.free.domain._
-import github4s.{ GithubApiConfig, HttpClient }
+import github4s.{ GithubApiUrls, HttpClient }
 import io.circe.generic.auto._
 import io.circe.syntax._
 import scalaj.http.HttpConstants._
 
 /** Factory to encapsulate calls related to Auth operations  */
-class Auth(implicit config: GithubApiConfig) {
+class Auth(implicit urls: GithubApiUrls) {
 
   val httpClient = new HttpClient
 
-  val authorizeUrl = config.getString("github.authorizeUrl")
-  val accessTokenUrl = config.getString("github.accessTokenUrl")
+  val authorizeUrl = urls.authorizeUrl
+  val accessTokenUrl = urls.accessTokenUrl
 
   /**
     * Call to request a new authorization given a basic authentication, the returned object Authorization includes an
@@ -59,7 +59,7 @@ class Auth(implicit config: GithubApiConfig) {
     val state = UUID.randomUUID().toString
     Xor.Right(
       GHResult(
-        value      = Authorize(authorizeUrl.format(client_id, redirect_uri, scopes.mkString(","), state), state),
+        result     = Authorize(authorizeUrl.format(client_id, redirect_uri, scopes.mkString(","), state), state),
         statusCode = 200,
         headers    = Map.empty
       )

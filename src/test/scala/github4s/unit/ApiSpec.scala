@@ -3,7 +3,7 @@ package github4s.unit
 import cats.scalatest.{ XorMatchers, XorValues }
 import github4s.api.{ Users, Repos, Auth }
 import github4s.free.domain.Pagination
-import github4s.utils.{ DummyGithubConfig, MockGithubApiServer, TestUtils }
+import github4s.utils.{ DummyGithubUrls, MockGithubApiServer, TestUtils }
 import org.scalatest._
 
 class ApiSpec
@@ -13,7 +13,7 @@ class ApiSpec
   with XorValues
   with TestUtils
   with MockGithubApiServer
-  with DummyGithubConfig {
+  with DummyGithubUrls {
 
   val auth = new Auth
   val repos = new Repos
@@ -22,7 +22,7 @@ class ApiSpec
   "Auth >> NewAuth" should "return a valid token when valid credential is provided" in {
     val response = auth.newAuth(validUsername, "", validScopes, validNote, validClientId, "")
     response shouldBe right
-    response.value.value.token.nonEmpty shouldBe true
+    response.value.result.token.nonEmpty shouldBe true
     response.value.statusCode shouldBe okStatusCode
   }
 
@@ -34,14 +34,14 @@ class ApiSpec
   "Auth >> AuthorizeUrl" should "return the expected URL for valid username" in {
     val response = auth.authorizeUrl(validClientId, validRedirectUri, validScopes)
     response shouldBe right
-    response.value.value.url.contains(validRedirectUri) shouldBe true
+    response.value.result.url.contains(validRedirectUri) shouldBe true
     response.value.statusCode shouldBe okStatusCode
   }
 
   "Auth >> GetAccessToken" should "return a valid access_token when a valid code is provided" in {
     val response = auth.getAccessToken("", "", validCode, "", "")
     response shouldBe right
-    response.value.value.access_token.nonEmpty shouldBe true
+    response.value.result.access_token.nonEmpty shouldBe true
     response.value.statusCode shouldBe okStatusCode
   }
 
@@ -54,7 +54,7 @@ class ApiSpec
 
     val response = repos.get(accessToken, validRepoOwner, validRepoName)
     response shouldBe right
-    response.value.value.name shouldBe validRepoName
+    response.value.result.name shouldBe validRepoName
     response.value.statusCode shouldBe okStatusCode
   }
 
@@ -71,7 +71,7 @@ class ApiSpec
       pagination  = Option(Pagination(validPage, validPerPage))
     )
     response shouldBe right
-    response.value.value.nonEmpty shouldBe true
+    response.value.result.nonEmpty shouldBe true
     response.value.statusCode shouldBe okStatusCode
   }
 
@@ -84,7 +84,7 @@ class ApiSpec
     )
 
     response shouldBe right
-    response.value.value.isEmpty shouldBe true
+    response.value.result.isEmpty shouldBe true
     response.value.statusCode shouldBe okStatusCode
   }
 
@@ -98,7 +98,7 @@ class ApiSpec
     val response = users.get(accessToken, validUsername)
 
     response shouldBe right
-    response.value.value.login shouldBe validUsername
+    response.value.result.login shouldBe validUsername
     response.value.statusCode shouldBe okStatusCode
   }
 
@@ -110,7 +110,7 @@ class ApiSpec
   "Users >> GetAuth" should "return the expected login for a valid accessToken" in {
     val response = users.getAuth(accessToken)
     response shouldBe right
-    response.value.value.login shouldBe validUsername
+    response.value.result.login shouldBe validUsername
     response.value.statusCode shouldBe okStatusCode
   }
 
@@ -122,14 +122,14 @@ class ApiSpec
   "Users >> GetUsers" should "return users for a valid since value" in {
     val response = users.getUsers(accessToken, validSinceInt)
     response shouldBe right
-    response.value.value.nonEmpty shouldBe true
+    response.value.result.nonEmpty shouldBe true
     response.value.statusCode shouldBe okStatusCode
   }
 
   it should "return an empty list when a invalid since value is provided" in {
     val response = users.getUsers(accessToken, invalidSinceInt)
     response shouldBe right
-    response.value.value.isEmpty shouldBe true
+    response.value.result.isEmpty shouldBe true
     response.value.statusCode shouldBe okStatusCode
   }
 

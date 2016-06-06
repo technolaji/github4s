@@ -1,12 +1,12 @@
 package github4s.api
 
 import github4s.GithubResponses.GHResponse
-import github4s.{ GithubApiConfig, HttpClient }
+import github4s.{ GithubApiUrls, HttpClient }
 import github4s.free.domain.{ Pagination, User }
 import io.circe.generic.auto._
 
 /** Factory to encapsulate calls related to Users operations  */
-class Users(implicit config: GithubApiConfig) {
+class Users(implicit urls: GithubApiUrls) {
 
   val httpClient = new HttpClient
 
