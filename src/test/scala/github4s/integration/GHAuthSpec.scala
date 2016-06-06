@@ -4,7 +4,6 @@ import cats.Id
 import cats.scalatest.{ XorMatchers, XorValues }
 import github4s.Github._
 import github4s.implicits._
-import github4s.implicits.IdInterpreters._
 import github4s.Github
 import github4s.utils.TestUtils
 import org.scalatest._
