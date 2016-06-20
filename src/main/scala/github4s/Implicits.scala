@@ -6,7 +6,7 @@ import cats.{ Monad, Id, Eval, MonadError }
 import github4s.free.interpreters.Interpreters
 import scala.concurrent.{ ExecutionContext, Future }
 
-object implicits extends Interpreters with EvalInstances with IdInstances with FutureInstances 
+object implicits extends Interpreters with EvalInstances with IdInstances with FutureInstances
 
 trait EvalInstances {
 
