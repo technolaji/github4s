@@ -23,7 +23,7 @@ object Decoders {
     for {
       id ← c.downField("id").as[Int]
       name ← c.downField("name").as[String]
-      full_name ← c.downField("name").as[String]
+      full_name ← c.downField("full_name").as[String]
       owner ← c.downField("owner").as[User]
       priv ← c.downField("private").as[Boolean]
       description ← c.downField("description").as[String]
