@@ -21,14 +21,17 @@ object GithubResponses {
     cause foreach initCause
   }
 
-  case class JsonParsingException(msg: String) extends GHException(msg)
+  case class JsonParsingException(
+    msg: String,
+    json: String
+  ) extends GHException(msg)
 
   case class UnexpectedException(msg: String) extends GHException(msg)
 
   def toEntity[A](response: HttpResponse[String])(implicit D: Decoder[A]): GHResponse[A] = response match {
     case r if r.isSuccess ⇒ decode[A](r.body)
       .fold(
-        e ⇒ JsonParsingException(e.getMessage).left[GHResult[A]],
+        e ⇒ JsonParsingException(e.getMessage, r.body).left[GHResult[A]],
         result ⇒ Xor.Right(GHResult(result, r.code, toLowerCase(r.headers)))
       )
     case r ⇒ UnexpectedException(s"Failed invoking get with status : ${r.code}, body : \n ${r.body}").left[GHResult[A]]
