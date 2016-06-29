@@ -5,7 +5,7 @@ case class Commit(
   message: String,
   date: String,
   url: String,
-  login: String,
-  avatar_url: String,
-  author_url: String
+  login: Option[String],
+  avatar_url: Option[String],
+  author_url: Option[String]
 )
