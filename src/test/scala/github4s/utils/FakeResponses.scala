@@ -290,6 +290,58 @@ trait FakeResponses {
       |        "html_url": "https://github.com/47deg/github4s/commit/e23072c0637e7ecc2ef6d9a6d090288dc63f6beb"
       |      }
       |    ]
+      |  },
+      |  {
+      |    "sha": "5f919723674b46a8ade67e6a62348953d2bf4350",
+      |    "commit": {
+      |      "author": {
+      |        "name": "Rafa Paradela",
+      |        "email": "rafa.p@47deg.com",
+      |        "date": "2016-05-23T14:00:25Z"
+      |      },
+      |      "committer": {
+      |        "name": "Rafa Paradela",
+      |        "email": "rafa.p@47deg.com",
+      |        "date": "2016-05-23T14:00:25Z"
+      |      },
+      |      "message": "Moved/Renamed package to omit organization prefix",
+      |      "tree": {
+      |        "sha": "373377d6041f110396e5650c2a84b24745d677d0",
+      |        "url": "https://api.github.com/repos/47deg/github4s/git/trees/373377d6041f110396e5650c2a84b24745d677d0"
+      |      },
+      |      "url": "https://api.github.com/repos/47deg/github4s/git/commits/5f919723674b46a8ade67e6a62348953d2bf4350",
+      |      "comment_count": 0
+      |    },
+      |    "url": "https://api.github.com/repos/47deg/github4s/commits/5f919723674b46a8ade67e6a62348953d2bf4350",
+      |    "html_url": "https://github.com/47deg/github4s/commit/5f919723674b46a8ade67e6a62348953d2bf4350",
+      |    "comments_url": "https://api.github.com/repos/47deg/github4s/commits/5f919723674b46a8ade67e6a62348953d2bf4350/comments",
+      |    "author": null,
+      |    "committer": {
+      |      "login": "rafaparadela",
+      |      "id": 315070,
+      |      "avatar_url": "https://avatars.githubusercontent.com/u/315070?v=3",
+      |      "gravatar_id": "",
+      |      "url": "https://api.github.com/users/rafaparadela",
+      |      "html_url": "https://github.com/rafaparadela",
+      |      "followers_url": "https://api.github.com/users/rafaparadela/followers",
+      |      "following_url": "https://api.github.com/users/rafaparadela/following{/other_user}",
+      |      "gists_url": "https://api.github.com/users/rafaparadela/gists{/gist_id}",
+      |      "starred_url": "https://api.github.com/users/rafaparadela/starred{/owner}{/repo}",
+      |      "subscriptions_url": "https://api.github.com/users/rafaparadela/subscriptions",
+      |      "organizations_url": "https://api.github.com/users/rafaparadela/orgs",
+      |      "repos_url": "https://api.github.com/users/rafaparadela/repos",
+      |      "events_url": "https://api.github.com/users/rafaparadela/events{/privacy}",
+      |      "received_events_url": "https://api.github.com/users/rafaparadela/received_events",
+      |      "type": "User",
+      |      "site_admin": false
+      |    },
+      |    "parents": [
+      |      {
+      |        "sha": "e23072c0637e7ecc2ef6d9a6d090288dc63f6beb",
+      |        "url": "https://api.github.com/repos/47deg/github4s/commits/e23072c0637e7ecc2ef6d9a6d090288dc63f6beb",
+      |        "html_url": "https://github.com/47deg/github4s/commit/e23072c0637e7ecc2ef6d9a6d090288dc63f6beb"
+      |      }
+      |    ]
       |  }
       |]
     """.stripMargin
