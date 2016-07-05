@@ -17,12 +17,15 @@ lazy val buildSettings = Seq(
   licenses := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 )
 
+lazy val cats = "0.6.0"
+lazy val circe = "0.5.0-M2"
+
 lazy val dependencies = libraryDependencies ++= Seq(
-  "org.typelevel" %% "cats" % "0.4.0",
+  "org.typelevel" %% "cats-free" % cats,
   "org.scalaj" %% "scalaj-http" % "2.2.1",
-  "io.circe" %% "circe-core" % "0.3.0",
-  "io.circe" %% "circe-generic" % "0.3.0",
-  "io.circe" %% "circe-parser" % "0.3.0",
+  "io.circe" %% "circe-core" % circe,
+  "io.circe" %% "circe-generic" % circe,
+  "io.circe" %% "circe-parser" % circe,
   "org.scalatest" %% "scalatest" % "2.2.6" % "test",
   "com.ironcorelabs" %% "cats-scalatest" % "1.1.2" % "test",
   "org.mock-server" % "mockserver-netty" % "3.10.4" % "test"
