@@ -6,6 +6,7 @@ import cats.data.Xor
 
 /** Implicit circe decoders of domains objects */
 object Decoders {
+  case class Author(login: Option[String], avatar_url: Option[String], html_url: Option[String])
 
   implicit val decodeCommit: Decoder[Commit] = Decoder.instance { c ⇒
     for {
@@ -13,10 +14,16 @@ object Decoders {
       message ← c.downField("commit").downField("message").as[String]
       date ← c.downField("commit").downField("author").downField("date").as[String]
       url ← c.downField("html_url").as[String]
-      login ← c.downField("author").downField("login").as[Option[String]]
-      avatar_url ← c.downField("author").downField("avatar_url").as[Option[String]]
-      author_url ← c.downField("author").downField("html_url").as[Option[String]]
-    } yield Commit(sha, message, date, url, login, avatar_url, author_url)
+      author ← c.downField("author").as[Option[Author]]
+    } yield Commit(
+      sha        = sha,
+      message    = message,
+      date       = date,
+      url        = url,
+      login      = author.map(_.login).flatten,
+      avatar_url = author.map(_.avatar_url).flatten,
+      author_url = author.map(_.html_url).flatten
+    )
   }
 
   implicit val decodeRepository: Decoder[Repository] = Decoder.instance { c ⇒
