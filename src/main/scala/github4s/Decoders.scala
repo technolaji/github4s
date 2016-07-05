@@ -6,7 +6,7 @@ import cats.data.Xor
 
 /** Implicit circe decoders of domains objects */
 object Decoders {
-  case class Author(login: Option[String], avatar_url: Option[String], author_url: Option[String])
+  case class Author(login: Option[String], avatar_url: Option[String], html_url: Option[String])
 
   implicit val decodeCommit: Decoder[Commit] = Decoder.instance { c ⇒
     for {
