@@ -28,6 +28,7 @@ trait Interpreters {
     def apply[A](fa: RepositoryOp[A]): M[A] = fa match {
       case GetRepo(owner, repo, accessToken) ⇒ A.pureEval(Eval.later(repos.get(accessToken, owner, repo)))
       case ListCommits(owner, repo, sha, path, author, since, until, pagination, accessToken) ⇒ A.pureEval(Eval.later(repos.listCommits(accessToken, owner, repo, sha, path, author, since, until, pagination)))
+      case ListContributors(owner, repo, anon, accessToken) ⇒ A.pureEval(Eval.later(repos.listContributors(accessToken, owner, repo, anon)))
     }
   }
 

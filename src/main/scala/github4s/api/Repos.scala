@@ -59,4 +59,21 @@ class Repos(implicit urls: GithubApiUrls) {
         case (key, Some(value)) ⇒ key → value
       }, pagination)
 
+  /**
+    * Fetch contributors list for the the specified repository,
+    * sorted by the number of commits per contributor in descending order.
+    *
+    * @param accessToken to identify the authenticated user
+    * @param owner of the repo
+    * @param repo name of the repo
+    * @param anon Set to 1 or true to include anonymous contributors in results
+    * @return GHResponse[List[User]\] List of contributors associated with the specified repository.
+    */
+  def listContributors(accessToken: Option[String] = None, owner: String, repo: String, anon: Option[String]): GHResponse[List[User]] =
+    httpClient.get[List[User]](accessToken, s"repos/$owner/$repo/contributors", Map(
+      "anon" → anon
+    ).collect {
+        case (key, Some(value)) ⇒ key → value
+      })
+
 }
