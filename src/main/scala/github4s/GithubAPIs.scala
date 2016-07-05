@@ -31,6 +31,13 @@ class GHRepos(accessToken: Option[String] = None)(implicit O: RepositoryOps[GitH
   ): GHIO[GHResponse[List[Commit]]] =
     O.listCommits(owner, repo, sha, path, author, since, until, pagination, accessToken)
 
+  def listContributors(
+    owner: String,
+    repo: String,
+    anon: Option[String] = None
+  ): GHIO[GHResponse[List[User]]] =
+    O.listContributors(owner, repo, anon, accessToken)
+
 }
 
 class GHAuth(accessToken: Option[String] = None)(implicit O: AuthOps[GitHub4s]) {

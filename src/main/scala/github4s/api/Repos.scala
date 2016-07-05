@@ -69,7 +69,12 @@ class Repos(implicit urls: GithubApiUrls) {
     * @param anon Set to 1 or true to include anonymous contributors in results
     * @return GHResponse[List[User]\] List of contributors associated with the specified repository.
     */
-  def listContributors(accessToken: Option[String] = None, owner: String, repo: String, anon: Option[String]): GHResponse[List[User]] =
+  def listContributors(
+    accessToken: Option[String] = None,
+    owner: String,
+    repo: String,
+    anon: Option[String] = None
+  ): GHResponse[List[User]] =
     httpClient.get[List[User]](accessToken, s"repos/$owner/$repo/contributors", Map(
       "anon" → anon
     ).collect {

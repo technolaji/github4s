@@ -93,6 +93,49 @@ class ApiSpec
     response shouldBe left
   }
 
+  "Repos >> ListContributors" should "return the expected list of contributors for valid data" in {
+    val response = repos.listContributors(
+      accessToken = accessToken,
+      owner       = validRepoOwner,
+      repo        = validRepoName
+    )
+
+    response shouldBe right
+    response.value.result shouldNot be(empty)
+    response.value.statusCode shouldBe okStatusCode
+  }
+
+  it should "return the expected list of contributors for valid data, including a valid anon parameter" in {
+    val response = repos.listContributors(
+      accessToken = accessToken,
+      owner       = validRepoOwner,
+      repo        = validRepoName,
+      anon        = Option(validAnonParameter)
+    )
+
+    response shouldBe right
+    response.value.result shouldNot be(empty)
+    response.value.statusCode shouldBe okStatusCode
+  }
+
+  it should "return an empty list of contributors for invalid anon parameter" in {
+    val response = repos.listContributors(
+      accessToken = accessToken,
+      owner       = validRepoOwner,
+      repo        = validRepoName,
+      anon        = Some(invalidAnonParameter)
+    )
+
+    response shouldBe right
+    response.value.result shouldBe empty
+    response.value.statusCode shouldBe okStatusCode
+  }
+
+  it should "return error for invalid repo name" in {
+    val response = repos.listContributors(accessToken, validRepoOwner, invalidRepoName)
+    response shouldBe left
+  }
+
   "Users >> Get" should "return the expected login for a valid username" in {
 
     val response = users.get(accessToken, validUsername)

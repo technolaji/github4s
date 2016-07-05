@@ -36,4 +36,6 @@ trait TestUtils {
   val unauthorizedStatusCode = 401
   val notFoundStatusCode = 404
 
+  val validAnonParameter = "true"
+  val invalidAnonParameter = "X"
 }
