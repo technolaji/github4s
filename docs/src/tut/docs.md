@@ -10,6 +10,10 @@ WIP: Import
 import github4s.Github
 ```
 
+```tut:invisible
+val accessToken = sys.props.get("token")
+```
+
 WIP: Every Github4s api returns a `Free[GHResponse[A], A]` where `GHResonse[A]` is a type alias for `GHException Xor GHResult[A]`. GHResult contains the result `[A]` given by Github, but also the status code of the response and headers:
 
 ```scala
@@ -19,7 +23,7 @@ case class GHResult[A](result: A, statusCode: Int, headers: Map[String, IndexedS
 For geting an user
 
 ```tut:silent
-val user1 = Github().users.get("rafaparadela")
+val user1 = Github(accessToken).users.get("rafaparadela")
 ```
 
 user1 in this case `Free[GHException Xor GHResult[User], User]` and we can run (`foldMap`) with `exec[M[_]]` where `M[_]` represent any type container that implements `MonadError[M, Throwable]`, for instance `cats.Eval`.
@@ -51,7 +55,7 @@ WIP:  With `Id`
 ```tut:silent
 import cats.Id
 
-val u2 = Github().users.get("raulraja").exec[Id]
+val u2 = Github(accessToken).users.get("raulraja").exec[Id]
 ```
 
 WIP: With `Future`
@@ -63,7 +67,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.Await
 
-val u3 = Github().users.get("dialelo").exec[Future]
+val u3 = Github(accessToken).users.get("dialelo").exec[Future]
 Await.result(u3, 2.seconds)
 ```
 
@@ -73,7 +77,7 @@ WIP: With `scalaz.Task`
 import scalaz.concurrent.Task
 import github4s.scalaz.implicits._
 
-val u4 = Github().users.get("franciscodr").exec[Task]
+val u4 = Github(accessToken).users.get("franciscodr").exec[Task]
 u4.attemptRun
 ```
 
