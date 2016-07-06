@@ -2,7 +2,7 @@ package github4s.free.algebra
 
 import cats.free.{ Free, Inject }
 import github4s.GithubResponses.GHResponse
-import github4s.free.domain.{ Pagination, Commit, Repository }
+import github4s.free.domain.{ Commit, Pagination, Repository, User }
 
 /**
   * Repositories ops ADT
@@ -25,6 +25,13 @@ final case class ListCommits(
   pagination: Option[Pagination] = None,
   accessToken: Option[String] = None
 ) extends RepositoryOp[GHResponse[List[Commit]]]
+
+final case class ListContributors(
+  owner: String,
+  repo: String,
+  anon: Option[String] = None,
+  accessToken: Option[String] = None
+) extends RepositoryOp[GHResponse[List[User]]]
 
 /**
   * Exposes Repositories operations as a Free monadic algebra that may be combined with other Algebras via
@@ -51,6 +58,14 @@ class RepositoryOps[F[_]](implicit I: Inject[RepositoryOp, F]) {
     accessToken: Option[String] = None
   ): Free[F, GHResponse[List[Commit]]] =
     Free.inject[RepositoryOp, F](ListCommits(owner, repo, sha, path, author, since, until, pagination, accessToken))
+
+  def listContributors(
+    owner: String,
+    repo: String,
+    anon: Option[String] = None,
+    accessToken: Option[String] = None
+  ): Free[F, GHResponse[List[User]]] =
+    Free.inject[RepositoryOp, F](ListContributors(owner, repo, anon, accessToken))
 
 }
 

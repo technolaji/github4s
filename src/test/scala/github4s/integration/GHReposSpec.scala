@@ -36,4 +36,16 @@ class GHReposSpec extends FlatSpec with Matchers with XorMatchers with XorValues
     response shouldBe left
   }
 
+  "Repos >> ListContributors" should "return the expected list of contributors for valid data" in {
+    val response = Github(accessToken).repos.listContributors(validRepoOwner, validRepoName).exec[Id]
+    response shouldBe right
+    response.value.result shouldNot be(empty)
+    response.value.statusCode shouldBe okStatusCode
+  }
+
+  it should "return error for invalid repo name" in {
+    val response = Github(accessToken).repos.listContributors(invalidRepoName, validRepoName).exec[Id]
+    response shouldBe left
+  }
+
 }
