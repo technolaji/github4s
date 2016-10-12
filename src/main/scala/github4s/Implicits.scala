@@ -1,28 +1,25 @@
 package github4s
 
 import cats.implicits._
+import cats.instances.FutureInstances
 import cats.{ Monad, Id, Eval, MonadError, FlatMap }
 import github4s.free.interpreters._
 import scala.concurrent.{ ExecutionContext, Future }
 
-object implicits extends ProdInterpreters
-object testimplicits extends TestInterpreters
+object implicits extends Interpreters with EvalInstances with IdInstances with FutureInstances {
 
-trait ProdInterpreters extends Interpreters[Eval] with EvalInstances {
+  //Future Capture evidence:
+  implicit val futureCaptureInstance = new Capture[Future] {
+    override def capture[A](a: ⇒ A): Future[A] = Future.successful(a)
+  }
+
+}
+
+trait EvalInstances {
 
   implicit val evalCaptureInstance = new Capture[Eval] {
     override def capture[A](a: ⇒ A): Eval[A] = Eval.later(a)
   }
-}
-
-trait TestInterpreters extends Interpreters[Id] with IdInstances {
-
-  implicit val idCaptureInstance = new Capture[Id] {
-    override def capture[A](a: ⇒ A): Id[A] = idMonad.pure(a)
-  }
-}
-
-trait EvalInstances {
 
   implicit def evalMonadError(implicit FM: FlatMap[Eval]): MonadError[Eval, Throwable] = new MonadError[Eval, Throwable] {
 
@@ -51,6 +48,10 @@ trait EvalInstances {
 }
 
 trait IdInstances {
+
+  implicit val idCaptureInstance = new Capture[Id] {
+    override def capture[A](a: ⇒ A): Id[A] = idMonad.pure(a)
+  }
 
   implicit def idMonad(implicit I: Monad[Id], FM: FlatMap[Id]): MonadError[Id, Throwable] = new MonadError[Id, Throwable] {
 

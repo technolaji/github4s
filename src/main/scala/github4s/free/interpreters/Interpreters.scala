@@ -14,9 +14,9 @@ import simulacrum.typeclass
   def capture[A](a: ⇒ A): M[A]
 }
 
-trait Interpreters[M[_]] {
+trait Interpreters {
 
-  implicit def interpreters(
+  implicit def interpreters[M[_]](
     implicit
     A: MonadError[M, Throwable],
     C: Capture[M]

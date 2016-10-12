@@ -61,7 +61,7 @@ val u2 = Github(accessToken).users.get("raulraja").exec[Id]
 WIP: With `Future`
 
 ```tut:silent
-import cats.std.future._
+import github4s.implicits._
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._

@@ -86,7 +86,7 @@ lazy val docs = (project in file("docs"))
     .dependsOn(scalaz)
 
 lazy val scalazDependencies = libraryDependencies ++= Seq(
-  "org.scalaz" %% "scalaz-concurrent" % "7.1.4"
+  "org.scalaz" %% "scalaz-concurrent" % "7.3.0-M5"
 )
 
 lazy val scalazSettings = buildSettings ++ scalazDependencies ++ scalariformSettings
