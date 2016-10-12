@@ -17,8 +17,8 @@ lazy val buildSettings = Seq(
   licenses := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 )
 
-lazy val cats = "0.6.0"
-lazy val circe = "0.5.0-M2"
+lazy val cats = "0.7.2"
+lazy val circe = "0.5.2"
 
 lazy val dependencies = libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-free" % cats,
@@ -26,9 +26,11 @@ lazy val dependencies = libraryDependencies ++= Seq(
   "io.circe" %% "circe-core" % circe,
   "io.circe" %% "circe-generic" % circe,
   "io.circe" %% "circe-parser" % circe,
+  "com.github.mpilquist" %% "simulacrum" % "0.8.0",
   "org.scalatest" %% "scalatest" % "2.2.6" % "test",
   "com.ironcorelabs" %% "cats-scalatest" % "1.1.2" % "test",
-  "org.mock-server" % "mockserver-netty" % "3.10.4" % "test"
+  "org.mock-server" % "mockserver-netty" % "3.10.4" % "test",
+  compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 )
 
 lazy val scalariformSettings = SbtScalariform.scalariformSettings ++ Seq(
@@ -84,7 +86,7 @@ lazy val docs = (project in file("docs"))
     .dependsOn(scalaz)
 
 lazy val scalazDependencies = libraryDependencies ++= Seq(
-  "org.scalaz" %% "scalaz-concurrent" % "7.1.4"
+  "org.scalaz" %% "scalaz-concurrent" % "7.3.0-M5"
 )
 
 lazy val scalazSettings = buildSettings ++ scalazDependencies ++ scalariformSettings
