@@ -1,16 +1,14 @@
 package github4s.unit
 
-import cats.scalatest.{ XorMatchers, XorValues }
 import github4s.api.{ Users, Repos, Auth }
 import github4s.free.domain.Pagination
 import github4s.utils.{ DummyGithubUrls, MockGithubApiServer, TestUtils }
 import org.scalatest._
+import cats.implicits._
 
 class ApiSpec
   extends FlatSpec
   with Matchers
-  with XorMatchers
-  with XorValues
   with TestUtils
   with MockGithubApiServer
   with DummyGithubUrls {
@@ -21,46 +19,60 @@ class ApiSpec
 
   "Auth >> NewAuth" should "return a valid token when valid credential is provided" in {
     val response = auth.newAuth(validUsername, "", validScopes, validNote, validClientId, "")
-    response shouldBe right
-    response.value.result.token.nonEmpty shouldBe true
-    response.value.statusCode shouldBe okStatusCode
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.result.token.nonEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    }
   }
 
   it should "return error on Left when invalid credential is provided" in {
     val response = auth.newAuth(validUsername, invalidPassword, validScopes, validNote, validClientId, "")
-    response shouldBe left
+    response should be('left)
   }
 
   "Auth >> AuthorizeUrl" should "return the expected URL for valid username" in {
     val response = auth.authorizeUrl(validClientId, validRedirectUri, validScopes)
-    response shouldBe right
-    response.value.result.url.contains(validRedirectUri) shouldBe true
-    response.value.statusCode shouldBe okStatusCode
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.result.url.contains(validRedirectUri) shouldBe true
+      r.statusCode shouldBe okStatusCode
+    }
   }
 
   "Auth >> GetAccessToken" should "return a valid access_token when a valid code is provided" in {
     val response = auth.getAccessToken("", "", validCode, "", "")
-    response shouldBe right
-    response.value.result.access_token.nonEmpty shouldBe true
-    response.value.statusCode shouldBe okStatusCode
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.result.access_token.nonEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    }
+
   }
 
   it should "return error on Left when invalid code is provided" in {
     val response = auth.getAccessToken("", "", invalidCode, "", "")
-    response shouldBe left
+    response should be('left)
   }
 
   "Repos >> Get" should "return the expected name when valid repo is provided" in {
 
     val response = repos.get(accessToken, validRepoOwner, validRepoName)
-    response shouldBe right
-    response.value.result.name shouldBe validRepoName
-    response.value.statusCode shouldBe okStatusCode
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.result.name shouldBe validRepoName
+      r.statusCode shouldBe okStatusCode
+    }
+
   }
 
   it should "return error when an invalid repo name is passed" in {
     val response = repos.get(accessToken, validRepoOwner, invalidRepoName)
-    response shouldBe left
+    response should be('left)
   }
 
   "Repos >> ListCommits" should "return the expected list of commits for valid data" in {
@@ -70,9 +82,12 @@ class ApiSpec
       repo        = validRepoName,
       pagination  = Option(Pagination(validPage, validPerPage))
     )
-    response shouldBe right
-    response.value.result.nonEmpty shouldBe true
-    response.value.statusCode shouldBe okStatusCode
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.result.nonEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    }
   }
 
   it should "return an empty list of commits for invalid page parameter" in {
@@ -83,14 +98,18 @@ class ApiSpec
       pagination  = Option(Pagination(invalidPage, validPerPage))
     )
 
-    response shouldBe right
-    response.value.result.isEmpty shouldBe true
-    response.value.statusCode shouldBe okStatusCode
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.result.isEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    }
+
   }
 
   it should "return error for invalid repo name" in {
     val response = repos.listCommits(accessToken, validRepoOwner, invalidRepoName)
-    response shouldBe left
+    response should be('left)
   }
 
   "Repos >> ListContributors" should "return the expected list of contributors for valid data" in {
@@ -100,9 +119,13 @@ class ApiSpec
       repo        = validRepoName
     )
 
-    response shouldBe right
-    response.value.result shouldNot be(empty)
-    response.value.statusCode shouldBe okStatusCode
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.result shouldNot be(empty)
+      r.statusCode shouldBe okStatusCode
+    }
+
   }
 
   it should "return the expected list of contributors for valid data, including a valid anon parameter" in {
@@ -113,9 +136,12 @@ class ApiSpec
       anon        = Option(validAnonParameter)
     )
 
-    response shouldBe right
-    response.value.result shouldNot be(empty)
-    response.value.statusCode shouldBe okStatusCode
+    response should be('right)
+    response.toOption map { r ⇒
+      r.result shouldNot be(empty)
+      r.statusCode shouldBe okStatusCode
+    }
+
   }
 
   it should "return an empty list of contributors for invalid anon parameter" in {
@@ -126,54 +152,72 @@ class ApiSpec
       anon        = Some(invalidAnonParameter)
     )
 
-    response shouldBe right
-    response.value.result shouldBe empty
-    response.value.statusCode shouldBe okStatusCode
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.result shouldBe empty
+      r.statusCode shouldBe okStatusCode
+    }
   }
 
   it should "return error for invalid repo name" in {
     val response = repos.listContributors(accessToken, validRepoOwner, invalidRepoName)
-    response shouldBe left
+    response should be('left)
   }
 
   "Users >> Get" should "return the expected login for a valid username" in {
 
     val response = users.get(accessToken, validUsername)
 
-    response shouldBe right
-    response.value.result.login shouldBe validUsername
-    response.value.statusCode shouldBe okStatusCode
+    response should be('right)
+    response.toOption map { r ⇒
+      r.result.login shouldBe validUsername
+      r.statusCode shouldBe okStatusCode
+    }
+
   }
 
   it should "return error on Left for invalid username" in {
     val response = users.get(accessToken, invalidUsername)
-    response shouldBe left
+    response should be('left)
   }
 
   "Users >> GetAuth" should "return the expected login for a valid accessToken" in {
     val response = users.getAuth(accessToken)
-    response shouldBe right
-    response.value.result.login shouldBe validUsername
-    response.value.statusCode shouldBe okStatusCode
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.result.login shouldBe validUsername
+      r.statusCode shouldBe okStatusCode
+    }
+
   }
 
   it should "return error on Left when no accessToken is provided" in {
     val response = users.getAuth(None)
-    response shouldBe left
+    response should be('left)
   }
 
   "Users >> GetUsers" should "return users for a valid since value" in {
     val response = users.getUsers(accessToken, validSinceInt)
-    response shouldBe right
-    response.value.result.nonEmpty shouldBe true
-    response.value.statusCode shouldBe okStatusCode
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.result.nonEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    }
+
   }
 
   it should "return an empty list when a invalid since value is provided" in {
     val response = users.getUsers(accessToken, invalidSinceInt)
-    response shouldBe right
-    response.value.result.isEmpty shouldBe true
-    response.value.statusCode shouldBe okStatusCode
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.result.isEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    }
+
   }
 
 }

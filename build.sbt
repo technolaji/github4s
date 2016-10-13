@@ -28,7 +28,6 @@ lazy val dependencies = libraryDependencies ++= Seq(
   "io.circe" %% "circe-parser" % circe,
   "com.github.mpilquist" %% "simulacrum" % "0.8.0",
   "org.scalatest" %% "scalatest" % "2.2.6" % "test",
-  "com.ironcorelabs" %% "cats-scalatest" % "1.1.2" % "test",
   "org.mock-server" % "mockserver-netty" % "3.10.4" % "test",
   compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 )

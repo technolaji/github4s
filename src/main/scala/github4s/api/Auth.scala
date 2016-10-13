@@ -1,12 +1,12 @@
 package github4s.api
 
 import java.util.UUID
-import cats.data.Xor
 import github4s.GithubResponses.{ GHResult, GHResponse }
 import github4s.free.domain._
 import github4s.{ GithubApiUrls, HttpClient }
 import io.circe.generic.auto._
 import io.circe.syntax._
+import cats.implicits._
 import scalaj.http.HttpConstants._
 
 /** Factory to encapsulate calls related to Auth operations  */
@@ -57,7 +57,7 @@ class Auth(implicit urls: GithubApiUrls) {
     scopes: List[String]
   ): GHResponse[Authorize] = {
     val state = UUID.randomUUID().toString
-    Xor.Right(
+    Either.right(
       GHResult(
         result     = Authorize(authorizeUrl.format(client_id, redirect_uri, scopes.mkString(","), state), state),
         statusCode = 200,
