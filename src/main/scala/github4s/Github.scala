@@ -1,6 +1,6 @@
 package github4s
 
-import cats.data.{ OptionT, XorT }
+import cats.data.{ OptionT, EitherT }
 import cats.{ MonadError, ~>, RecursiveTailRecM }
 import cats.implicits._
 import github4s.GithubResponses._
@@ -23,11 +23,11 @@ object Github {
 
   def apply(accessToken: Option[String] = None) = new Github(accessToken)
 
-  implicit class GithubIOSyntaxXOR[A](gio: GHIO[GHResponse[A]]) {
+  implicit class GithubIOSyntaxEither[A](gio: GHIO[GHResponse[A]]) {
 
     def exec[M[_]](implicit I: (GitHub4s ~> M), A: MonadError[M, Throwable], TR: RecursiveTailRecM[M]): M[GHResponse[A]] = gio foldMap I
 
-    def liftGH: XorT[GHIO, GHException, GHResult[A]] = XorT[GHIO, GHException, GHResult[A]](gio)
+    def liftGH: EitherT[GHIO, GHException, GHResult[A]] = EitherT[GHIO, GHException, GHResult[A]](gio)
 
   }
 }

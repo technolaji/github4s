@@ -1,8 +1,7 @@
 package github4s
 
-import cats.data.Xor
 import cats.free.Free
-import cats.syntax.xor._
+import cats.implicits._
 import github4s.app.GitHub4s
 import io.circe.Decoder
 import io.circe.parser._
@@ -13,7 +12,7 @@ object GithubResponses {
 
   type GHIO[A] = Free[GitHub4s, A]
 
-  type GHResponse[A] = GHException Xor GHResult[A]
+  type GHResponse[A] = Either[GHException, GHResult[A]]
 
   case class GHResult[A](result: A, statusCode: Int, headers: Map[String, IndexedSeq[String]])
 
@@ -31,15 +30,15 @@ object GithubResponses {
   def toEntity[A](response: HttpResponse[String])(implicit D: Decoder[A]): GHResponse[A] = response match {
     case r if r.isSuccess ⇒ decode[A](r.body)
       .fold(
-        e ⇒ JsonParsingException(e.getMessage, r.body).left[GHResult[A]],
-        result ⇒ Xor.Right(GHResult(result, r.code, toLowerCase(r.headers)))
+        e ⇒ Either.left(JsonParsingException(e.getMessage, r.body)),
+        result ⇒ Either.right(GHResult(result, r.code, toLowerCase(r.headers)))
       )
-    case r ⇒ UnexpectedException(s"Failed invoking get with status : ${r.code}, body : \n ${r.body}").left[GHResult[A]]
+    case r ⇒ Either.left(UnexpectedException(s"Failed invoking get with status : ${r.code}, body : \n ${r.body}"))
   }
 
   def toEmpty(response: HttpResponse[String]): GHResponse[Unit] = response match {
-    case r if r.isSuccess ⇒ Xor.Right(GHResult(Unit, r.code, toLowerCase(r.headers)))
-    case r ⇒ UnexpectedException(s"Failed invoking get with status : ${r.code}, body : \n ${r.body}").left[GHResult[Unit]]
+    case r if r.isSuccess ⇒ Either.right(GHResult(Unit, r.code, toLowerCase(r.headers)))
+    case r ⇒ Either.left(UnexpectedException(s"Failed invoking get with status : ${r.code}, body : \n ${r.body}"))
   }
 
   private def toLowerCase(headers: Map[String, IndexedSeq[String]]): Map[String, IndexedSeq[String]] = headers.map(e ⇒ (e._1.toLowerCase, e._2))

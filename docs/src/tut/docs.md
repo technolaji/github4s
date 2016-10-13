@@ -14,7 +14,7 @@ import github4s.Github
 val accessToken = sys.props.get("token")
 ```
 
-WIP: Every Github4s api returns a `Free[GHResponse[A], A]` where `GHResonse[A]` is a type alias for `GHException Xor GHResult[A]`. GHResult contains the result `[A]` given by Github, but also the status code of the response and headers:
+WIP: Every Github4s api returns a `Free[GHResponse[A], A]` where `GHResonse[A]` is a type alias for `Either[GHException, GHResult[A]]`. GHResult contains the result `[A]` given by Github, but also the status code of the response and headers:
 
 ```scala
 case class GHResult[A](result: A, statusCode: Int, headers: Map[String, IndexedSeq[String]])
@@ -39,14 +39,14 @@ val u1 = user1.exec[Eval].value
 WIP: As mentioned above `u1` should have an `GHResult[User]` in the right.
 
 ```tut:invisible
-import cats.data.Xor
+import cats.implicits._
 import github4s.GithubResponses.GHResult
 ```
 
 ```tut:book
 u1 match {
-  case Xor.Right(GHResult(result, status, headers)) => result.login
-  case Xor.Left(e) => e.getMessage
+  case Right(GHResult(result, status, headers)) => result.login
+  case Left(e) => e.getMessage
 }
 ```
 

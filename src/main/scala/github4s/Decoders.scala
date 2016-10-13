@@ -2,7 +2,6 @@ package github4s
 
 import github4s.free.domain._
 import io.circe._, io.circe.generic.auto._, io.circe.jawn._, io.circe.syntax._
-import cats.data.Xor
 
 /** Implicit circe decoders of domains objects */
 object Decoders {
