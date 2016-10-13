@@ -195,7 +195,7 @@ class ApiSpec
 
   it should "return error on Left when no accessToken is provided" in {
     val response = users.getAuth(None)
-    response should be('right)
+    response should be('left)
   }
 
   "Users >> GetUsers" should "return users for a valid since value" in {
