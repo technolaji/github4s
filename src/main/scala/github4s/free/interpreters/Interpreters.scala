@@ -4,7 +4,7 @@ import cats.implicits._
 import cats.{ ApplicativeError, Eval, MonadError, ~> }
 import github4s.GithubDefaultUrls._
 import github4s.api.{ Auth, Gists, Repos, Users }
-import github4s.app.{ COGH01, GitHub4s }
+import github4s.app.{ COGH01, COGH02, GitHub4s }
 import github4s.free.algebra._
 import io.circe.Decoder
 import simulacrum.typeclass
@@ -21,7 +21,8 @@ trait Interpreters {
     C: Capture[M]
   ): GitHub4s ~> M = {
     val c01interpreter: COGH01 ~> M = repositoryOpsInterpreter[M] or userOpsInterpreter[M]
-    val all: GitHub4s ~> M = authOpsInterpreter[M] or c01interpreter
+    val c02interpreter: COGH02 ~> M = gistOpsInterpreter[M] or c01interpreter
+    val all: GitHub4s ~> M = authOpsInterpreter[M] or c02interpreter
     all
   }
 

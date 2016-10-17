@@ -1,5 +1,7 @@
 package github4s.utils
 
+import github4s.free.domain.GistFile
+
 import scalaj.http.HttpConstants._
 
 trait TestUtils {
@@ -33,9 +35,15 @@ trait TestUtils {
   val invalidSinceInt = 999999999
 
   val okStatusCode = 200
+  val createdStatusCode = 201
   val unauthorizedStatusCode = 401
   val notFoundStatusCode = 404
 
   val validAnonParameter = "true"
   val invalidAnonParameter = "X"
+
+  val validGistDescription = "A Gist"
+  val validGistPublic = true
+  val validGistFile = GistFile("val meaningOfLife = 42")
+  val validGistFiles = Map("file1.scala" → validGistFile)
 }

@@ -177,13 +177,11 @@ object Decoders {
       id ← c.downField("id").as[String]
       description ← c.downField("description").as[String]
       public ← c.downField("public").as[Boolean]
-      owner ← c.downField("owner").as[User]
     } yield Gist(
       url         = url,
       id          = id,
       description = description,
-      public      = public,
-      owner       = owner
+      public      = public
     )
   }
 

@@ -4,8 +4,7 @@ case class Gist(
   url: String,
   id: String,
   description: String,
-  public: Boolean,
-  owner: User
+  public: Boolean
 )
 
 case class GistFile(
