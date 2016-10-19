@@ -27,8 +27,7 @@ class GistOps[F[_]](implicit I: Inject[GistOp, F]) {
     public: Boolean,
     files: Map[String, GistFile],
     accessToken: Option[String] = None
-  ): Free[F, GHResponse[Gist]] =
-    Free.inject[GistOp, F](NewGist(description, public, files))
+  ): Free[F, GHResponse[Gist]] = Free.inject[GistOp, F](NewGist(description, public, files, accessToken))
 }
 
 /**

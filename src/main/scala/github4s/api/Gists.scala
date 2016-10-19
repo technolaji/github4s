@@ -26,4 +26,5 @@ class Gists(implicit urls: GithubApiUrls) {
       "gists",
       data = NewGistRequest(description, public, files).asJson.noSpaces
     )
+
 }

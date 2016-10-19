@@ -73,8 +73,7 @@ class GHGists(accessToken: Option[String] = None)(implicit O: GistOps[GitHub4s])
   def newGist(
     description: String,
     public: Boolean,
-    files: Map[String, GistFile],
-    accessToken: Option[String]
+    files: Map[String, GistFile]
   ): GHIO[GHResponse[Gist]] =
     O.newGist(description, public, files, accessToken)
 }
