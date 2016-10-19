@@ -1,8 +1,8 @@
 package github4s
 
-import github4s.GithubResponses.{ GHResponse, GHIO }
+import github4s.GithubResponses.{ GHIO, GHResponse }
 import github4s.app._
-import github4s.free.algebra.{ AuthOps, RepositoryOps, UserOps }
+import github4s.free.algebra.{ AuthOps, GistOps, RepositoryOps, UserOps }
 import github4s.free.domain._
 
 class GHUsers(accessToken: Option[String] = None)(implicit O: UserOps[GitHub4s]) {
@@ -67,4 +67,13 @@ class GHAuth(accessToken: Option[String] = None)(implicit O: AuthOps[GitHub4s]) 
     state: String
   ): GHIO[GHResponse[OAuthToken]] =
     O.getAccessToken(client_id, client_secret, code, redirect_uri, state)
+}
+
+class GHGists(accessToken: Option[String] = None)(implicit O: GistOps[GitHub4s]) {
+  def newGist(
+    description: String,
+    public: Boolean,
+    files: Map[String, GistFile]
+  ): GHIO[GHResponse[Gist]] =
+    O.newGist(description, public, files, accessToken)
 }

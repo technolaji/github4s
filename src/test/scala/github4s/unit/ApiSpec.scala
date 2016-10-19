@@ -1,6 +1,6 @@
 package github4s.unit
 
-import github4s.api.{ Users, Repos, Auth }
+import github4s.api.{ Auth, Gists, Repos, Users }
 import github4s.free.domain.Pagination
 import github4s.utils.{ DummyGithubUrls, MockGithubApiServer, TestUtils }
 import org.scalatest._
@@ -16,6 +16,7 @@ class ApiSpec
   val auth = new Auth
   val repos = new Repos
   val users = new Users
+  val gists = new Gists
 
   "Auth >> NewAuth" should "return a valid token when valid credential is provided" in {
     val response = auth.newAuth(validUsername, "", validScopes, validNote, validClientId, "")
@@ -216,6 +217,16 @@ class ApiSpec
     response.toOption map { r ⇒
       r.result.isEmpty shouldBe true
       r.statusCode shouldBe okStatusCode
+    }
+
+  }
+
+  "Gists >> PostGist" should "return the provided gist for a valid request" in {
+    val response = gists.newGist(validGistDescription, validGistPublic, validGistFiles, accessToken)
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.statusCode shouldBe createdStatusCode
     }
 
   }

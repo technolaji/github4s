@@ -171,4 +171,18 @@ object Decoders {
     )
   }
 
+  implicit val decodeGist: Decoder[Gist] = Decoder.instance { c ⇒
+    for {
+      url ← c.downField("url").as[String]
+      id ← c.downField("id").as[String]
+      description ← c.downField("description").as[String]
+      public ← c.downField("public").as[Boolean]
+    } yield Gist(
+      url         = url,
+      id          = id,
+      description = description,
+      public      = public
+    )
+  }
+
 }
