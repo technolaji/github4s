@@ -222,7 +222,6 @@ class ApiSpec
   }
 
   "Gists >> PostGist" should "return the provided gist for a valid request" in {
-    println(s"******* Token: $accessToken")
     val response = gists.newGist(validGistDescription, validGistPublic, validGistFiles, accessToken)
     response should be('right)
 
