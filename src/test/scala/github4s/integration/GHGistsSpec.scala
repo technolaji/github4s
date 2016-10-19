@@ -12,7 +12,7 @@ class GHGistsSpec extends FlatSpec with Matchers with TestUtils {
   "Gists >> Post" should "return the provided gist" in {
     val response = Github(accessToken)
       .gists
-      .newGist(validGistDescription, validGistPublic, validGistFiles, accessToken)
+      .newGist(validGistDescription, validGistPublic, validGistFiles)
       .exec[Id]
     response should be('right)
     response.toOption map { r ⇒
