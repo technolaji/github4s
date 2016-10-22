@@ -1,232 +1,81 @@
-<!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]--><!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]--><!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]--><!--[if gt IE 8]><!--><html class="no-js" lang="">
-<!--<![endif]-->
+<html><head><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><title>github4s</title><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="Github API wrapper written in Scala" /><meta name="author" content="47 Degrees" /><meta name="og:image" content="/github4s/img/poster.png" /><meta name="og:title" content="github4s" /><meta name="og:site_name" content="github4s" /><meta name="og:url" content="https://github.com/com.fortysevendeg/github4s" /><meta name="og:type" content="website" /><meta name="og:description" content="Github API wrapper written in Scala" /><meta name="twitter:image" content="/github4s/img/poster.png" /><meta name="twitter:card" content="summary_large_image" /><meta name="twitter:site" content="" /><link rel="icon" type="image/png" href="/github4s/img/favicon.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/styles/default.min.css" /><link rel="stylesheet" href="/github4s/css/style.css" /><link rel="stylesheet" href="/github4s/css/palette.css" /><link rel="stylesheet" href="/github4s/css/override.css" /></head><body class="docs"><div id="wrapper"><div id="sidebar-wrapper"><ul id="sidebar" class="sidebar-nav"><li class="sidebar-brand"><a href="/github4s/" class="brand"><div class="brand-wrapper" style="background:url('/github4s/img/sidebar_brand.png') no-repeat"><span>github4s</span></div></a></li>  <li><a href="/github4s/docs.html" class=" active ">Getting Started</a></li>  <li><a href="/github4s/" class=""></a></li>  <li><a href="/github4s/css/palette.css" class=""></a></li>  <li><a href="/github4s/css/style.css" class=""></a></li> </li></ul></div><div id="page-content-wrapper"><div class="nav"><div class="container-fluid"><div class="row"><div class="col-lg-12"><div class="action-menu pull-left clearfix"><a href="#menu-toggle" id="menu-toggle"><i class="fa fa-bars" aria-hidden="true"></i></a></div><ul class="pull-right"><li class="hidden-xs"><a href="https://github.com/47deg/github4s"><i class="fa fa-eye"></i><span>WATCH<span id="eyes" class="label label-default">--</span></span></a></li><li class="hidden-xs"><a href="https://github.com/47deg/github4s"><i class="fa fa-star-o"></i><span>STARS<span id="stars" class="label label-default">--</span></span></a></li><li><a href="#" onclick="shareSiteTwitter('github4s Github API wrapper written in Scala');"><i class="fa fa-twitter"></i></a></li><li><a href="#" onclick="shareSiteFacebook('github4s Github API wrapper written in Scala');"><i class="fa fa-facebook"></i></a></li><li><a href="#" onclick="shareSiteGoogle();"><i class="fa fa-google-plus"></i></a></li></ul></div></div></div></div><div id="content" data-github-owner="47deg" data-github-repo="github4s"><div class="content-wrapper"><section><h1 id="get-started">Get started</h1>
 
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>Github4s</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="">
-  <meta name="author" content="">
-  <link rel="apple-touch-icon" href="%5BINSERT%20apple-tuch-icon.png%5D">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/tomorrow.min.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-  <link href="https://rawgit.com/47deg/microsites/cdn/style.css" rel="stylesheet">
-</head>
+<p>WIP: Import</p>
 
-<body class="docs">
-  <!--[if IE]>
-    <script src="https://cdn.jsdelivr.net/html5shiv/3.7.2/html5shiv.min.js"></script>
-  	<script src="https://cdn.jsdelivr.net/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">github4s.Github</span>
+</code></pre>
+</div>
 
-  <div id="wrapper">
-    <div id="sidebar-wrapper">
-      <ul id="sidebar" class="sidebar-nav">
-        <li class="sidebar-brand">
-          <a href="#" data-href="/github4s/">
-            <div class="brand-wrapper" style="background:url('https://rawgit.com/47deg/microsites/cdn/github4s/sidebar_brand.png') no-repeat">
-              <span>Github4s</span>
-            </div>
-          </a>
-        </li>
-      </ul>
-    </div>
-    <div id="page-content-wrapper">
-      <div class="nav">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-lg-12">
-              <div class="action-menu pull-left clearfix">
-                <a href="#menu-toggle" id="menu-toggle"><i class="fa fa-bars" aria-hidden="true"></i></a>
-              </div>
-              <ul class="pull-right">
-                <li class="hidden-xs"><a href="#" data-href="https://github.com/47deg/github4s"><i class="fa fa-eye"></i><span>WATCH (<m id="eyes">--</m>)</span></a></li>
-                <li class="hidden-xs"><a href="#" data-href="https://github.com/47deg/github4s"><i class="fa fa-star-o"></i><span>STARS (<m id="stars">--</m>)</span></a></li>
-                <li><a href="#" onclick="shareSiteTwitter();"><i class="fa fa-twitter"></i></a></li>
-                <li><a href="#" onclick="shareSiteFacebook();"><i class="fa fa-facebook"></i></a></li>
-                <li><a href="#" onclick="shareSiteGoogle();"><i class="fa fa-google-plus"></i></a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!--Heading-->
-      <div id="content"><div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="n">scala</span><span class="o">&gt;</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span>
-<span class="n">res0</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">4</span>
-</code></pre></div></div>
+<p>WIP: Every Github4s api returns a <code class="highlighter-rouge">Free[GHResponse[A], A]</code> where <code class="highlighter-rouge">GHResonse[A]</code> is a type alias for <code class="highlighter-rouge">Either[GHException, GHResult[A]]</code>. GHResult contains the result <code class="highlighter-rouge">[A]</code> given by Github, but also the status code of the response and headers:</p>
 
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">case</span> <span class="k">class</span> <span class="nc">GHResult</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">result</span><span class="k">:</span> <span class="kt">A</span><span class="o">,</span> <span class="n">statusCode</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">headers</span><span class="k">:</span> <span class="kt">Map</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">IndexedSeq</span><span class="o">[</span><span class="kt">String</span><span class="o">]])</span>
+</code></pre>
+</div>
 
-    </div>
-  </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/highlight.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/languages/scala.min.js"></script>
+<p>For geting an user</p>
 
-  <script>
-    jQuery(document).ready(function() {
-      activeLinks();
-      loadStyle();
-      hljs.initHighlightingOnLoad();
-      activeToggle();
-      organizeContent();
-      loadGitHubStats();
-    });
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">user1</span> <span class="k">=</span> <span class="nc">Github</span><span class="o">(</span><span class="n">accessToken</span><span class="o">).</span><span class="n">users</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">"rafaparadela"</span><span class="o">)</span>
+</code></pre>
+</div>
 
-    function loadStyle() {
-      $("<link/>", {
-        rel: "stylesheet",
-        type: "text/css",
-        href: "https://rawgit.com/47deg/microsites/cdn/github4s/palette.css"
-      }).appendTo("head");
-    }
+<p>user1 in this case <code class="highlighter-rouge">Free[GHException Xor GHResult[User], User]</code> and we can run (<code class="highlighter-rouge">foldMap</code>) with <code class="highlighter-rouge">exec[M[_]]</code> where <code class="highlighter-rouge">M[_]</code> represent any type container that implements <code class="highlighter-rouge">MonadError[M, Throwable]</code>, for instance <code class="highlighter-rouge">cats.Eval</code>.</p>
 
-    function organizeContent() {
-      var content = $('#content');
-      var subcontent = $('<div></div>');
-      content.prepend(subcontent);
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.Eval</span>
+<span class="k">import</span> <span class="nn">github4s.Github._</span>
+<span class="k">import</span> <span class="nn">github4s.implicits._</span>
 
-      content.find('h1').each(function(index) {
-        var section = $('<section></section>');
-        subcontent.append(section);
-        var h1 = $(this);
-        var elements = h1.nextUntil('h1');
-        var text = h1.text();
-        var slug = slugify(text) + '-' + index;
-        addSectionToSidebar(text, slug);
-        section.append(makeSectionAnchor(h1, text, slug));
+<span class="k">val</span> <span class="n">u1</span> <span class="k">=</span> <span class="n">user1</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">Eval</span><span class="o">].</span><span class="n">value</span>
+</code></pre>
+</div>
 
-        if (elements.length > 0) {
-          elements.appendTo(section);
-          organizeSubSection(slug, elements);
+<p>WIP: As mentioned above <code class="highlighter-rouge">u1</code> should have an <code class="highlighter-rouge">GHResult[User]</code> in the right.</p>
 
-        }
-      });
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">u1</span> <span class="k">match</span> <span class="o">{</span>
+  <span class="k">case</span> <span class="nc">Right</span><span class="o">(</span><span class="nc">GHResult</span><span class="o">(</span><span class="n">result</span><span class="o">,</span> <span class="n">status</span><span class="o">,</span> <span class="n">headers</span><span class="o">))</span> <span class="k">=&gt;</span> <span class="n">result</span><span class="o">.</span><span class="n">login</span>
+  <span class="k">case</span> <span class="nc">Left</span><span class="o">(</span><span class="n">e</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">e</span><span class="o">.</span><span class="n">getMessage</span>
+<span class="o">}</span>
+<span class="c1">// res1: String = rafaparadela
+</span></code></pre>
+</div>
 
-      removeEmptyList();
-    }
+<p>WIP:  With <code class="highlighter-rouge">Id</code></p>
 
-    function organizeSubSection(s, children) {
-      children.filter('h2').each(function(index, el) {
-        var h2 = $(this);
-        var text = h2.text();
-        var slug = s + '-' + slugify(text) + '-' + index;
-        var a = makeSectionAnchor(h2, text, slug);
-        addSubSectionToSidebar(text, slug, s);
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.Id</span>
 
-      });
-    }
+<span class="k">val</span> <span class="n">u2</span> <span class="k">=</span> <span class="nc">Github</span><span class="o">(</span><span class="n">accessToken</span><span class="o">).</span><span class="n">users</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">"raulraja"</span><span class="o">).</span><span class="n">exec</span><span class="o">[</span><span class="kt">Id</span><span class="o">]</span>
+</code></pre>
+</div>
 
-    function makeSectionAnchor(h, text, slug) {
-      var a = $('<a></a>').attr({
-        'class': 'anchor',
-        'name': slug,
-        'href': '#' + slug
-      });
-      a.append(h.clone());
-      h.replaceWith(a);
-      return a;
-    }
+<p>WIP: With <code class="highlighter-rouge">Future</code></p>
 
-    function addSectionToSidebar(text, slug) {
-      var ul = $('<ul></ul>').addClass('sub_section');
-      var a = $('<a href="#' + slug + '">' + text + '<span><i class="fa fa-angle-right"></i></span></a>');
-      var li = $('<li class="' + slug + '"></li>');
-      li.append(a).append(ul);
-      $('#sidebar').append(li);
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">github4s.implicits._</span>
+<span class="k">import</span> <span class="nn">scala.concurrent.Future</span>
+<span class="k">import</span> <span class="nn">scala.concurrent.ExecutionContext.Implicits.global</span>
+<span class="k">import</span> <span class="nn">scala.concurrent.duration._</span>
+<span class="k">import</span> <span class="nn">scala.concurrent.Await</span>
 
-      a.click(function(event) {
-        $('#sidebar li').add('#sidebar a').removeClass('active');
-        $('#sidebar .sub_section').not(ul).slideUp();
-        ul.slideToggle('fast');
-        li.add(a).toggleClass('active');
+<span class="k">val</span> <span class="n">u3</span> <span class="k">=</span> <span class="nc">Github</span><span class="o">(</span><span class="n">accessToken</span><span class="o">).</span><span class="n">users</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">"dialelo"</span><span class="o">).</span><span class="n">exec</span><span class="o">[</span><span class="kt">Future</span><span class="o">]</span>
+<span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">u3</span><span class="o">,</span> <span class="mf">2.</span><span class="n">seconds</span><span class="o">)</span>
+</code></pre>
+</div>
 
-      });
-    }
+<p>WIP: With <code class="highlighter-rouge">scalaz.Task</code></p>
 
-    function addSubSectionToSidebar(text, slug, s) {
-      var ul = $('#sidebar li.' + s + ' ul');
-      var li = $('<li class="' + slug + '"><a href="#' + slug + '">' + text + '</a></li>');
-      ul.append(li);
-    }
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">scalaz.concurrent.Task</span>
+<span class="k">import</span> <span class="nn">github4s.scalaz.implicits._</span>
 
-    function removeEmptyList() {
-      $('#sidebar>li').not('.sidebar-brand').each(function(index, el) {
-        var li = $(this);
-        var children = li.find('li');
-        if (children.size() == 0) {
-          li.find('span').remove();
-        }
-      });
-    }
+<span class="k">val</span> <span class="n">u4</span> <span class="k">=</span> <span class="nc">Github</span><span class="o">(</span><span class="n">accessToken</span><span class="o">).</span><span class="n">users</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">"franciscodr"</span><span class="o">).</span><span class="n">exec</span><span class="o">[</span><span class="kt">Task</span><span class="o">]</span>
+<span class="n">u4</span><span class="o">.</span><span class="n">attemptRun</span>
+</code></pre>
+</div>
 
-    function slugify(text) {
-      return text.toString().toLowerCase()
-        .replace(/\s+/g, '-') // Replace spaces with -
-        .replace(/[^\w\-]+/g, '') // Remove all non-word chars
-        .replace(/\-\-+/g, '-') // Replace multiple - with single -
-        .replace(/^-+/, '') // Trim - from start of text
-        .replace(/-+$/, ''); // Trim - from end of text
-    }
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">user1</span> <span class="k">=</span> <span class="nc">Github</span><span class="o">(</span><span class="n">accessToken</span><span class="o">).</span><span class="n">users</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">"rafaparadela"</span><span class="o">).</span><span class="n">exec</span><span class="o">[</span><span class="kt">Eval</span><span class="o">].</span><span class="n">value</span>
+<span class="c1">// user1: github4s.GithubResponses.GHResponse[github4s.free.domain.User] = Right(GHResult(User(315070,rafaparadela,https://avatars.githubusercontent.com/u/315070?v=3,https://github.com/rafaparadela,Some(Rafa Paradela),Some(rafa.p@47deg.com)),200,Map(etag -&gt; Vector(W/"a11e9f62acdd69ed617dbaeee280f4fa"), server -&gt; Vector(GitHub.com), x-served-by -&gt; Vector(3e3b9690823fb031da84658eb58aa83b), x-xss-protection -&gt; Vector(1; mode=block), access-control-allow-origin -&gt; Vector(*), cache-control -&gt; Vector(public, max-age=60, s-maxage=60), content-security-policy -&gt; Vector(default-src 'none'), x-ratelimit-remaining -&gt; Vector(45), access-control-expose-headers -&gt; Vector(ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll...
+</span>
+<span class="n">user1</span> <span class="n">should</span> <span class="n">be</span> <span class="o">(</span><span class="ss">'right)</span>
 
-    function activeToggle() {
-      $("#menu-toggle").click(function(e) {
-        e.preventDefault();
-        $("#wrapper").toggleClass("toggled");
-      });
-    }
-
-    function activeLinks() {
-      $('a[data-href]').each(function(index, el) {
-        $(this).attr('href', $(this).attr('data-href'));
-      });
-    }
-
-    var baseURL = window.location.href;
-
-    function shareSiteFacebook() {
-      var title = 'Github4s: A GitHub API wrapper written in Scala';
-      launchPopup('http://www.facebook.com/sharer/sharer.php?u='+baseURL+'&t=' + title);
-    }
-
-    function shareSiteTwitter() {
-      var text = 'Github4s: A GitHub API wrapper written in Scala '+baseURL;
-      launchPopup('https://twitter.com/home?status=' + text);
-      return false;
-    }
-
-    function shareSiteGoogle() {
-      launchPopup('https://plus.google.com/share?url='+baseURL);
-      return false;
-    }
-
-    function launchPopup(url) {
-      window.open(url, 'Social Share', 'height=320, width=640, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, directories=no, status=no');
-    }
-
-    function loadGitHubStats() {
-
-      var gitHubAPI = "https://api.github.com/repos/" + "47deg/github4s" + "?callback=?";
-      $.getJSON(gitHubAPI).done(function(data) {
-        $('#eyes').text(data.data.subscribers_count);
-        $('#stars').text(data.data.stargazers_count);
-      });
-
-    }
-  </script>
-
-</body>
-
-
-
-
-
-
-
-
-
-
-</html>
+<span class="n">user1</span><span class="o">.</span><span class="n">toOption</span> <span class="n">map</span> <span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">login</span> <span class="n">shouldBe</span> <span class="s">"rafaparadela"</span><span class="o">)</span>
+<span class="c1">// res8: Option[Unit] = Some(())
+</span></code></pre>
+</div>
+</section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/highlight.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/languages/scala.min.js"></script><script src="/github4s/js/main.js"></script></body></html>
