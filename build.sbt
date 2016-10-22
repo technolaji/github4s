@@ -18,7 +18,11 @@ lazy val buildSettings = Seq(
     headers := Map(
       "scala" -> MIT("2016", "47 Degrees, LLC. <http://www.47deg.com>")
     )
-  ) ++ reformatOnCompileSettings
+  ) ++ reformatOnCompileSettings ++
+    sharedReleaseProcess ++
+    pgpSettings ++
+    credentialSettings ++
+    sharedPublishSettings(gh, dev)
 
 lazy val micrositeSettings = Seq(
   micrositeName := "github4s",
