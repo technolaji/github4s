@@ -28,7 +28,7 @@ import github4s.{GithubApiUrls, HttpClient}
 import io.circe.generic.auto._
 import io.circe.syntax._
 import cats.implicits._
-import scalaj.http.HttpConstants._
+//import scalaj.http.HttpConstants._
 
 /** Factory to encapsulate calls related to Auth operations  */
 class Auth(implicit urls: GithubApiUrls) {
