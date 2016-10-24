@@ -1,96 +1,78 @@
-import com.typesafe.sbt.SbtGhPages.ghpages
-import com.typesafe.sbt.SbtGit.git
+import de.heikoseeberger.sbtheader.license.MIT
+import catext.Dependencies._
 
-import scalariform.formatter.preferences._
-import com.typesafe.sbt.SbtScalariform
-import com.typesafe.sbt.SbtScalariform.ScalariformKeys
-
+val dev  = Seq(Dev("47 Degrees (twitter: @47deg)", "47 Degrees"))
+val gh   = GitHubSettings("com.fortysevendeg", "github4s", "47 Degrees", mit)
+val vAll = Versions(versions, libraries, scalacPlugins)
 
 lazy val buildSettings = Seq(
-  organization := "com.fortysevendeg",
-  organizationName := "47 Degrees",
-  description := "Github API wrapper written in Scala",
-  startYear := Option(2016),
-  homepage := Option(url("http://47deg.github.io/github4s/")),
-  organizationHomepage := Option(new URL("http://47deg.com")),
-  scalaVersion := "2.11.8",
-  licenses := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
+    name := gh.proj,
+    organization := gh.org,
+    organizationName := gh.publishOrg,
+    description := "Github API wrapper written in Scala",
+    startYear := Option(2016),
+    homepage := Option(url("http://47deg.github.io/github4s/")),
+    organizationHomepage := Option(new URL("http://47deg.com")),
+    scalaVersion := "2.11.8",
+    scalafmtConfig in ThisBuild := Some(file(".scalafmt")),
+    headers := Map(
+      "scala" -> MIT("2016", "47 Degrees, LLC. <http://www.47deg.com>")
+    )
+  ) ++ reformatOnCompileSettings ++
+    sharedReleaseProcess ++
+    pgpSettings ++
+    credentialSettings ++
+    sharedPublishSettings(gh, dev)
+
+lazy val micrositeSettings = Seq(
+  micrositeName := "github4s",
+  micrositeDescription := "Github API wrapper written in Scala",
+  micrositeBaseUrl := "github4s",
+  micrositeDocumentationUrl := "/github4s/docs.html",
+  micrositeGithubOwner := "47deg",
+  micrositeGithubRepo := "github4s",
+  includeFilter in makeSite := "*.html" | "*.css" | "*.png" | "*.jpg" | "*.gif" | "*.js" | "*.swf" | "*.md"
 )
 
-lazy val cats = "0.7.2"
-lazy val circe = "0.5.2"
-
-lazy val dependencies = libraryDependencies ++= Seq(
-  "org.typelevel" %% "cats-free" % cats,
-  "org.scalaj" %% "scalaj-http" % "2.2.1",
-  "io.circe" %% "circe-core" % circe,
-  "io.circe" %% "circe-generic" % circe,
-  "io.circe" %% "circe-parser" % circe,
-  "com.github.mpilquist" %% "simulacrum" % "0.8.0",
-  "org.scalatest" %% "scalatest" % "2.2.6" % "test",
-  "org.mock-server" % "mockserver-netty" % "3.10.4" % "test",
-  compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
-)
-
-lazy val scalariformSettings = SbtScalariform.scalariformSettings ++ Seq(
-  ScalariformKeys.preferences := ScalariformKeys.preferences.value
-      .setPreference(SpacesWithinPatternBinders, true)
-      .setPreference(SpaceBeforeColon, false)
-      .setPreference(SpaceInsideParentheses, false)
-      .setPreference(SpaceInsideBrackets, false)
-      .setPreference(SpacesAroundMultiImports, true)
-      .setPreference(PreserveSpaceBeforeArguments, false)
-      .setPreference(CompactStringConcatenation, false)
-      .setPreference(DanglingCloseParenthesis, Force)
-      .setPreference(CompactControlReadability, false)
-      .setPreference(AlignParameters, false)
-      .setPreference(AlignArguments, true)
-      .setPreference(AlignSingleLineCaseStatements, false)
-      .setPreference(DoubleIndentClassDeclaration, false)
-      .setPreference(IndentLocalDefs, false)
-      .setPreference(MultilineScaladocCommentsStartOnFirstLine, false)
-      .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
-      .setPreference(RewriteArrowSymbols, true))
-
-
-lazy val noPublishSettings = Seq(
-  publish := (),
-  publishLocal := (),
-  publishArtifact := false)
-
-lazy val tutDirectoriesSettings = Seq(
-  tutSourceDirectory := sourceDirectory.value / "tut",
-  tutTargetDirectory := sourceDirectory.value / "jekyll"
-)
-
-lazy val github4sSettings = buildSettings ++ dependencies ++ scalariformSettings
-
-lazy val ghpagesSettings = ghpages.settings ++ Seq(git.remoteRepo := "git@github.com:47deg/github4s.git")
-
-lazy val docsSettings = buildSettings ++ docsDependencies ++ noPublishSettings ++ tutSettings ++ tutDirectoriesSettings ++ ghpagesSettings
+lazy val dependencies = addLibs(vAll,
+                                "cats-free",
+                                "circe-core",
+                                "circe-generic",
+                                "circe-parser",
+                                "simulacrum") ++
+    addTestLibs(vAll, "scalatest") ++
+    addCompilerPlugins(vAll, "paradise") ++
+    Seq(
+      libraryDependencies ++= Seq(
+        "org.scalaj" %% "scalaj-http" % "2.2.1",
+        "org.mock-server" % "mockserver-netty" % "3.10.4" % "test"
+      ))
 
 lazy val docsDependencies = libraryDependencies ++= Seq(
-  "com.ironcorelabs" %% "cats-scalatest" % "1.1.2" % "test",
-  "org.mock-server" % "mockserver-netty" % "3.10.4" % "test"
-)
+    "com.ironcorelabs" %% "cats-scalatest"  % "1.1.2"  % "test",
+    "org.mock-server"  % "mockserver-netty" % "3.10.4" % "test"
+  )
+
+lazy val scalazDependencies = addLibs(vAll, "scalaz-concurrent")
 
 lazy val github4s = (project in file("."))
-    .settings(moduleName := "github4s")
-    .settings(github4sSettings:_*)
+  .settings(moduleName := "github4s")
+  .settings(buildSettings: _*)
+  .settings(dependencies: _*)
+  .enablePlugins(AutomateHeaderPlugin)
 
 lazy val docs = (project in file("docs"))
-    .settings(moduleName := "github4s-docs")
-    .settings(docsSettings: _*)
-    .enablePlugins(JekyllPlugin)
-    .dependsOn(scalaz)
-
-lazy val scalazDependencies = libraryDependencies ++= Seq(
-  "org.scalaz" %% "scalaz-concurrent" % "7.3.0-M5"
-)
-
-lazy val scalazSettings = buildSettings ++ scalazDependencies ++ scalariformSettings
+  .dependsOn(scalaz)
+  .settings(moduleName := "github4s-docs")
+  .settings(buildSettings: _*)
+  .settings(micrositeSettings: _*)
+  .settings(docsDependencies: _*)
+  .settings(noPublishSettings: _*)
+  .enablePlugins(MicrositesPlugin)
 
 lazy val scalaz = (project in file("scalaz"))
-    .settings(moduleName := "github4s-scalaz")
-    .settings(scalazSettings: _*)
-    .dependsOn(github4s)
+  .settings(moduleName := "github4s-scalaz")
+  .settings(buildSettings: _*)
+  .settings(scalazDependencies: _*)
+  .dependsOn(github4s)
+  .enablePlugins(AutomateHeaderPlugin)
