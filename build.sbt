@@ -19,6 +19,7 @@ lazy val buildSettings = Seq(
       "scala" -> MIT("2016", "47 Degrees, LLC. <http://www.47deg.com>")
     )
   ) ++ reformatOnCompileSettings ++
+    miscSettings ++
     sharedReleaseProcess ++
     pgpSettings ++
     credentialSettings ++
