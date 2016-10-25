@@ -1,9 +1,14 @@
 import de.heikoseeberger.sbtheader.license.MIT
 import catext.Dependencies._
+import PgpKeys.gpgCommand
 
 val dev  = Seq(Dev("47 Degrees (twitter: @47deg)", "47 Degrees"))
 val gh   = GitHubSettings("com.fortysevendeg", "github4s", "47 Degrees", mit)
 val vAll = Versions(versions, libraries, scalacPlugins)
+
+pgpPassphrase := Some(sys.env.getOrElse("PGP_PASSPHRASE", "").toCharArray)
+pgpPublicRing := file(s"${sys.env.getOrElse("PGP_FOLDER", ".")}/pubring.gpg")
+pgpSecretRing := file(s"${sys.env.getOrElse("PGP_FOLDER", ".")}/secring.gpg")
 
 lazy val buildSettings = Seq(
     name := gh.proj,
@@ -20,8 +25,8 @@ lazy val buildSettings = Seq(
     )
   ) ++ reformatOnCompileSettings ++
     sharedCommonSettings ++
+    miscSettings ++
     sharedReleaseProcess ++
-    pgpSettings ++
     credentialSettings ++
     sharedPublishSettings(gh, dev)
 
