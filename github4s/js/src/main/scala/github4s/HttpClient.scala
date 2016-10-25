@@ -21,66 +21,33 @@
 
 package github4s
 
-import io.circe.Decoder
-
 import scala.concurrent.Future
-import github4s.GithubResponses.GHResponse
-
-import fr.hmil.roshttp.{HttpRequest, Method, HttpResponse}
+import fr.hmil.roshttp.{HttpRequest, HttpResponse, Method}
 import fr.hmil.roshttp.body.BodyPart
-
 import java.nio.ByteBuffer
 
-class HttpClient {
+import github4s.GithubResponses.GHResponse
+import github4s.HttpClient.Headers
 
-  type Headers = Map[String, String]
-
-  def post[A](
-      url: String,
-      secretKey: String,
-      method: String = "post",
-      headers: Headers = Map.empty,
-      data: String
-  )(implicit D: Decoder[A]): Future[GHResponse[A]] =
-    GithubResponses.toEntity(
-      HttpRequestBuilder(url = url, httpVerb = method)
-        .withHeaders(headers + (authHeaderName -> secretKey))
-        .withBody(data)
-        .run)
-
-  def postAuth[A](
-      method: String,
-      headers: Map[String, String] = Map.empty,
-      data: String
-  )(implicit D: Decoder[A]): Future[GHResponse[A]] =
-    GithubResponses.toEntity(
-      HttpRequestBuilder(buildURL(method)).withHeaders(headers).withData(data).run)
+case class CirceJSONBody(value: String) extends BodyPart {
+  override def contentType: String = s"application/json; charset=utf-8"
+  override def content: ByteBuffer = ByteBuffer.wrap(value.getBytes("utf-8"))
 }
 
-case class HttpRequestBuilder(
-    url: String,
-    httpVerb: String,
-    headers: Headers = Map.empty[String, String],
-    body: String = ""
-) {
+object HttpClientExtensionJS {
 
-  case class CirceJSONBody(value: String) extends BodyPart {
-    override def contentType: String = s"application/json; charset=utf-8"
+  implicit object ExtensionJVM extends HttpClientExtension[GHResponse[HttpResponse]] {
+    def run(rb: HttpRequestBuilder): Future[GHResponse[HttpResponse]] = {
+      val request = HttpRequest(rb.url)
+        .withMethod(Method(rb.httpVerb.verb))
+        .withHeader("content-type", "application/json")
+        .withHeaders(rb.headers.toList: _*)
 
-    override def content: ByteBuffer = ByteBuffer.wrap(value.getBytes("utf-8"))
+      rb.data match {
+        case Some(d) ⇒ request.send(CirceJSONBody(d)).map(r => GithubResponses.toEntity(r))
+        case _       ⇒ request.send().map(r => r)
+      }
+    }
   }
 
-  def withHeaders(headers: Headers) = copy(headers = headers)
-
-  def withBody(body: String) = copy(body = body)
-
-  def run: Future[HttpResponse] = {
-
-    val request = HttpRequest(url)
-      .withMethod(Method(httpVerb))
-      .withHeader("content-type", "application/json")
-      .withHeaders(headers.toList: _*)
-
-    request.send(CirceJSONBody(body))
-  }
 }

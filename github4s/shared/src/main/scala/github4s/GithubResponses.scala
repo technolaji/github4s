@@ -28,6 +28,7 @@ import io.circe.Decoder
 import io.circe.parser._
 import io.circe.generic.auto._
 import scalaj.http.HttpResponse
+import fr.hmil.roshttp.{HttpResponse => RosHttpResponse}
 
 object GithubResponses {
 
@@ -59,6 +60,20 @@ object GithubResponses {
       case r ⇒
         Either.left(
           UnexpectedException(s"Failed invoking get with status : ${r.code}, body : \n ${r.body}"))
+    }
+
+  def toEntity[A](response: RosHttpResponse)(implicit D: Decoder[A]): GHResponse[A] =
+    response match {
+      case r if r.statusCode < 400 ⇒
+        decode[A](r.body).fold(
+          e ⇒ Either.left(JsonParsingException(e.getMessage, r.body)),
+          result ⇒ Either.right(
+            GHResult(result, r.statusCode, toLowerCase(r.headers.flatMap(m => Map(m._1, IndexedSeq(m._2)))))
+          )
+        )
+      case r ⇒
+        Either.left(
+          UnexpectedException(s"Failed invoking get with status : ${r.statusCode}, body : \n ${r.body}"))
     }
 
   def toEmpty(response: HttpResponse[String]): GHResponse[Unit] = response match {

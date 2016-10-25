@@ -21,31 +21,10 @@
 
 package github4s
 
-import scalaj.http._
+import github4s.GithubResponses.GHResponse
+import simulacrum.typeclass
 
-object HttpClientExtensionJVM {
-
-  implicit object ExtensionJVM extends HttpClientExtension[HttpResponse] {
-
-    def run(rb: HttpRequestBuilder) = {
-
-      val connTimeoutMs: Int = 1000
-      val readTimeoutMs: Int = 5000
-
-      val request = Http(rb.url)
-        .method(rb.httpVerb.verb)
-        .option(HttpOptions.connTimeout(connTimeoutMs))
-        .option(HttpOptions.readTimeout(readTimeoutMs))
-        .params(rb.params)
-        .headers(rb.authHeader)
-        .headers(rb.headers)
-
-      rb.data match {
-        case Some(d) ⇒ request.postData(d).header("content-type", "application/json").asString
-        case _       ⇒ request.asString
-      }
-    }
-
-  }
-
+@typeclass
+trait HttpClientExtension[A] extends HttpClient {
+  def run[M[_]](rb: HttpRequestBuilder): M[GHResponse[A]]
 }
