@@ -44,15 +44,15 @@ object HttpClientExtensionJS {
 
   implicit def extensionJS: HttpClientExtension[HttpResponse] =
     new HttpClientExtension[HttpResponse] {
-      def run[HttpResponse](rb: HttpRequestBuilder): Future[GHResponse[HttpResponse]] = {
+      def run[A](rb: HttpRequestBuilder)(implicit D: Decoder[A]): GHResponse[A] = {
         val request = HttpRequest(rb.url)
           .withMethod(Method(rb.httpVerb.verb))
           .withHeader("content-type", "application/json")
           .withHeaders(rb.headers.toList: _*)
 
         rb.data match {
-          case Some(d) ⇒ request.send(CirceJSONBody(d)).map(r => toEntity[HttpResponse](r))
-          case _       ⇒ request.send().map(r => toEntity[HttpResponse](r))
+          case Some(d) ⇒ request.send(CirceJSONBody(d)).map(r => toEntity[A](r))
+          case _       ⇒ request.send().map(r => toEntity[A](r))
         }
       }
     }

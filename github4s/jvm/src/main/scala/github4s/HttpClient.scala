@@ -37,7 +37,7 @@ object HttpClientExtensionJVM {
   implicit def extensionJVM: HttpClientExtension[HttpResponse[String]] =
     new HttpClientExtension[HttpResponse[String]] {
 
-      def run[HttpResponse[String]](rb: HttpRequestBuilder): GHResponse[HttpResponse[String]] = {
+      def run[A](rb: HttpRequestBuilder)(implicit D: Decoder[A]): GHResponse[A] = {
 
         val connTimeoutMs: Int = 1000
         val readTimeoutMs: Int = 5000
@@ -52,9 +52,8 @@ object HttpClientExtensionJVM {
 
         rb.data match {
           case Some(d) ⇒
-            toEntity[HttpResponse[String]](
-              request.postData(d).header("content-type", "application/json").asString)
-          case _ ⇒ toEntity[HttpResponse[String]](request.asString)
+            toEntity[A](request.postData(d).header("content-type", "application/json").asString)
+          case _ ⇒ toEntity[A](request.asString)
         }
       }
 

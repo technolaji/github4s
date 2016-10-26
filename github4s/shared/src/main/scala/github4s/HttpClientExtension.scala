@@ -22,9 +22,10 @@
 package github4s
 
 import github4s.GithubResponses.GHResponse
+import io.circe.Decoder
 
 import scala.language.higherKinds
 
 trait HttpClientExtension[C] extends HttpClient[C] {
-  def run[A](rb: HttpRequestBuilder): GHResponse[A]
+  def run[A](rb: HttpRequestBuilder)(implicit D: Decoder[A]): GHResponse[A]
 }
