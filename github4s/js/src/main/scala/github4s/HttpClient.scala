@@ -40,7 +40,7 @@ case class CirceJSONBody(value: String) extends BodyPart {
   override def content: ByteBuffer = ByteBuffer.wrap(value.getBytes("utf-8"))
 }
 
-object HttpClientExtensionJS {
+trait HttpClientExtensionJS {
 
   implicit def extensionJS: HttpClientExtension[HttpResponse, Future] =
     new HttpClientExtension[HttpResponse, Future] {

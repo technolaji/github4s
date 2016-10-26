@@ -46,9 +46,10 @@ lazy val commonDeps = addLibs(vAll,
                                 "circe-generic",
                                 "circe-parser",
                                 "simulacrum") ++
-    addCompilerPlugins(vAll, "paradise")
+    addCompilerPlugins(vAll, "paradise") ++
+Seq(libraryDependencies += "org.scalatest" %%% "scalatest" % "3.0.0-M15" % "test")
 
-lazy val jvmDeps = addTestLibs(vAll, "scalatest") ++ Seq(
+lazy val jvmDeps = Seq(
       libraryDependencies ++= Seq(
         "org.scalaj" %% "scalaj-http" % "2.2.1",
         "org.mock-server" % "mockserver-netty" % "3.10.4" % "test"

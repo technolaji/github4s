@@ -19,25 +19,20 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package github4s.integration
+package github4s
 
 import cats.Id
-import cats.implicits._
-import github4s.Github._
+import github4s.free.interpreters.Interpreters
+import scalaj.http._
 import github4s.implicits._
-import github4s.Github
-import github4s.utils.TestUtils
-import org.scalatest._
+import cats.instances.FutureInstances
 
-class GHGistsSpec extends FlatSpec with Matchers with TestUtils {
-  "Gists >> Post" should "return the provided gist" in {
-    val response = Github(accessToken).gists
-      .newGist(validGistDescription, validGistPublic, validGistFiles)
-      .exec[Id]
-    response should be('right)
-    response.toOption map { r ⇒
-      r.result.description shouldBe validGistDescription
-      r.statusCode shouldBe createdStatusCode
-    }
-  }
+trait ImplicitsJVM
+    extends IdInstances
+    with EvalInstances
+    with FutureInstances
+    with HttpClientExtensionJVM {
+
+  implicit val intInstanceIdScalaJ = new Interpreters[Id, HttpResponse[String]] {}
+
 }

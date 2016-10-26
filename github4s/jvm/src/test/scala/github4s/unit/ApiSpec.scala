@@ -26,18 +26,22 @@ import github4s.free.domain.Pagination
 import github4s.utils.{DummyGithubUrls, MockGithubApiServer, TestUtils}
 import org.scalatest._
 import cats.implicits._
+import github4s.ImplicitsJVM
+import scalaj.http._
+import cats.Id
 
 class ApiSpec
     extends FlatSpec
     with Matchers
     with TestUtils
     with MockGithubApiServer
-    with DummyGithubUrls {
+    with DummyGithubUrls
+    with ImplicitsJVM {
 
-  val auth  = new Auth
-  val repos = new Repos
-  val users = new Users
-  val gists = new Gists
+  val auth  = new Auth[HttpResponse[String], Id]
+  val repos = new Repos[HttpResponse[String], Id]
+  val users = new Users[HttpResponse[String], Id]
+  val gists = new Gists[HttpResponse[String], Id]
 
   "Auth >> NewAuth" should "return a valid token when valid credential is provided" in {
     val response = auth.newAuth(validUsername, "", validScopes, validNote, validClientId, "")

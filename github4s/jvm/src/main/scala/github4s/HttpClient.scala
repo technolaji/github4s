@@ -32,7 +32,7 @@ import cats.implicits._
 import github4s.GithubDefaultUrls._
 import github4s.free.interpreters.Capture
 
-object HttpClientExtensionJVM {
+trait HttpClientExtensionJVM {
 
   implicit def extensionJVM[M[_]](
       implicit C: Capture[M]): HttpClientExtension[HttpResponse[String], M] =
