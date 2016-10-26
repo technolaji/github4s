@@ -29,12 +29,15 @@ import github4s.{GithubApiUrls, HttpClient, HttpClientExtension}
 import io.circe.generic.auto._
 import io.circe.syntax._
 import cats.implicits._
+import github4s.free.interpreters.Capture
 import sun.misc.BASE64Encoder
 
 /** Factory to encapsulate calls related to Auth operations  */
-class Auth[C](implicit urls: GithubApiUrls, httpClientImpl: HttpClientExtension[C]) {
+class Auth[C, M[_]](implicit urls: GithubApiUrls,
+                    C: Capture[M],
+                    httpClientImpl: HttpClientExtension[C, M]) {
 
-  val httpClient         = new HttpClient[C]
+  val httpClient         = new HttpClient[C, M]
   lazy val base64Encoder = new BASE64Encoder()
 
   val authorizeUrl   = urls.authorizeUrl
@@ -59,7 +62,7 @@ class Auth[C](implicit urls: GithubApiUrls, httpClientImpl: HttpClientExtension[
       note: String,
       client_id: String,
       client_secret: String
-  ): GHResponse[Authorization] =
+  ): M[GHResponse[Authorization]] =
     httpClient.postAuth[Authorization](
       method = "authorizations",
       headers = Map("Authorization" → s"Basic ${base64(s"$username:$password")}"),
@@ -78,15 +81,17 @@ class Auth[C](implicit urls: GithubApiUrls, httpClientImpl: HttpClientExtension[
       client_id: String,
       redirect_uri: String,
       scopes: List[String]
-  ): GHResponse[Authorize] = {
+  ): M[GHResponse[Authorize]] = {
     val state = UUID.randomUUID().toString
-    Either.right(
-      GHResult(
-        result =
-          Authorize(authorizeUrl.format(client_id, redirect_uri, scopes.mkString(","), state),
-                    state),
-        statusCode = 200,
-        headers = Map.empty
+    C.capture(
+      Either.right(
+        GHResult(
+          result =
+            Authorize(authorizeUrl.format(client_id, redirect_uri, scopes.mkString(","), state),
+                      state),
+          statusCode = 200,
+          headers = Map.empty
+        )
       )
     )
   }
@@ -107,7 +112,7 @@ class Auth[C](implicit urls: GithubApiUrls, httpClientImpl: HttpClientExtension[
       code: String,
       redirect_uri: String,
       state: String
-  ): GHResponse[OAuthToken] = httpClient.postOAuth[OAuthToken](
+  ): M[GHResponse[OAuthToken]] = httpClient.postOAuth[OAuthToken](
     url = accessTokenUrl,
     data = NewOAuthRequest(client_id, client_secret, code, redirect_uri, state).asJson.noSpaces
   )

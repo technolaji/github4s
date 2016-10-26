@@ -23,15 +23,18 @@ package github4s.api
 
 import github4s.GithubResponses.GHResponse
 import github4s.free.domain.{Commit, Pagination, Repository, User}
+import github4s.free.interpreters.Capture
 import github4s.{Decoders, GithubApiUrls, HttpClient, HttpClientExtension}
 import io.circe.generic.auto._
 
 /** Factory to encapsulate calls related to Repositories operations  */
-class Repos[C](implicit urls: GithubApiUrls, httpClientImpl: HttpClientExtension[C]) {
+class Repos[C, M[_]](implicit urls: GithubApiUrls,
+                     C: Capture[M],
+                     httpClientImpl: HttpClientExtension[C, M]) {
 
   import Decoders._
 
-  val httpClient = new HttpClient[C]
+  val httpClient = new HttpClient[C, M]
 
   /**
     * Get information of a particular repository
@@ -43,7 +46,7 @@ class Repos[C](implicit urls: GithubApiUrls, httpClientImpl: HttpClientExtension
     */
   def get(accessToken: Option[String] = None,
           owner: String,
-          repo: String): GHResponse[Repository] =
+          repo: String): M[GHResponse[Repository]] =
     httpClient.get[Repository](accessToken, s"repos/$owner/$repo")
 
   /**
@@ -70,7 +73,7 @@ class Repos[C](implicit urls: GithubApiUrls, httpClientImpl: HttpClientExtension
       since: Option[String] = None,
       until: Option[String] = None,
       pagination: Option[Pagination] = Some(httpClient.defaultPagination)
-  ): GHResponse[List[Commit]] =
+  ): M[GHResponse[List[Commit]]] =
     httpClient.get[List[Commit]](accessToken,
                                  s"repos/$owner/$repo/commits",
                                  Map(
@@ -99,7 +102,7 @@ class Repos[C](implicit urls: GithubApiUrls, httpClientImpl: HttpClientExtension
       owner: String,
       repo: String,
       anon: Option[String] = None
-  ): GHResponse[List[User]] =
+  ): M[GHResponse[List[User]]] =
     httpClient.get[List[User]](accessToken,
                                s"repos/$owner/$repo/contributors",
                                Map(

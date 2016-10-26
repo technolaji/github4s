@@ -42,9 +42,9 @@ case class CirceJSONBody(value: String) extends BodyPart {
 
 object HttpClientExtensionJS {
 
-  implicit def extensionJS: HttpClientExtension[HttpResponse] =
-    new HttpClientExtension[HttpResponse] {
-      def run[A](rb: HttpRequestBuilder)(implicit D: Decoder[A]): GHResponse[A] = {
+  implicit def extensionJS: HttpClientExtension[HttpResponse, Future] =
+    new HttpClientExtension[HttpResponse, Future] {
+      def run[A](rb: HttpRequestBuilder)(implicit D: Decoder[A]): Future[GHResponse[A]] = {
         val request = HttpRequest(rb.url)
           .withMethod(Method(rb.httpVerb.verb))
           .withHeader("content-type", "application/json")

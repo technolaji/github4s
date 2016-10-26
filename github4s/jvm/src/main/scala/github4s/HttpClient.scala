@@ -34,10 +34,11 @@ import github4s.free.interpreters.Capture
 
 object HttpClientExtensionJVM {
 
-  implicit def extensionJVM: HttpClientExtension[HttpResponse[String]] =
-    new HttpClientExtension[HttpResponse[String]] {
+  implicit def extensionJVM[M[_]](
+      implicit C: Capture[M]): HttpClientExtension[HttpResponse[String], M] =
+    new HttpClientExtension[HttpResponse[String], M] {
 
-      def run[A](rb: HttpRequestBuilder)(implicit D: Decoder[A]): GHResponse[A] = {
+      def run[A](rb: HttpRequestBuilder)(implicit D: Decoder[A]): M[GHResponse[A]] = {
 
         val connTimeoutMs: Int = 1000
         val readTimeoutMs: Int = 5000
@@ -52,8 +53,9 @@ object HttpClientExtensionJVM {
 
         rb.data match {
           case Some(d) ⇒
-            toEntity[A](request.postData(d).header("content-type", "application/json").asString)
-          case _ ⇒ toEntity[A](request.asString)
+            C.capture(
+              toEntity[A](request.postData(d).header("content-type", "application/json").asString))
+          case _ ⇒ C.capture(toEntity[A](request.asString))
         }
       }
 

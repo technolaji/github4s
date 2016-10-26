@@ -51,7 +51,7 @@ object Github {
     def exec[M[_], C](implicit I: Interpreters[M, C],
                       A: MonadError[M, Throwable],
                       TR: RecursiveTailRecM[M],
-                      H: HttpClientExtension[C]): M[GHResponse[A]] = gio foldMap I.interpreters
+                      H: HttpClientExtension[C, M]): M[GHResponse[A]] = gio foldMap I.interpreters
 
     def liftGH: EitherT[GHIO, GHException, GHResult[A]] =
       EitherT[GHIO, GHException, GHResult[A]](gio)

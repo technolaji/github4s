@@ -38,7 +38,7 @@ trait Capture[M[_]] {
 
 class Interpreters[M[_], C](implicit A: ApplicativeError[M, Throwable],
                             C: Capture[M],
-                            httpClientImpl: HttpClientExtension[C]) {
+                            httpClientImpl: HttpClientExtension[C, M]) {
 
   implicit def interpreters(
       implicit A: MonadError[M, Throwable]
@@ -57,12 +57,11 @@ class Interpreters[M[_], C](implicit A: ApplicativeError[M, Throwable],
     val repos = new Repos()
 
     def apply[A](fa: RepositoryOp[A]): M[A] = fa match {
-      case GetRepo(owner, repo, accessToken) ⇒ C.capture(repos.get(accessToken, owner, repo))
+      case GetRepo(owner, repo, accessToken) ⇒ repos.get(accessToken, owner, repo)
       case ListCommits(owner, repo, sha, path, author, since, until, pagination, accessToken) ⇒
-        C.capture(
-          repos.listCommits(accessToken, owner, repo, sha, path, author, since, until, pagination))
+        repos.listCommits(accessToken, owner, repo, sha, path, author, since, until, pagination)
       case ListContributors(owner, repo, anon, accessToken) ⇒
-        C.capture(repos.listContributors(accessToken, owner, repo, anon))
+        repos.listContributors(accessToken, owner, repo, anon)
     }
   }
 
@@ -75,10 +74,10 @@ class Interpreters[M[_], C](implicit A: ApplicativeError[M, Throwable],
       val users = new Users()
 
       def apply[A](fa: UserOp[A]): M[A] = fa match {
-        case GetUser(username, accessToken) ⇒ C.capture(users.get(accessToken, username))
-        case GetAuthUser(accessToken)       ⇒ C.capture(users.getAuth(accessToken))
+        case GetUser(username, accessToken) ⇒ users.get(accessToken, username)
+        case GetAuthUser(accessToken)       ⇒ users.getAuth(accessToken)
         case GetUsers(since, pagination, accessToken) ⇒
-          C.capture(users.getUsers(accessToken, since, pagination))
+          users.getUsers(accessToken, since, pagination)
       }
     }
 
@@ -92,11 +91,11 @@ class Interpreters[M[_], C](implicit A: ApplicativeError[M, Throwable],
 
       def apply[A](fa: AuthOp[A]): M[A] = fa match {
         case NewAuth(username, password, scopes, note, client_id, client_secret) ⇒
-          C.capture(auth.newAuth(username, password, scopes, note, client_id, client_secret))
+          auth.newAuth(username, password, scopes, note, client_id, client_secret)
         case AuthorizeUrl(client_id, redirect_uri, scopes) ⇒
-          C.capture(auth.authorizeUrl(client_id, redirect_uri, scopes))
+          auth.authorizeUrl(client_id, redirect_uri, scopes)
         case GetAccessToken(client_id, client_secret, code, redirect_uri, state) ⇒
-          C.capture(auth.getAccessToken(client_id, client_secret, code, redirect_uri, state))
+          auth.getAccessToken(client_id, client_secret, code, redirect_uri, state)
       }
     }
 
@@ -110,7 +109,7 @@ class Interpreters[M[_], C](implicit A: ApplicativeError[M, Throwable],
 
       def apply[A](fa: GistOp[A]): M[A] = fa match {
         case NewGist(description, public, files, accessToken) ⇒
-          C.capture(gists.newGist(description, public, files, accessToken))
+          gists.newGist(description, public, files, accessToken)
       }
     }
 

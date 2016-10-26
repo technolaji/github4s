@@ -86,7 +86,7 @@ case class HttpRequestBuilder(
 
 }
 
-class HttpClient[C](implicit urls: GithubApiUrls, httpClientImpl: HttpClientExtension[C]) {
+class HttpClient[C, M[_]](implicit urls: GithubApiUrls, httpClientImpl: HttpClientExtension[C, M]) {
   val defaultPagination = Pagination(1, 1000)
 
   def get[A](
@@ -94,7 +94,7 @@ class HttpClient[C](implicit urls: GithubApiUrls, httpClientImpl: HttpClientExte
       method: String,
       params: Map[String, String] = Map.empty,
       pagination: Option[Pagination] = None
-  )(implicit D: Decoder[A]): GHResponse[A] =
+  )(implicit D: Decoder[A]): M[GHResponse[A]] =
     httpClientImpl.run[A](
       HttpRequestBuilder(buildURL(method))
         .withAuth(accessToken)
@@ -103,12 +103,13 @@ class HttpClient[C](implicit urls: GithubApiUrls, httpClientImpl: HttpClientExte
     )
 
   def patch[A](accessToken: Option[String] = None, method: String, data: String)(
-      implicit D: Decoder[A]): GHResponse[A] =
+      implicit D: Decoder[A]): M[GHResponse[A]] =
     httpClientImpl.run[A](
       HttpRequestBuilder(buildURL(method)).patchMethod.withAuth(accessToken).withData(data))
 
-  def put(accessToken: Option[String] = None, method: String): GHResponse[Unit] =
-    httpClientImpl.run[Unit](
+  def put[A](accessToken: Option[String] = None, method: String)(
+      implicit D: Decoder[A]): M[GHResponse[A]] =
+    httpClientImpl.run[A](
       HttpRequestBuilder(buildURL(method)).putMethod
         .withAuth(accessToken)
         .withHeaders(Map("Content-Length" → "0")))
@@ -118,7 +119,7 @@ class HttpClient[C](implicit urls: GithubApiUrls, httpClientImpl: HttpClientExte
       method: String,
       headers: Map[String, String] = Map.empty,
       data: String
-  )(implicit D: Decoder[A]): GHResponse[A] =
+  )(implicit D: Decoder[A]): M[GHResponse[A]] =
     httpClientImpl.run[A](
       HttpRequestBuilder(buildURL(method))
         .withAuth(accessToken)
@@ -129,21 +130,21 @@ class HttpClient[C](implicit urls: GithubApiUrls, httpClientImpl: HttpClientExte
       method: String,
       headers: Map[String, String] = Map.empty,
       data: String
-  )(implicit D: Decoder[A]): GHResponse[A] =
+  )(implicit D: Decoder[A]): M[GHResponse[A]] =
     httpClientImpl.run[A](HttpRequestBuilder(buildURL(method)).withHeaders(headers).withData(data))
 
   def postOAuth[A](
       url: String,
       data: String
-  )(implicit D: Decoder[A]): GHResponse[A] =
+  )(implicit D: Decoder[A]): M[GHResponse[A]] =
     httpClientImpl.run[A](
       HttpRequestBuilder(url).postMethod
         .withHeaders(Map("Accept" → "application/json"))
         .withData(data))
 
-  def delete(accessToken: Option[String] = None, method: String): GHResponse[Unit] =
-    httpClientImpl.run[Unit](
-      HttpRequestBuilder(buildURL(method)).deleteMethod.withAuth(accessToken))
+  def delete[A](accessToken: Option[String] = None, method: String)(
+      implicit D: Decoder[A]): M[GHResponse[A]] =
+    httpClientImpl.run[A](HttpRequestBuilder(buildURL(method)).deleteMethod.withAuth(accessToken))
 
   private def buildURL(method: String) = urls.baseUrl + method
 

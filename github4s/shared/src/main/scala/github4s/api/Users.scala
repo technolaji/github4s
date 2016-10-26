@@ -24,12 +24,15 @@ package github4s.api
 import github4s.GithubResponses.GHResponse
 import github4s.{GithubApiUrls, HttpClient, HttpClientExtension}
 import github4s.free.domain.{Pagination, User}
+import github4s.free.interpreters.Capture
 import io.circe.generic.auto._
 
 /** Factory to encapsulate calls related to Users operations  */
-class Users[C](implicit urls: GithubApiUrls, httpClientImpl: HttpClientExtension[C]) {
+class Users[C, M[_]](implicit urls: GithubApiUrls,
+                     C: Capture[M],
+                     httpClientImpl: HttpClientExtension[C, M]) {
 
-  val httpClient = new HttpClient[C]
+  val httpClient = new HttpClient[C, M]
 
   /**
     * Get information for a particular user
@@ -38,7 +41,7 @@ class Users[C](implicit urls: GithubApiUrls, httpClientImpl: HttpClientExtension
     * @param username of the user to retrieve
     * @return GHResponse[User] User details
     */
-  def get(accessToken: Option[String] = None, username: String): GHResponse[User] =
+  def get(accessToken: Option[String] = None, username: String): M[GHResponse[User]] =
     httpClient.get[User](accessToken, s"users/$username")
 
   /**
@@ -46,7 +49,7 @@ class Users[C](implicit urls: GithubApiUrls, httpClientImpl: HttpClientExtension
     * @param accessToken to identify the authenticated user
     * @return GHResponse[User] User details
     */
-  def getAuth(accessToken: Option[String] = None): GHResponse[User] =
+  def getAuth(accessToken: Option[String] = None): M[GHResponse[User]] =
     httpClient.get[User](accessToken, "user")
 
   /**
@@ -61,7 +64,7 @@ class Users[C](implicit urls: GithubApiUrls, httpClientImpl: HttpClientExtension
       accessToken: Option[String] = None,
       since: Int,
       pagination: Option[Pagination] = None
-  ): GHResponse[List[User]] =
+  ): M[GHResponse[List[User]]] =
     httpClient.get[List[User]](accessToken, "users", Map("since" → since.toString), pagination)
 
 }
