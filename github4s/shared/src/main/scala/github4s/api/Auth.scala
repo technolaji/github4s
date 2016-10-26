@@ -22,18 +22,20 @@
 package github4s.api
 
 import java.util.UUID
-import github4s.GithubResponses.{GHResult, GHResponse}
+
+import github4s.GithubResponses.{GHResponse, GHResult}
 import github4s.free.domain._
-import github4s.{GithubApiUrls, HttpClient}
+import github4s.{GithubApiUrls, HttpClient, HttpClientExtension}
 import io.circe.generic.auto._
 import io.circe.syntax._
 import cats.implicits._
-//import scalaj.http.HttpConstants._
+import sun.misc.BASE64Encoder
 
 /** Factory to encapsulate calls related to Auth operations  */
-class Auth(implicit urls: GithubApiUrls) {
+class Auth[C](implicit urls: GithubApiUrls, httpClientImpl: HttpClientExtension[C]) {
 
-  val httpClient = new HttpClient
+  val httpClient         = new HttpClient[C]
+  lazy val base64Encoder = new BASE64Encoder()
 
   val authorizeUrl   = urls.authorizeUrl
   val accessTokenUrl = urls.accessTokenUrl
@@ -109,5 +111,7 @@ class Auth(implicit urls: GithubApiUrls) {
     url = accessTokenUrl,
     data = NewOAuthRequest(client_id, client_secret, code, redirect_uri, state).asJson.noSpaces
   )
+
+  def base64(str: String): String = base64Encoder.encode(str.getBytes())
 
 }

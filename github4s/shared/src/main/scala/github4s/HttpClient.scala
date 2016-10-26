@@ -25,6 +25,7 @@ import github4s.free.domain.Pagination
 import io.circe.Decoder
 import github4s.GithubResponses.GHResponse
 import github4s.HttpClient._
+import github4s.free.interpreters.Capture
 
 object HttpClient {
   type Headers = Map[String, String]
@@ -85,8 +86,7 @@ case class HttpRequestBuilder(
 
 }
 
-class HttpClient(implicit urls: GithubApiUrls,
-                       httpClientImpl: HttpClientExtension) {
+class HttpClient[C](implicit urls: GithubApiUrls, httpClientImpl: HttpClientExtension[C]) {
   val defaultPagination = Pagination(1, 1000)
 
   def get[A](
@@ -94,35 +94,24 @@ class HttpClient(implicit urls: GithubApiUrls,
       method: String,
       params: Map[String, String] = Map.empty,
       pagination: Option[Pagination] = None
-  )(implicit D: Decoder[A]): GHResponse[A] = {
-    httpClientImpl.run(
+  )(implicit D: Decoder[A]): GHResponse[A] =
+    httpClientImpl.run[A](
       HttpRequestBuilder(buildURL(method))
-          .withAuth(accessToken)
-          .withParams(params ++ pagination.fold(Map.empty[String, String])(p ⇒
-            Map("page" → p.page.toString, "per_page" → p.per_page.toString)))
+        .withAuth(accessToken)
+        .withParams(params ++ pagination.fold(Map.empty[String, String])(p ⇒
+          Map("page" → p.page.toString, "per_page" → p.per_page.toString)))
     )
-  }
-
-
-//    GithubResponses.toEntity(
-//      httpClientImpl.run(
-//        HttpRequestBuilder(buildURL(method))
-//            .withAuth(accessToken)
-//            .withParams(params ++ pagination.fold(Map.empty[String, String])(p ⇒
-//              Map("page" → p.page.toString, "per_page" → p.per_page.toString))))
-//    )
 
   def patch[A](accessToken: Option[String] = None, method: String, data: String)(
       implicit D: Decoder[A]): GHResponse[A] =
-    GithubResponses.toEntity(
-      HttpRequestBuilder(buildURL(method)).patchMethod.withAuth(accessToken).withData(data).run)
+    httpClientImpl.run[A](
+      HttpRequestBuilder(buildURL(method)).patchMethod.withAuth(accessToken).withData(data))
 
   def put(accessToken: Option[String] = None, method: String): GHResponse[Unit] =
-    GithubResponses.toEmpty(
+    httpClientImpl.run[Unit](
       HttpRequestBuilder(buildURL(method)).putMethod
         .withAuth(accessToken)
-        .withHeaders(Map("Content-Length" → "0"))
-        .run)
+        .withHeaders(Map("Content-Length" → "0")))
 
   def post[A](
       accessToken: Option[String] = None,
@@ -130,34 +119,31 @@ class HttpClient(implicit urls: GithubApiUrls,
       headers: Map[String, String] = Map.empty,
       data: String
   )(implicit D: Decoder[A]): GHResponse[A] =
-    GithubResponses.toEntity(
+    httpClientImpl.run[A](
       HttpRequestBuilder(buildURL(method))
         .withAuth(accessToken)
         .withHeaders(headers)
-        .withData(data)
-        .run)
+        .withData(data))
 
   def postAuth[A](
       method: String,
       headers: Map[String, String] = Map.empty,
       data: String
   )(implicit D: Decoder[A]): GHResponse[A] =
-    GithubResponses.toEntity(
-      HttpRequestBuilder(buildURL(method)).withHeaders(headers).withData(data).run)
+    httpClientImpl.run[A](HttpRequestBuilder(buildURL(method)).withHeaders(headers).withData(data))
 
   def postOAuth[A](
       url: String,
       data: String
   )(implicit D: Decoder[A]): GHResponse[A] =
-    GithubResponses.toEntity(
+    httpClientImpl.run[A](
       HttpRequestBuilder(url).postMethod
         .withHeaders(Map("Accept" → "application/json"))
-        .withData(data)
-        .run)
+        .withData(data))
 
   def delete(accessToken: Option[String] = None, method: String): GHResponse[Unit] =
-    GithubResponses.toEmpty(
-      HttpRequestBuilder(buildURL(method)).deleteMethod.withAuth(accessToken).run)
+    httpClientImpl.run[Unit](
+      HttpRequestBuilder(buildURL(method)).deleteMethod.withAuth(accessToken))
 
   private def buildURL(method: String) = urls.baseUrl + method
 

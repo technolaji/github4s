@@ -22,9 +22,9 @@
 package github4s
 
 import github4s.GithubResponses.GHResponse
-import simulacrum.typeclass
 
-@typeclass
-trait HttpClientExtension[A] extends HttpClient {
-  def run[M[_]](rb: HttpRequestBuilder): M[GHResponse[A]]
+import scala.language.higherKinds
+
+trait HttpClientExtension[C] extends HttpClient[C] {
+  def run[A](rb: HttpRequestBuilder): GHResponse[A]
 }

@@ -22,7 +22,7 @@
 package github4s
 
 import github4s.free.domain._
-import io.circe._, io.circe.generic.auto._, io.circe.jawn._, io.circe.syntax._
+import io.circe._, io.circe.generic.auto._, io.circe.syntax._
 
 /** Implicit circe decoders of domains objects */
 object Decoders {

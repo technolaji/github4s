@@ -22,14 +22,14 @@
 package github4s.api
 
 import github4s.GithubResponses.GHResponse
-import github4s.{GithubApiUrls, HttpClient}
+import github4s.{GithubApiUrls, HttpClient, HttpClientExtension}
 import github4s.free.domain.{Pagination, User}
 import io.circe.generic.auto._
 
 /** Factory to encapsulate calls related to Users operations  */
-class Users(implicit urls: GithubApiUrls) {
+class Users[C](implicit urls: GithubApiUrls, httpClientImpl: HttpClientExtension[C]) {
 
-  val httpClient = new HttpClient
+  val httpClient = new HttpClient[C]
 
   /**
     * Get information for a particular user

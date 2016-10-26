@@ -22,16 +22,16 @@
 package github4s.api
 
 import github4s.GithubResponses.GHResponse
-import github4s.free.domain.{Pagination, Commit, Repository, User}
-import github4s.{GithubApiUrls, Decoders, HttpClient}
+import github4s.free.domain.{Commit, Pagination, Repository, User}
+import github4s.{Decoders, GithubApiUrls, HttpClient, HttpClientExtension}
 import io.circe.generic.auto._
 
 /** Factory to encapsulate calls related to Repositories operations  */
-class Repos(implicit urls: GithubApiUrls) {
+class Repos[C](implicit urls: GithubApiUrls, httpClientImpl: HttpClientExtension[C]) {
 
   import Decoders._
 
-  val httpClient = new HttpClient
+  val httpClient = new HttpClient[C]
 
   /**
     * Get information of a particular repository

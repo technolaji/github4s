@@ -22,12 +22,18 @@
 package github4s
 
 import scala.concurrent.Future
-import fr.hmil.roshttp.{HttpRequest, HttpResponse, Method}
+import fr.hmil.roshttp._
 import fr.hmil.roshttp.body.BodyPart
 import java.nio.ByteBuffer
 
-import github4s.GithubResponses.GHResponse
-import github4s.HttpClient.Headers
+import cats.implicits._
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import github4s.GithubResponses.{GHResponse, GHResult, JsonParsingException, UnexpectedException}
+import github4s.GithubDefaultUrls._
+import github4s.Decoders._
+import io.circe.Decoder
+import io.circe.parser._
 
 case class CirceJSONBody(value: String) extends BodyPart {
   override def contentType: String = s"application/json; charset=utf-8"
@@ -36,18 +42,47 @@ case class CirceJSONBody(value: String) extends BodyPart {
 
 object HttpClientExtensionJS {
 
-  implicit object ExtensionJVM extends HttpClientExtension[GHResponse[HttpResponse]] {
-    def run(rb: HttpRequestBuilder): Future[GHResponse[HttpResponse]] = {
-      val request = HttpRequest(rb.url)
-        .withMethod(Method(rb.httpVerb.verb))
-        .withHeader("content-type", "application/json")
-        .withHeaders(rb.headers.toList: _*)
+  implicit def extensionJS: HttpClientExtension[HttpResponse] =
+    new HttpClientExtension[HttpResponse] {
+      def run[HttpResponse](rb: HttpRequestBuilder): Future[GHResponse[HttpResponse]] = {
+        val request = HttpRequest(rb.url)
+          .withMethod(Method(rb.httpVerb.verb))
+          .withHeader("content-type", "application/json")
+          .withHeaders(rb.headers.toList: _*)
 
-      rb.data match {
-        case Some(d) ⇒ request.send(CirceJSONBody(d)).map(r => GithubResponses.toEntity(r))
-        case _       ⇒ request.send().map(r => r)
+        rb.data match {
+          case Some(d) ⇒ request.send(CirceJSONBody(d)).map(r => toEntity[HttpResponse](r))
+          case _       ⇒ request.send().map(r => toEntity[HttpResponse](r))
+        }
       }
     }
+
+  def toEntity[A](response: HttpResponse)(implicit D: Decoder[A]): GHResponse[A] =
+    response match {
+      case r if r.statusCode < 400 ⇒
+        decode[A](r.body).fold(
+          e ⇒ Either.left(JsonParsingException(e.getMessage, r.body)),
+          result ⇒
+            Either.right(
+              GHResult(result, r.statusCode, rosHeaderMapToRegularMap(r.headers))
+          )
+        )
+      case r ⇒
+        Either.left(
+          UnexpectedException(
+            s"Failed invoking get with status : ${r.statusCode}, body : \n ${r.body}"))
+    }
+
+  def toEmpty(response: HttpResponse): GHResponse[Unit] = response match {
+    case r if r.statusCode < 400 ⇒
+      Either.right(GHResult(Unit, r.statusCode, rosHeaderMapToRegularMap(r.headers)))
+    case r ⇒
+      Either.left(
+        UnexpectedException(
+          s"Failed invoking get with status : ${r.statusCode}, body : \n ${r.body}"))
   }
 
+  private def rosHeaderMapToRegularMap(
+      headers: HeaderMap[String]): Map[String, IndexedSeq[String]] =
+    headers.flatMap(m => Map(m._1.toLowerCase -> IndexedSeq(m._2)))
 }

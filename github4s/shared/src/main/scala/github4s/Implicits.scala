@@ -27,7 +27,7 @@ import cats.{Monad, Id, Eval, MonadError, FlatMap}
 import github4s.free.interpreters._
 import scala.concurrent.{ExecutionContext, Future}
 
-object implicits extends Interpreters with EvalInstances with IdInstances with FutureInstances {
+object implicits extends EvalInstances with IdInstances with FutureInstances {
 
   //Future Capture evidence:
   implicit val futureCaptureInstance = new Capture[Future] {

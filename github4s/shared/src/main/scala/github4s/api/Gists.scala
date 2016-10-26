@@ -22,16 +22,17 @@
 package github4s.api
 
 import github4s.free.domain._
-import github4s.{Decoders, GithubApiUrls, HttpClient}
+import github4s.{Decoders, GithubApiUrls, HttpClient, HttpClientExtension}
 import io.circe.generic.auto._
 import io.circe.syntax._
 import cats.implicits._
+import github4s.GithubResponses.GHResponse
 
 /** Factory to encapsulate calls related to Repositories operations  */
-class Gists(implicit urls: GithubApiUrls) {
+class Gists[C](implicit urls: GithubApiUrls, httpClientImpl: HttpClientExtension[C]) {
   import Decoders._
 
-  val httpClient = new HttpClient
+  val httpClient = new HttpClient[C]
 
   /**
     * Create a new gist
@@ -44,7 +45,7 @@ class Gists(implicit urls: GithubApiUrls) {
   def newGist(description: String,
               public: Boolean,
               files: Map[String, GistFile],
-              accessToken: Option[String] = None) =
+              accessToken: Option[String] = None): GHResponse[Gist] =
     httpClient.post[Gist](
       accessToken,
       "gists",

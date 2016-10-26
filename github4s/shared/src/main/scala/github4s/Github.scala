@@ -21,11 +21,12 @@
 
 package github4s
 
-import cats.data.{OptionT, EitherT}
-import cats.{MonadError, ~>, RecursiveTailRecM}
+import cats.data.{EitherT, OptionT}
+import cats.{MonadError, RecursiveTailRecM, ~>}
 import cats.implicits._
 import github4s.GithubResponses._
 import github4s.app._
+import github4s.free.interpreters.Interpreters
 
 /**
   * Represent the Github API wrapper
@@ -47,9 +48,10 @@ object Github {
 
   implicit class GithubIOSyntaxEither[A](gio: GHIO[GHResponse[A]]) {
 
-    def exec[M[_]](implicit I: (GitHub4s ~> M),
-                   A: MonadError[M, Throwable],
-                   TR: RecursiveTailRecM[M]): M[GHResponse[A]] = gio foldMap I
+    def exec[M[_], C](implicit I: Interpreters[M, C],
+                      A: MonadError[M, Throwable],
+                      TR: RecursiveTailRecM[M],
+                      H: HttpClientExtension[C]): M[GHResponse[A]] = gio foldMap I.interpreters
 
     def liftGH: EitherT[GHIO, GHException, GHResult[A]] =
       EitherT[GHIO, GHException, GHResult[A]](gio)
