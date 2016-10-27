@@ -21,8 +21,9 @@
 
 package github4s
 
-import cats.Id
+import cats.{Eval, Id}
 import github4s.free.interpreters.Interpreters
+
 import scalaj.http._
 import github4s.implicits._
 import cats.instances.FutureInstances
@@ -31,8 +32,8 @@ trait ImplicitsJVM
     extends IdInstances
     with EvalInstances
     with FutureInstances
-    with HttpClientExtensionJVM {
+    with HttpRequestBuilderExtensionJVM {
 
-  implicit val intInstanceIdScalaJ = new Interpreters[Id, HttpResponse[String]] {}
-
+  implicit val intInstanceIdScalaJ   = new Interpreters[Id, HttpResponse[String]]
+  implicit val intInstanceEvalScalaJ = new Interpreters[Eval, HttpResponse[String]]
 }

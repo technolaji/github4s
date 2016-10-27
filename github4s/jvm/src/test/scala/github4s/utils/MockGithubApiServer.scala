@@ -23,9 +23,8 @@ package github4s.utils
 
 import org.mockserver.model.HttpRequest._
 import org.mockserver.model.HttpResponse._
-import org.mockserver.model.NottableString._
-import org.mockserver.model.{Parameter, ParameterBody}
 import org.mockserver.model.JsonBody._
+import org.mockserver.model.NottableString._
 
 trait MockGithubApiServer extends MockServerService with FakeResponses with TestUtils {
 

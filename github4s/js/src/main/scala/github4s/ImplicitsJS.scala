@@ -19,30 +19,18 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package github4s.integration
+package github4s
 
 import cats.Id
-import cats.implicits._
-import github4s.Github._
-import github4s.free.domain.GistFile
+import cats.instances.FutureInstances
+import github4s.free.interpreters.Interpreters
+import fr.hmil.roshttp.response.SimpleHttpResponse
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import github4s.implicits._
-import github4s.{Github, ImplicitsJVM}
-import github4s.utils.TestUtils
-import org.scalatest._
 
-import scalaj.http.HttpResponse
+trait ImplicitsJS extends FutureInstances with HttpRequestBuilderExtensionJS {
 
-class GHGistsSpec extends FlatSpec with Matchers with TestUtils with ImplicitsJVM {
-  "Gists >> Post" should "return the provided gist" in {
-    val response = Github(accessToken).gists
-      .newGist(validGistDescription,
-               validGistPublic,
-               Map(validGistFilename -> GistFile(validGistFileContent)))
-      .exec[Id, HttpResponse[String]]
-    response should be('right)
-    response.toOption map { r ⇒
-      r.result.description shouldBe validGistDescription
-      r.statusCode shouldBe createdStatusCode
-    }
-  }
+  implicit val intInstanceFutureRosHttp = new Interpreters[Future, SimpleHttpResponse]
+
 }

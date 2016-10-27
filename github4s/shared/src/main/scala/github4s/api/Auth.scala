@@ -30,15 +30,14 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import cats.implicits._
 import github4s.free.interpreters.Capture
-import sun.misc.BASE64Encoder
+import com.github.marklister.base64.Base64.Encoder
 
 /** Factory to encapsulate calls related to Auth operations  */
 class Auth[C, M[_]](implicit urls: GithubApiUrls,
                     C: Capture[M],
                     httpClientImpl: HttpRequestBuilderExtension[C, M]) {
 
-  val httpClient         = new HttpClient[C, M]
-  lazy val base64Encoder = new BASE64Encoder()
+  val httpClient = new HttpClient[C, M]
 
   val authorizeUrl   = urls.authorizeUrl
   val accessTokenUrl = urls.accessTokenUrl
@@ -65,7 +64,7 @@ class Auth[C, M[_]](implicit urls: GithubApiUrls,
   ): M[GHResponse[Authorization]] =
     httpClient.postAuth[Authorization](
       method = "authorizations",
-      headers = Map("Authorization" → s"Basic ${base64(s"$username:$password")}"),
+      headers = Map("Authorization" → s"Basic ${s"$username:$password".getBytes.toBase64}"),
       data = NewAuthRequest(scopes, note, client_id, client_secret).asJson.noSpaces
     )
 
@@ -116,7 +115,5 @@ class Auth[C, M[_]](implicit urls: GithubApiUrls,
     url = accessTokenUrl,
     data = NewOAuthRequest(client_id, client_secret, code, redirect_uri, state).asJson.noSpaces
   )
-
-  def base64(str: String): String = base64Encoder.encode(str.getBytes())
 
 }

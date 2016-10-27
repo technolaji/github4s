@@ -21,10 +21,9 @@
 
 package github4s.utils
 
-import com.github.marklister.base64.Base64.Encoder
+import com.github.marklister.base64.Base64._
 
 trait TestUtils {
-
   val accessToken = sys.props.get("token")
   def tokenHeader = "token " + accessToken.getOrElse("")
 
@@ -33,7 +32,7 @@ trait TestUtils {
   val invalidPassword = "invalidPassword"
 
   def validBasicAuth   = s"Basic ${s"$validUsername:".getBytes.toBase64}"
-  def invalidBasicAuth = s"Basic ${s"$validUsername:$invalidPassword".getBytes.toBase64}"
+  def invalidBasicAuth = s"Basic ${"$validUsername:$invalidPassword".getBytes.toBase64}"
 
   val validScopes         = List("public_repo")
   val validNote           = "New access token"

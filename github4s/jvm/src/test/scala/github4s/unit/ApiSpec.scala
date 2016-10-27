@@ -22,11 +22,12 @@
 package github4s.unit
 
 import github4s.api.{Auth, Gists, Repos, Users}
-import github4s.free.domain.Pagination
+import github4s.free.domain.{GistFile, Pagination}
 import github4s.utils.{DummyGithubUrls, MockGithubApiServer, TestUtils}
 import org.scalatest._
 import cats.implicits._
 import github4s.ImplicitsJVM
+
 import scalaj.http._
 import cats.Id
 
@@ -249,7 +250,10 @@ class ApiSpec
 
   "Gists >> PostGist" should "return the provided gist for a valid request" in {
     val response =
-      gists.newGist(validGistDescription, validGistPublic, validGistFiles, accessToken)
+      gists.newGist(validGistDescription,
+                    validGistPublic,
+                    Map(validGistFilename -> GistFile(validGistFileContent)),
+                    accessToken)
     response should be('right)
 
     response.toOption map { r ⇒

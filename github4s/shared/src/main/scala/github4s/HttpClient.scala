@@ -75,7 +75,7 @@ class HttpRequestBuilder[C, M[_]](
   def withAuth(accessToken: Option[String] = None) = {
     val authHeader = accessToken match {
       case Some(token) ⇒ Map("Authorization" → s"token $token")
-      case _           ⇒ Map.empty[String, String]
+      case _ ⇒ Map.empty[String, String]
     }
     new HttpRequestBuilder[C, M](url, httpVerb, authHeader, data, params, headers)
   }
@@ -114,7 +114,7 @@ class HttpClient[C, M[_]](implicit urls: GithubApiUrls,
       pagination: Option[Pagination] = None
   )(implicit D: Decoder[A]): M[GHResponse[A]] =
     httpRbImpl.run[A](
-      httpRequestBuilder(buildURL(method))
+      httpRequestBuilder(buildURL(method)).putMethod
         .withAuth(accessToken)
         .withParams(params ++ pagination.fold(Map.empty[String, String])(p ⇒
           Map("page" → p.page.toString, "per_page" → p.per_page.toString)))
@@ -139,7 +139,7 @@ class HttpClient[C, M[_]](implicit urls: GithubApiUrls,
       data: String
   )(implicit D: Decoder[A]): M[GHResponse[A]] =
     httpRbImpl.run[A](
-      httpRequestBuilder(buildURL(method))
+      httpRequestBuilder(buildURL(method)).postMethod
         .withAuth(accessToken)
         .withHeaders(headers)
         .withData(data))
@@ -149,7 +149,8 @@ class HttpClient[C, M[_]](implicit urls: GithubApiUrls,
       headers: Map[String, String] = Map.empty,
       data: String
   )(implicit D: Decoder[A]): M[GHResponse[A]] =
-    httpRbImpl.run[A](httpRequestBuilder(buildURL(method)).withHeaders(headers).withData(data))
+    httpRbImpl.run[A](
+      httpRequestBuilder(buildURL(method)).postMethod.withHeaders(headers).withData(data))
 
   def postOAuth[A](
       url: String,

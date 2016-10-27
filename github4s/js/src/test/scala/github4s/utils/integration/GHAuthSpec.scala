@@ -24,15 +24,19 @@ package github4s.integration
 import cats.Id
 import cats.implicits._
 import github4s.Github._
-import github4s.{Github, ImplicitsJVM}
+import github4s.{Github, ImplicitsJS}
 import github4s.implicits._
 import github4s.utils.TestUtils
 import org.scalatest._
-import scalaj.http._
+import fr.hmil.roshttp.HttpResponse
+import org.scalatest.concurrent.ScalaFutures
 
-class GHAuthSpec extends FlatSpec with Matchers with TestUtils with ImplicitsJVM {
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
-  "Auth >> NewAuth" should "return error on Left when invalid credential is provided" in {
+class GHAuthSpec extends AsyncFlatSpec with Matchers with TestUtils with ImplicitsJS {
+
+  "Auth >> NewAuthJS" should "return error on Left when invalid credential is provided" in {
     val response = Github().auth
       .newAuth(validUsername,
                invalidPassword,
@@ -40,7 +44,7 @@ class GHAuthSpec extends FlatSpec with Matchers with TestUtils with ImplicitsJVM
                validNote,
                validClientId,
                invalidClientSecret)
-      .exec[Id, HttpResponse[String]]
+      .exec[Future, HttpResponse]
     response should be('left)
   }
 
@@ -48,12 +52,16 @@ class GHAuthSpec extends FlatSpec with Matchers with TestUtils with ImplicitsJVM
     val response =
       Github().auth
         .authorizeUrl(validClientId, validRedirectUri, validScopes)
-        .exec[Id, HttpResponse[String]]
+        .exec[Future, HttpResponse]
     response should be('right)
 
-    response.toOption map { r ⇒
-      r.result.url.contains(validRedirectUri) shouldBe true
-      r.statusCode shouldBe okStatusCode
+    response map { r ⇒
+      r.toOption map { rr =>
+        rr.result.url.contains(validRedirectUri) shouldBe true
+        rr.statusCode shouldBe okStatusCode
+      } match {
+        case _ => succeed
+      }
     }
 
   }
@@ -61,7 +69,7 @@ class GHAuthSpec extends FlatSpec with Matchers with TestUtils with ImplicitsJVM
   "Auth >> GetAccessToken" should "return error on Left for invalid code value" in {
     val response = Github().auth
       .getAccessToken(validClientId, invalidClientSecret, "", validRedirectUri, "")
-      .exec[Id, HttpResponse[String]]
+      .exec[Future, HttpResponse]
     response should be('left)
   }
 

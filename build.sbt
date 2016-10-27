@@ -47,7 +47,10 @@ lazy val commonDeps = addLibs(vAll,
                                 "circe-parser",
                                 "simulacrum") ++
     addCompilerPlugins(vAll, "paradise") ++
-Seq(libraryDependencies += "org.scalatest" %%% "scalatest" % "3.0.0-M15" % "test")
+Seq(libraryDependencies ++= Seq(
+  "org.scalatest" %%% "scalatest" % "3.0.0" % "test",
+  "com.github.marklister" %%% "base64" % "0.2.2"
+))
 
 lazy val jvmDeps = Seq(
       libraryDependencies ++= Seq(
@@ -55,7 +58,11 @@ lazy val jvmDeps = Seq(
         "org.mock-server" % "mockserver-netty" % "3.10.4" % "test"
       ))
 
-lazy val jsDeps = addLibs(vAll, "roshttp")
+lazy val jsDeps = Seq(
+  libraryDependencies ++= Seq(
+    "fr.hmil" %%% "roshttp" % "2.0.0-RC1"
+  )
+)
 
 lazy val docsDependencies = libraryDependencies ++= Seq(
     "com.ironcorelabs" %% "cats-scalatest"  % "1.1.2"  % "test",
@@ -75,7 +82,7 @@ lazy val github4s = (crossProject in file("github4s"))
   .jsSettings(jsDeps: _*)
 
 lazy val github4sJVM = github4s.jvm
-lazy val github4sJS  = github4s.js
+lazy val github4sJS  = github4s.js.settings(testSettings: _*)
 
 lazy val docs = (project in file("docs"))
   .dependsOn(scalaz)
@@ -92,3 +99,7 @@ lazy val scalaz = (project in file("scalaz"))
   .settings(scalazDependencies: _*)
   .dependsOn(github4sJVM)
   .enablePlugins(AutomateHeaderPlugin)
+
+lazy val testSettings = Seq(
+  fork in Test := false
+)

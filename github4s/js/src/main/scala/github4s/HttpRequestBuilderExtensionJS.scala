@@ -23,43 +23,57 @@ package github4s
 
 import scala.concurrent.Future
 import fr.hmil.roshttp._
-import fr.hmil.roshttp.body.BodyPart
+import fr.hmil.roshttp.body.{BodyPart, BulkBodyPart}
 import java.nio.ByteBuffer
 
 import cats.implicits._
+import fr.hmil.roshttp.response.SimpleHttpResponse
+import fr.hmil.roshttp.util.HeaderMap
+import fr.hmil.roshttp.body.Implicits._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import github4s.GithubResponses.{GHResponse, GHResult, JsonParsingException, UnexpectedException}
 import github4s.GithubDefaultUrls._
 import github4s.Decoders._
-import github4s.HttpClient.{Get, HttpVerb}
 import io.circe.Decoder
 import io.circe.parser._
+import monix.reactive.Observable
 
-case class CirceJSONBody(value: String) extends BodyPart {
-  override def contentType: String = s"application/json; charset=utf-8"
-  override def content: ByteBuffer = ByteBuffer.wrap(value.getBytes("utf-8"))
+case class CirceJSONBody(value: String) extends BulkBodyPart {
+  override def contentType: String     = s"application/json; charset=utf-8"
+  override def contentData: ByteBuffer = ByteBuffer.wrap(value.getBytes("utf-8"))
 }
 
-trait HttpClientExtensionJS {
+trait HttpRequestBuilderExtensionJS {
 
-  implicit def extensionJS: HttpRequestBuilderExtension[HttpResponse, Future] =
-    new HttpRequestBuilderExtension[HttpResponse, Future] {
-      def run[A](rb: HttpRequestBuilder[HttpResponse, Future])(
+  import monix.execution.Scheduler.Implicits.global
+
+  implicit def extensionJS: HttpRequestBuilderExtension[SimpleHttpResponse, Future] =
+    new HttpRequestBuilderExtension[SimpleHttpResponse, Future] {
+      def run[A](rb: HttpRequestBuilder[SimpleHttpResponse, Future])(
           implicit D: Decoder[A]): Future[GHResponse[A]] = {
         val request = HttpRequest(rb.url)
           .withMethod(Method(rb.httpVerb.verb))
+          .withQueryParameters(rb.params.toSeq: _*)
           .withHeader("content-type", "application/json")
+          .withHeaders(rb.authHeader.toList: _*)
           .withHeaders(rb.headers.toList: _*)
 
         rb.data match {
-          case Some(d) ⇒ request.send(CirceJSONBody(d)).map(r => toEntity[A](r))
-          case _       ⇒ request.send().map(r => toEntity[A](r))
+          case Some(d) ⇒ {
+            println(
+              s"request method: ${request.method}, request headers: ${request.headers}, url: ${request.url}")
+            request
+              .withHeader("content-type", "application/json")
+              .send(CirceJSONBody(d))
+              .map(r => toEntity[A](r))
+          }
+          case _ ⇒ request.send().map(r => toEntity[A](r))
         }
       }
     }
 
-  def toEntity[A](response: HttpResponse)(implicit D: Decoder[A]): GHResponse[A] =
+  def toEntity[A](response: SimpleHttpResponse)(implicit D: Decoder[A]): GHResponse[A] =
     response match {
       case r if r.statusCode < 400 ⇒
         decode[A](r.body).fold(
@@ -75,7 +89,7 @@ trait HttpClientExtensionJS {
             s"Failed invoking get with status : ${r.statusCode}, body : \n ${r.body}"))
     }
 
-  def toEmpty(response: HttpResponse): GHResponse[Unit] = response match {
+  def toEmpty(response: SimpleHttpResponse): GHResponse[Unit] = response match {
     case r if r.statusCode < 400 ⇒
       Either.right(GHResult(Unit, r.statusCode, rosHeaderMapToRegularMap(r.headers)))
     case r ⇒
@@ -87,4 +101,5 @@ trait HttpClientExtensionJS {
   private def rosHeaderMapToRegularMap(
       headers: HeaderMap[String]): Map[String, IndexedSeq[String]] =
     headers.flatMap(m => Map(m._1.toLowerCase -> IndexedSeq(m._2)))
+
 }

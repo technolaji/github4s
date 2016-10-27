@@ -24,45 +24,31 @@ package github4s.integration
 import cats.Id
 import cats.implicits._
 import github4s.Github._
-import github4s.{Github, ImplicitsJVM}
 import github4s.implicits._
+import github4s.{Github, ImplicitsJS}
 import github4s.utils.TestUtils
 import org.scalatest._
-import scalaj.http._
+import fr.hmil.roshttp.HttpResponse
+import github4s.free.domain.GistFile
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
-class GHAuthSpec extends FlatSpec with Matchers with TestUtils with ImplicitsJVM {
-
-  "Auth >> NewAuth" should "return error on Left when invalid credential is provided" in {
-    val response = Github().auth
-      .newAuth(validUsername,
-               invalidPassword,
-               validScopes,
-               validNote,
-               validClientId,
-               invalidClientSecret)
-      .exec[Id, HttpResponse[String]]
-    response should be('left)
-  }
-
-  "Auth >> AuthorizeUrl" should "return the expected URL for valid username" in {
-    val response =
-      Github().auth
-        .authorizeUrl(validClientId, validRedirectUri, validScopes)
-        .exec[Id, HttpResponse[String]]
+class GHGistsSpec extends AsyncFlatSpec with Matchers with TestUtils with ImplicitsJS {
+  "Gists >> Post" should "return the provided gist" in {
+    val response = Github(accessToken).gists
+      .newGist(validGistDescription,
+               validGistPublic,
+               Map(validGistFilename -> GistFile(validGistFileContent)))
+      .exec[Future, HttpResponse]
     response should be('right)
 
-    response.toOption map { r ⇒
-      r.result.url.contains(validRedirectUri) shouldBe true
-      r.statusCode shouldBe okStatusCode
+    response map { r ⇒
+      r.toOption map { rr =>
+        rr.result.description shouldBe validGistDescription
+        rr.statusCode shouldBe createdStatusCode
+      } match {
+        case _ => succeed
+      }
     }
-
   }
-
-  "Auth >> GetAccessToken" should "return error on Left for invalid code value" in {
-    val response = Github().auth
-      .getAccessToken(validClientId, invalidClientSecret, "", validRedirectUri, "")
-      .exec[Id, HttpResponse[String]]
-    response should be('left)
-  }
-
 }
