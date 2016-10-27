@@ -35,10 +35,11 @@ import github4s.free.interpreters.Capture
 trait HttpClientExtensionJVM {
 
   implicit def extensionJVM[M[_]](
-      implicit C: Capture[M]): HttpClientExtension[HttpResponse[String], M] =
-    new HttpClientExtension[HttpResponse[String], M] {
+      implicit C: Capture[M]): HttpRequestBuilderExtension[HttpResponse[String], M] =
+    new HttpRequestBuilderExtension[HttpResponse[String], M] {
 
-      def run[A](rb: HttpRequestBuilder)(implicit D: Decoder[A]): M[GHResponse[A]] = {
+      def run[A](rb: HttpRequestBuilder[HttpResponse[String], M])(
+          implicit D: Decoder[A]): M[GHResponse[A]] = {
 
         val connTimeoutMs: Int = 1000
         val readTimeoutMs: Int = 5000

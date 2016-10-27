@@ -22,7 +22,7 @@
 package github4s.api
 
 import github4s.GithubResponses.GHResponse
-import github4s.{GithubApiUrls, HttpClient, HttpClientExtension}
+import github4s.{GithubApiUrls, HttpClient, HttpRequestBuilderExtension}
 import github4s.free.domain.{Pagination, User}
 import github4s.free.interpreters.Capture
 import io.circe.generic.auto._
@@ -30,7 +30,7 @@ import io.circe.generic.auto._
 /** Factory to encapsulate calls related to Users operations  */
 class Users[C, M[_]](implicit urls: GithubApiUrls,
                      C: Capture[M],
-                     httpClientImpl: HttpClientExtension[C, M]) {
+                     httpClientImpl: HttpRequestBuilderExtension[C, M]) {
 
   val httpClient = new HttpClient[C, M]
 

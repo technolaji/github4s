@@ -22,7 +22,7 @@
 package github4s.api
 
 import github4s.free.domain._
-import github4s.{Decoders, GithubApiUrls, HttpClient, HttpClientExtension}
+import github4s._
 import io.circe.generic.auto._
 import io.circe.syntax._
 import cats.implicits._
@@ -32,7 +32,7 @@ import github4s.free.interpreters.Capture
 /** Factory to encapsulate calls related to Repositories operations  */
 class Gists[C, M[_]](implicit urls: GithubApiUrls,
                      C: Capture[M],
-                     httpClientImpl: HttpClientExtension[C, M]) {
+                     httpClientImpl: HttpRequestBuilderExtension[C, M]) {
   import Decoders._
 
   val httpClient = new HttpClient[C, M]

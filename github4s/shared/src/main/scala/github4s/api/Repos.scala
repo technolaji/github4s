@@ -24,13 +24,13 @@ package github4s.api
 import github4s.GithubResponses.GHResponse
 import github4s.free.domain.{Commit, Pagination, Repository, User}
 import github4s.free.interpreters.Capture
-import github4s.{Decoders, GithubApiUrls, HttpClient, HttpClientExtension}
+import github4s._
 import io.circe.generic.auto._
 
 /** Factory to encapsulate calls related to Repositories operations  */
 class Repos[C, M[_]](implicit urls: GithubApiUrls,
                      C: Capture[M],
-                     httpClientImpl: HttpClientExtension[C, M]) {
+                     httpClientImpl: HttpRequestBuilderExtension[C, M]) {
 
   import Decoders._
 

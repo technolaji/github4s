@@ -25,7 +25,7 @@ import java.util.UUID
 
 import github4s.GithubResponses.{GHResponse, GHResult}
 import github4s.free.domain._
-import github4s.{GithubApiUrls, HttpClient, HttpClientExtension}
+import github4s.{GithubApiUrls, HttpClient, HttpRequestBuilderExtension}
 import io.circe.generic.auto._
 import io.circe.syntax._
 import cats.implicits._
@@ -35,7 +35,7 @@ import sun.misc.BASE64Encoder
 /** Factory to encapsulate calls related to Auth operations  */
 class Auth[C, M[_]](implicit urls: GithubApiUrls,
                     C: Capture[M],
-                    httpClientImpl: HttpClientExtension[C, M]) {
+                    httpClientImpl: HttpRequestBuilderExtension[C, M]) {
 
   val httpClient         = new HttpClient[C, M]
   lazy val base64Encoder = new BASE64Encoder()

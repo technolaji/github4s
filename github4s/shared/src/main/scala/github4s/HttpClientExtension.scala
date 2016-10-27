@@ -26,6 +26,6 @@ import io.circe.Decoder
 
 import scala.language.higherKinds
 
-trait HttpClientExtension[C, M[_]] extends HttpClient[C, M] {
-  def run[A](rb: HttpRequestBuilder)(implicit D: Decoder[A]): M[GHResponse[A]]
+trait HttpRequestBuilderExtension[C, M[_]] {
+  def run[A](rb: HttpRequestBuilder[C, M])(implicit D: Decoder[A]): M[GHResponse[A]]
 }

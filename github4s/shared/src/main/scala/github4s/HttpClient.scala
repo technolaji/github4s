@@ -55,38 +55,56 @@ object HttpClient {
   }
 }
 
-case class HttpRequestBuilder(
-    url: String,
-    httpVerb: HttpVerb = Get,
-    authHeader: Map[String, String] = Map.empty[String, String],
-    data: Option[String] = None,
-    params: Map[String, String] = Map.empty[String, String],
-    headers: Map[String, String] = Map.empty[String, String]
+class HttpRequestBuilder[C, M[_]](
+    val url: String,
+    val httpVerb: HttpVerb = Get,
+    val authHeader: Map[String, String] = Map.empty[String, String],
+    val data: Option[String] = None,
+    val params: Map[String, String] = Map.empty[String, String],
+    val headers: Map[String, String] = Map.empty[String, String]
 ) {
 
-  def postMethod = copy(httpVerb = Post)
+  def postMethod = new HttpRequestBuilder[C, M](url, Post, authHeader, data, params, headers)
 
-  def patchMethod = copy(httpVerb = Patch)
+  def patchMethod = new HttpRequestBuilder[C, M](url, Patch, authHeader, data, params, headers)
 
-  def putMethod = copy(httpVerb = Put)
+  def putMethod = new HttpRequestBuilder[C, M](url, Put, authHeader, data, params, headers)
 
-  def deleteMethod = copy(httpVerb = Delete)
+  def deleteMethod = new HttpRequestBuilder[C, M](url, Delete, authHeader, data, params, headers)
 
-  def withAuth(accessToken: Option[String] = None) =
-    copy(authHeader = accessToken match {
+  def withAuth(accessToken: Option[String] = None) = {
+    val authHeader = accessToken match {
       case Some(token) ⇒ Map("Authorization" → s"token $token")
       case _           ⇒ Map.empty[String, String]
-    })
+    }
+    new HttpRequestBuilder[C, M](url, httpVerb, authHeader, data, params, headers)
+  }
 
-  def withHeaders(headers: Map[String, String]) = copy(headers = headers)
+  def withHeaders(headers: Map[String, String]) =
+    new HttpRequestBuilder[C, M](url, httpVerb, authHeader, data, params, headers)
 
-  def withParams(params: Map[String, String]) = copy(params = params)
+  def withParams(params: Map[String, String]) =
+    new HttpRequestBuilder[C, M](url, httpVerb, authHeader, data, params, headers)
 
-  def withData(data: String) = copy(data = Option(data))
-
+  def withData(data: String) =
+    new HttpRequestBuilder[C, M](url, httpVerb, authHeader, Option(data), params, headers)
 }
 
-class HttpClient[C, M[_]](implicit urls: GithubApiUrls, httpClientImpl: HttpClientExtension[C, M]) {
+object HttpRequestBuilder {
+  def httpRequestBuilder[C, M[_]](
+      url: String,
+      httpVerb: HttpVerb = Get,
+      authHeader: Map[String, String] = Map.empty[String, String],
+      data: Option[String] = None,
+      params: Map[String, String] = Map.empty[String, String],
+      headers: Map[String, String] = Map.empty[String, String]
+  ) = new HttpRequestBuilder[C, M](url, httpVerb, authHeader, data, params, headers)
+}
+
+class HttpClient[C, M[_]](implicit urls: GithubApiUrls,
+                          httpRbImpl: HttpRequestBuilderExtension[C, M]) {
+  import HttpRequestBuilder._
+
   val defaultPagination = Pagination(1, 1000)
 
   def get[A](
@@ -95,8 +113,8 @@ class HttpClient[C, M[_]](implicit urls: GithubApiUrls, httpClientImpl: HttpClie
       params: Map[String, String] = Map.empty,
       pagination: Option[Pagination] = None
   )(implicit D: Decoder[A]): M[GHResponse[A]] =
-    httpClientImpl.run[A](
-      HttpRequestBuilder(buildURL(method))
+    httpRbImpl.run[A](
+      httpRequestBuilder(buildURL(method))
         .withAuth(accessToken)
         .withParams(params ++ pagination.fold(Map.empty[String, String])(p ⇒
           Map("page" → p.page.toString, "per_page" → p.per_page.toString)))
@@ -104,13 +122,13 @@ class HttpClient[C, M[_]](implicit urls: GithubApiUrls, httpClientImpl: HttpClie
 
   def patch[A](accessToken: Option[String] = None, method: String, data: String)(
       implicit D: Decoder[A]): M[GHResponse[A]] =
-    httpClientImpl.run[A](
-      HttpRequestBuilder(buildURL(method)).patchMethod.withAuth(accessToken).withData(data))
+    httpRbImpl.run[A](
+      httpRequestBuilder(buildURL(method)).patchMethod.withAuth(accessToken).withData(data))
 
   def put[A](accessToken: Option[String] = None, method: String)(
       implicit D: Decoder[A]): M[GHResponse[A]] =
-    httpClientImpl.run[A](
-      HttpRequestBuilder(buildURL(method)).putMethod
+    httpRbImpl.run[A](
+      httpRequestBuilder(buildURL(method)).putMethod
         .withAuth(accessToken)
         .withHeaders(Map("Content-Length" → "0")))
 
@@ -120,8 +138,8 @@ class HttpClient[C, M[_]](implicit urls: GithubApiUrls, httpClientImpl: HttpClie
       headers: Map[String, String] = Map.empty,
       data: String
   )(implicit D: Decoder[A]): M[GHResponse[A]] =
-    httpClientImpl.run[A](
-      HttpRequestBuilder(buildURL(method))
+    httpRbImpl.run[A](
+      httpRequestBuilder(buildURL(method))
         .withAuth(accessToken)
         .withHeaders(headers)
         .withData(data))
@@ -131,20 +149,20 @@ class HttpClient[C, M[_]](implicit urls: GithubApiUrls, httpClientImpl: HttpClie
       headers: Map[String, String] = Map.empty,
       data: String
   )(implicit D: Decoder[A]): M[GHResponse[A]] =
-    httpClientImpl.run[A](HttpRequestBuilder(buildURL(method)).withHeaders(headers).withData(data))
+    httpRbImpl.run[A](httpRequestBuilder(buildURL(method)).withHeaders(headers).withData(data))
 
   def postOAuth[A](
       url: String,
       data: String
   )(implicit D: Decoder[A]): M[GHResponse[A]] =
-    httpClientImpl.run[A](
-      HttpRequestBuilder(url).postMethod
+    httpRbImpl.run[A](
+      httpRequestBuilder(url).postMethod
         .withHeaders(Map("Accept" → "application/json"))
         .withData(data))
 
   def delete[A](accessToken: Option[String] = None, method: String)(
       implicit D: Decoder[A]): M[GHResponse[A]] =
-    httpClientImpl.run[A](HttpRequestBuilder(buildURL(method)).deleteMethod.withAuth(accessToken))
+    httpRbImpl.run[A](httpRequestBuilder(buildURL(method)).deleteMethod.withAuth(accessToken))
 
   private def buildURL(method: String) = urls.baseUrl + method
 

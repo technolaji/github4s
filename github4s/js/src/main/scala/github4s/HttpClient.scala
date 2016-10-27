@@ -32,6 +32,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import github4s.GithubResponses.{GHResponse, GHResult, JsonParsingException, UnexpectedException}
 import github4s.GithubDefaultUrls._
 import github4s.Decoders._
+import github4s.HttpClient.{Get, HttpVerb}
 import io.circe.Decoder
 import io.circe.parser._
 
@@ -42,9 +43,10 @@ case class CirceJSONBody(value: String) extends BodyPart {
 
 trait HttpClientExtensionJS {
 
-  implicit def extensionJS: HttpClientExtension[HttpResponse, Future] =
-    new HttpClientExtension[HttpResponse, Future] {
-      def run[A](rb: HttpRequestBuilder)(implicit D: Decoder[A]): Future[GHResponse[A]] = {
+  implicit def extensionJS: HttpRequestBuilderExtension[HttpResponse, Future] =
+    new HttpRequestBuilderExtension[HttpResponse, Future] {
+      def run[A](rb: HttpRequestBuilder[HttpResponse, Future])(
+          implicit D: Decoder[A]): Future[GHResponse[A]] = {
         val request = HttpRequest(rb.url)
           .withMethod(Method(rb.httpVerb.verb))
           .withHeader("content-type", "application/json")

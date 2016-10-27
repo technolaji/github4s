@@ -24,7 +24,7 @@ package github4s.free.interpreters
 import cats.implicits._
 import cats.{ApplicativeError, Eval, MonadError, ~>}
 import github4s.GithubDefaultUrls._
-import github4s.HttpClientExtension
+import github4s.HttpRequestBuilderExtension
 import github4s.api.{Auth, Gists, Repos, Users}
 import github4s.app.{COGH01, COGH02, GitHub4s}
 import github4s.free.algebra._
@@ -38,7 +38,7 @@ trait Capture[M[_]] {
 
 class Interpreters[M[_], C](implicit A: ApplicativeError[M, Throwable],
                             C: Capture[M],
-                            httpClientImpl: HttpClientExtension[C, M]) {
+                            httpClientImpl: HttpRequestBuilderExtension[C, M]) {
 
   implicit def interpreters(
       implicit A: MonadError[M, Throwable]
