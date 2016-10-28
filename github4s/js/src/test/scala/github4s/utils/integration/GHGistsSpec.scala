@@ -28,7 +28,7 @@ import github4s.implicits._
 import github4s.{Github, ImplicitsJS}
 import github4s.utils.TestUtils
 import org.scalatest._
-import fr.hmil.roshttp.HttpResponse
+import fr.hmil.roshttp.response.SimpleHttpResponse
 import github4s.free.domain.GistFile
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -39,7 +39,7 @@ class GHGistsSpec extends AsyncFlatSpec with Matchers with TestUtils with Implic
       .newGist(validGistDescription,
                validGistPublic,
                Map(validGistFilename -> GistFile(validGistFileContent)))
-      .exec[Future, HttpResponse]
+      .exec[Future, SimpleHttpResponse]
     response should be('right)
 
     response map { r ⇒

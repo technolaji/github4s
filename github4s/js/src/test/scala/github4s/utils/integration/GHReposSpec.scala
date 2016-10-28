@@ -29,7 +29,7 @@ import github4s.implicits._
 import github4s.{Github, ImplicitsJS}
 import github4s.utils.TestUtils
 import org.scalatest.{AsyncFlatSpec, FlatSpec, Matchers}
-import fr.hmil.roshttp.HttpResponse
+import fr.hmil.roshttp.response.SimpleHttpResponse
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -38,7 +38,7 @@ class GHReposSpec extends AsyncFlatSpec with Matchers with TestUtils with Implic
   "Repos >> Get" should "return the expected name when valid repo is provided" in {
 
     val response =
-      Github(accessToken).repos.get(validRepoOwner, validRepoName).exec[Future, HttpResponse]
+      Github(accessToken).repos.get(validRepoOwner, validRepoName).exec[Future, SimpleHttpResponse]
     response should be('right)
 
     response map { r ⇒
@@ -53,7 +53,9 @@ class GHReposSpec extends AsyncFlatSpec with Matchers with TestUtils with Implic
 
   it should "return error when an invalid repo name is passed" in {
     val response =
-      Github(accessToken).repos.get(validRepoOwner, invalidRepoName).exec[Future, HttpResponse]
+      Github(accessToken).repos
+        .get(validRepoOwner, invalidRepoName)
+        .exec[Future, SimpleHttpResponse]
     response should be('left)
   }
 
@@ -61,7 +63,7 @@ class GHReposSpec extends AsyncFlatSpec with Matchers with TestUtils with Implic
     val response =
       Github(accessToken).repos
         .listCommits(validRepoOwner, validRepoName)
-        .exec[Future, HttpResponse]
+        .exec[Future, SimpleHttpResponse]
     response should be('right)
 
     response map { r ⇒
@@ -78,7 +80,7 @@ class GHReposSpec extends AsyncFlatSpec with Matchers with TestUtils with Implic
     val response =
       Github(accessToken).repos
         .listCommits(invalidRepoName, validRepoName)
-        .exec[Future, HttpResponse]
+        .exec[Future, SimpleHttpResponse]
     response should be('left)
   }
 
@@ -86,7 +88,7 @@ class GHReposSpec extends AsyncFlatSpec with Matchers with TestUtils with Implic
     val response =
       Github(accessToken).repos
         .listContributors(validRepoOwner, validRepoName)
-        .exec[Future, HttpResponse]
+        .exec[Future, SimpleHttpResponse]
     response should be('right)
 
     response map { r ⇒
@@ -103,7 +105,7 @@ class GHReposSpec extends AsyncFlatSpec with Matchers with TestUtils with Implic
     val response =
       Github(accessToken).repos
         .listContributors(invalidRepoName, validRepoName)
-        .exec[Future, HttpResponse]
+        .exec[Future, SimpleHttpResponse]
     response should be('left)
   }
 

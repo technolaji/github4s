@@ -28,7 +28,7 @@ import github4s.{Github, ImplicitsJS}
 import github4s.implicits._
 import github4s.utils.TestUtils
 import org.scalatest._
-import fr.hmil.roshttp.HttpResponse
+import fr.hmil.roshttp.response.SimpleHttpResponse
 import org.scalatest.concurrent.ScalaFutures
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -44,7 +44,7 @@ class GHAuthSpec extends AsyncFlatSpec with Matchers with TestUtils with Implici
                validNote,
                validClientId,
                invalidClientSecret)
-      .exec[Future, HttpResponse]
+      .exec[Future, SimpleHttpResponse]
     response should be('left)
   }
 
@@ -52,7 +52,7 @@ class GHAuthSpec extends AsyncFlatSpec with Matchers with TestUtils with Implici
     val response =
       Github().auth
         .authorizeUrl(validClientId, validRedirectUri, validScopes)
-        .exec[Future, HttpResponse]
+        .exec[Future, SimpleHttpResponse]
     response should be('right)
 
     response map { r ⇒
@@ -69,7 +69,7 @@ class GHAuthSpec extends AsyncFlatSpec with Matchers with TestUtils with Implici
   "Auth >> GetAccessToken" should "return error on Left for invalid code value" in {
     val response = Github().auth
       .getAccessToken(validClientId, invalidClientSecret, "", validRedirectUri, "")
-      .exec[Future, HttpResponse]
+      .exec[Future, SimpleHttpResponse]
     response should be('left)
   }
 

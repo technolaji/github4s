@@ -30,6 +30,7 @@ import cats.implicits._
 import fr.hmil.roshttp.response.SimpleHttpResponse
 import fr.hmil.roshttp.util.HeaderMap
 import fr.hmil.roshttp.body.Implicits._
+import fr.hmil.roshttp.exceptions.HttpException
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import github4s.GithubResponses.{GHResponse, GHResult, JsonParsingException, UnexpectedException}
@@ -38,6 +39,8 @@ import github4s.Decoders._
 import io.circe.Decoder
 import io.circe.parser._
 import monix.reactive.Observable
+
+import scala.util.{Failure, Success}
 
 case class CirceJSONBody(value: String) extends BulkBodyPart {
   override def contentType: String     = s"application/json; charset=utf-8"
@@ -48,6 +51,12 @@ trait HttpRequestBuilderExtensionJS {
 
   import monix.execution.Scheduler.Implicits.global
 
+  def userAgent = {
+    val name    = github4s.BuildInfo.name
+    val version = github4s.BuildInfo.version
+    s"$name/$version"
+  }
+
   implicit def extensionJS: HttpRequestBuilderExtension[SimpleHttpResponse, Future] =
     new HttpRequestBuilderExtension[SimpleHttpResponse, Future] {
       def run[A](rb: HttpRequestBuilder[SimpleHttpResponse, Future])(
@@ -56,24 +65,21 @@ trait HttpRequestBuilderExtensionJS {
           .withMethod(Method(rb.httpVerb.verb))
           .withQueryParameters(rb.params.toSeq: _*)
           .withHeader("content-type", "application/json")
+          .withHeader("user-agent", userAgent)
           .withHeaders(rb.authHeader.toList: _*)
           .withHeaders(rb.headers.toList: _*)
 
+        println(s"User-Agent: $userAgent")
         rb.data match {
-          case Some(d) ⇒ {
-            println(
-              s"request method: ${request.method}, request headers: ${request.headers}, url: ${request.url}")
-            request
-              .withHeader("content-type", "application/json")
-              .send(CirceJSONBody(d))
-              .map(r => toEntity[A](r))
-          }
-          case _ ⇒ request.send().map(r => toEntity[A](r))
+          case Some(d) ⇒ request.send(CirceJSONBody(d)).map(r => toEntity[A](r))
+          case _       ⇒ request.send().map(r => toEntity[A](r))
         }
       }
     }
 
-  def toEntity[A](response: SimpleHttpResponse)(implicit D: Decoder[A]): GHResponse[A] =
+  def toEntity[A](response: SimpleHttpResponse)(implicit D: Decoder[A]): GHResponse[A] = {
+    println("toEntity")
+
     response match {
       case r if r.statusCode < 400 ⇒
         decode[A](r.body).fold(
@@ -88,6 +94,7 @@ trait HttpRequestBuilderExtensionJS {
           UnexpectedException(
             s"Failed invoking get with status : ${r.statusCode}, body : \n ${r.body}"))
     }
+  }
 
   def toEmpty(response: SimpleHttpResponse): GHResponse[Unit] = response match {
     case r if r.statusCode < 400 ⇒

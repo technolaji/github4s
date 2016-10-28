@@ -75,6 +75,11 @@ lazy val scalazDependencies = addLibs(vAll, "scalaz-concurrent")
 lazy val github4s = (crossProject in file("github4s"))
   .settings(moduleName := "github4s")
   .enablePlugins(AutomateHeaderPlugin)
+    .enablePlugins(BuildInfoPlugin).
+    settings(
+      buildInfoKeys := Seq[BuildInfoKey](name, version),
+      buildInfoPackage := "github4s"
+    )
   .settings(buildSettings: _*)
   .settings(commonDeps: _*)
   .jvmSettings(jvmDeps: _*)

@@ -28,14 +28,14 @@ import github4s.implicits._
 import github4s.{Github, ImplicitsJS}
 import github4s.utils.TestUtils
 import org.scalatest._
-import fr.hmil.roshttp.HttpResponse
+import fr.hmil.roshttp.response.SimpleHttpResponse
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class GHUsersSpec extends AsyncFlatSpec with Matchers with TestUtils with ImplicitsJS {
 
   "Users >> Get" should "return the expected login for a valid username" in {
-    val response = Github(accessToken).users.get(validUsername).exec[Future, HttpResponse]
+    val response = Github(accessToken).users.get(validUsername).exec[Future, SimpleHttpResponse]
     response should be('right)
     response map { r ⇒
       r.toOption map { rr =>
@@ -48,17 +48,18 @@ class GHUsersSpec extends AsyncFlatSpec with Matchers with TestUtils with Implic
   }
 
   it should "return error on Left for invalid username" in {
-    val response = Github(accessToken).users.get(invalidUsername).exec[Future, HttpResponse]
+    val response = Github(accessToken).users.get(invalidUsername).exec[Future, SimpleHttpResponse]
     response should be('left)
   }
 
   "Users >> GetAuth" should "return error on Left when no accessToken is provided" in {
-    val response = Github().users.getAuth.exec[Future, HttpResponse]
+    val response = Github().users.getAuth.exec[Future, SimpleHttpResponse]
     response should be('left)
   }
 
   "Users >> GetUsers" should "return users for a valid since value" in {
-    val response = Github(accessToken).users.getUsers(validSinceInt).exec[Future, HttpResponse]
+    val response =
+      Github(accessToken).users.getUsers(validSinceInt).exec[Future, SimpleHttpResponse]
     response should be('right)
 
     response map { r ⇒
@@ -73,7 +74,7 @@ class GHUsersSpec extends AsyncFlatSpec with Matchers with TestUtils with Implic
 
   it should "return an empty list when a invalid since value is provided" in {
     val response =
-      Github(accessToken).users.getUsers(invalidSinceInt).exec[Future, HttpResponse]
+      Github(accessToken).users.getUsers(invalidSinceInt).exec[Future, SimpleHttpResponse]
     response should be('right)
 
     response map { r ⇒
