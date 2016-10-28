@@ -29,62 +29,50 @@ import github4s.{Github, ImplicitsJS}
 import github4s.utils.TestUtils
 import org.scalatest._
 import fr.hmil.roshttp.response.SimpleHttpResponse
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import github4s.free.domain.User
 
 class GHUsersSpec extends AsyncFlatSpec with Matchers with TestUtils with ImplicitsJS {
 
+  override implicit val executionContext = scala.concurrent.ExecutionContext.Implicits.global
+
   "Users >> Get" should "return the expected login for a valid username" in {
     val response = Github(accessToken).users.get(validUsername).exec[Future, SimpleHttpResponse]
-    response should be('right)
-    response map { r ⇒
-      r.toOption map { rr =>
-        rr.result.login shouldBe validUsername
-        rr.statusCode shouldBe okStatusCode
-      } match {
-        case _ => succeed
-      }
-    }
+
+    testFutureIsRight[User](response, { r =>
+      r.result.login shouldBe validUsername
+      r.statusCode shouldBe okStatusCode
+    })
   }
 
   it should "return error on Left for invalid username" in {
     val response = Github(accessToken).users.get(invalidUsername).exec[Future, SimpleHttpResponse]
-    response should be('left)
+    testFutureIsLeft(response)
   }
 
   "Users >> GetAuth" should "return error on Left when no accessToken is provided" in {
     val response = Github().users.getAuth.exec[Future, SimpleHttpResponse]
-    response should be('left)
+    testFutureIsLeft(response)
   }
 
   "Users >> GetUsers" should "return users for a valid since value" in {
     val response =
       Github(accessToken).users.getUsers(validSinceInt).exec[Future, SimpleHttpResponse]
-    response should be('right)
 
-    response map { r ⇒
-      r.toOption map { rr =>
-        rr.result.nonEmpty shouldBe true
-        rr.statusCode shouldBe okStatusCode
-      } match {
-        case _ => succeed
-      }
-    }
+    testFutureIsRight[List[User]](response, { r =>
+      r.result.nonEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    })
   }
 
   it should "return an empty list when a invalid since value is provided" in {
     val response =
       Github(accessToken).users.getUsers(invalidSinceInt).exec[Future, SimpleHttpResponse]
-    response should be('right)
 
-    response map { r ⇒
-      r.toOption map { rr =>
-        rr.result.isEmpty shouldBe true
-        rr.statusCode shouldBe okStatusCode
-      } match {
-        case _ => succeed
-      }
-    }
+    testFutureIsRight[List[User]](response, { r =>
+      r.result.isEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    })
   }
 
 }

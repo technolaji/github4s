@@ -55,24 +55,26 @@ trait HttpRequestBuilderExtensionJVM {
         rb.data match {
           case Some(d) ⇒
             C.capture(
-              toEntity[A](request.postData(d).header("content-type", "application/json").asString))
-          case _ ⇒ C.capture(toEntity[A](request.asString))
+              toEntity[A](request.postData(d).header("content-type", "application/json").asString,
+                          request.url))
+          case _ ⇒ C.capture(toEntity[A](request.asString, request.url))
         }
       }
 
     }
 
-  def toEntity[A](response: HttpResponse[String])(implicit D: Decoder[A]): GHResponse[A] =
-    response match {
-      case r if r.isSuccess ⇒
-        decode[A](r.body).fold(
-          e ⇒ Either.left(JsonParsingException(e.getMessage, r.body)),
-          result ⇒ Either.right(GHResult(result, r.code, toLowerCase(r.headers)))
-        )
-      case r ⇒
-        Either.left(
-          UnexpectedException(s"Failed invoking get with status : ${r.code}, body : \n ${r.body}"))
-    }
+  // TODO: put it back as it was
+  def toEntity[A](response: HttpResponse[String], url: String)(
+      implicit D: Decoder[A]): GHResponse[A] = response match {
+    case r if r.isSuccess ⇒
+      decode[A](r.body).fold(
+        e ⇒ Either.left(JsonParsingException(e.getMessage, r.body)),
+        result ⇒ Either.right(GHResult(result, r.code, toLowerCase(r.headers)))
+      )
+    case r ⇒
+      Either.left(
+        UnexpectedException(s"Failed invoking get with status : ${r.code}, body : \n ${r.body}"))
+  }
 
   def toEmpty(response: HttpResponse[String]): GHResponse[Unit] = response match {
     case r if r.isSuccess ⇒ Either.right(GHResult(Unit, r.code, toLowerCase(r.headers)))

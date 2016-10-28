@@ -69,17 +69,17 @@ trait HttpRequestBuilderExtensionJS {
           .withHeaders(rb.authHeader.toList: _*)
           .withHeaders(rb.headers.toList: _*)
 
-        println(s"User-Agent: $userAgent")
-        rb.data match {
-          case Some(d) ⇒ request.send(CirceJSONBody(d)).map(r => toEntity[A](r))
-          case _       ⇒ request.send().map(r => toEntity[A](r))
+        (rb.data match {
+          case Some(d) ⇒
+            request.send(CirceJSONBody(d))
+          case _ ⇒ request.send()
+        }).map(r => toEntity[A](r)).recoverWith[GHResponse[A]] {
+          case e => Future.successful(Either.left(UnexpectedException(e.getMessage)))
         }
       }
     }
 
-  def toEntity[A](response: SimpleHttpResponse)(implicit D: Decoder[A]): GHResponse[A] = {
-    println("toEntity")
-
+  def toEntity[A](response: SimpleHttpResponse)(implicit D: Decoder[A]): GHResponse[A] =
     response match {
       case r if r.statusCode < 400 ⇒
         decode[A](r.body).fold(
@@ -94,16 +94,6 @@ trait HttpRequestBuilderExtensionJS {
           UnexpectedException(
             s"Failed invoking get with status : ${r.statusCode}, body : \n ${r.body}"))
     }
-  }
-
-  def toEmpty(response: SimpleHttpResponse): GHResponse[Unit] = response match {
-    case r if r.statusCode < 400 ⇒
-      Either.right(GHResult(Unit, r.statusCode, rosHeaderMapToRegularMap(r.headers)))
-    case r ⇒
-      Either.left(
-        UnexpectedException(
-          s"Failed invoking get with status : ${r.statusCode}, body : \n ${r.body}"))
-  }
 
   private def rosHeaderMapToRegularMap(
       headers: HeaderMap[String]): Map[String, IndexedSeq[String]] =

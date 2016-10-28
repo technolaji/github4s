@@ -22,9 +22,36 @@
 package github4s.utils
 
 import com.github.marklister.base64.Base64._
+import org.scalatest.{Assertion, Matchers}
+import cats.implicits._
+import github4s.GithubResponses.{GHResponse, GHResult}
 
-trait TestUtils {
-  val accessToken = sys.props.get("token")
+import scala.concurrent.Future
+
+trait TestUtils extends Matchers {
+  def testFutureIsLeft[A](response: Future[GHResponse[A]])(
+      implicit ec: scala.concurrent.ExecutionContext) = {
+    response map { r =>
+      r.isLeft should be(true)
+    }
+  }
+
+  def testFutureIsRight[A](response: Future[GHResponse[A]], f: (GHResult[A]) => Assertion)(
+      implicit ec: scala.concurrent.ExecutionContext) = {
+    response map { r ⇒
+      {
+        r.isRight should be(true)
+
+        r.toOption map { rr =>
+          f(rr)
+        } match {
+          case _ => succeed
+        }
+      }
+    }
+  }
+
+  val accessToken = Option(github4s.BuildInfo.token)
   def tokenHeader = "token " + accessToken.getOrElse("")
 
   val validUsername   = "rafaparadela"

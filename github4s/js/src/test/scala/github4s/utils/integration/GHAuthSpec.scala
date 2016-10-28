@@ -29,14 +29,17 @@ import github4s.implicits._
 import github4s.utils.TestUtils
 import org.scalatest._
 import fr.hmil.roshttp.response.SimpleHttpResponse
+import github4s.free.domain.Authorize
 import org.scalatest.concurrent.ScalaFutures
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class GHAuthSpec extends AsyncFlatSpec with Matchers with TestUtils with ImplicitsJS {
 
-  "Auth >> NewAuthJS" should "return error on Left when invalid credential is provided" in {
+  override implicit val executionContext = scala.concurrent.ExecutionContext.Implicits.global
+
+  "Auth >> NewAuth" should "return error on Left when invalid credential is provided" in {
+
     val response = Github().auth
       .newAuth(validUsername,
                invalidPassword,
@@ -45,7 +48,8 @@ class GHAuthSpec extends AsyncFlatSpec with Matchers with TestUtils with Implici
                validClientId,
                invalidClientSecret)
       .exec[Future, SimpleHttpResponse]
-    response should be('left)
+
+    testFutureIsLeft(response)
   }
 
   "Auth >> AuthorizeUrl" should "return the expected URL for valid username" in {
@@ -53,24 +57,19 @@ class GHAuthSpec extends AsyncFlatSpec with Matchers with TestUtils with Implici
       Github().auth
         .authorizeUrl(validClientId, validRedirectUri, validScopes)
         .exec[Future, SimpleHttpResponse]
-    response should be('right)
 
-    response map { r ⇒
-      r.toOption map { rr =>
-        rr.result.url.contains(validRedirectUri) shouldBe true
-        rr.statusCode shouldBe okStatusCode
-      } match {
-        case _ => succeed
-      }
-    }
-
+    testFutureIsRight[Authorize](response, { r =>
+      r.result.url.contains(validRedirectUri) shouldBe true
+      r.statusCode shouldBe okStatusCode
+    })
   }
 
   "Auth >> GetAccessToken" should "return error on Left for invalid code value" in {
     val response = Github().auth
       .getAccessToken(validClientId, invalidClientSecret, "", validRedirectUri, "")
       .exec[Future, SimpleHttpResponse]
-    response should be('left)
+
+    testFutureIsLeft(response)
   }
 
 }

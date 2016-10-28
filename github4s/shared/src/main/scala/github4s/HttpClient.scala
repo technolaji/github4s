@@ -112,20 +112,13 @@ class HttpClient[C, M[_]](implicit urls: GithubApiUrls,
       method: String,
       params: Map[String, String] = Map.empty,
       pagination: Option[Pagination] = None
-  )(implicit D: Decoder[A]): M[GHResponse[A]] = {
-    val rb = httpRequestBuilder(buildURL(method)).putMethod
-      .withAuth(accessToken)
-      .withParams(params ++ pagination.fold(Map.empty[String, String])(p ⇒
-        Map("page" → p.page.toString, "per_page" → p.per_page.toString)))
-    println(s"***** URL: ${rb.url}")
-
+  )(implicit D: Decoder[A]): M[GHResponse[A]] =
     httpRbImpl.run[A](
-      httpRequestBuilder(buildURL(method)).putMethod
+      httpRequestBuilder(buildURL(method))
         .withAuth(accessToken)
         .withParams(params ++ pagination.fold(Map.empty[String, String])(p ⇒
           Map("page" → p.page.toString, "per_page" → p.per_page.toString)))
     )
-  }
 
   def patch[A](accessToken: Option[String] = None, method: String, data: String)(
       implicit D: Decoder[A]): M[GHResponse[A]] =
@@ -146,7 +139,7 @@ class HttpClient[C, M[_]](implicit urls: GithubApiUrls,
       data: String
   )(implicit D: Decoder[A]): M[GHResponse[A]] =
     httpRbImpl.run[A](
-      httpRequestBuilder(buildURL(method))
+      httpRequestBuilder(buildURL(method)).postMethod
         .withAuth(accessToken)
         .withHeaders(headers)
         .withData(data))
@@ -156,7 +149,8 @@ class HttpClient[C, M[_]](implicit urls: GithubApiUrls,
       headers: Map[String, String] = Map.empty,
       data: String
   )(implicit D: Decoder[A]): M[GHResponse[A]] =
-    httpRbImpl.run[A](httpRequestBuilder(buildURL(method)).withHeaders(headers).withData(data))
+    httpRbImpl.run[A](
+      httpRequestBuilder(buildURL(method)).postMethod.withHeaders(headers).withData(data))
 
   def postOAuth[A](
       url: String,

@@ -29,26 +29,26 @@ import github4s.{Github, ImplicitsJS}
 import github4s.utils.TestUtils
 import org.scalatest._
 import fr.hmil.roshttp.response.SimpleHttpResponse
-import github4s.free.domain.GistFile
-import scala.concurrent.ExecutionContext.Implicits.global
+import github4s.free.domain.{Gist, GistFile}
+
 import scala.concurrent.Future
 
 class GHGistsSpec extends AsyncFlatSpec with Matchers with TestUtils with ImplicitsJS {
+
+  override implicit val executionContext = scala.concurrent.ExecutionContext.Implicits.global
+
   "Gists >> Post" should "return the provided gist" in {
+    println(
+      s"Access Token: ${accessToken}, sys props: ${sys.props}, sys env: ${System.getenv("GITHUB_TOKEN")}")
     val response = Github(accessToken).gists
       .newGist(validGistDescription,
                validGistPublic,
                Map(validGistFilename -> GistFile(validGistFileContent)))
       .exec[Future, SimpleHttpResponse]
-    response should be('right)
 
-    response map { r ⇒
-      r.toOption map { rr =>
-        rr.result.description shouldBe validGistDescription
-        rr.statusCode shouldBe createdStatusCode
-      } match {
-        case _ => succeed
-      }
-    }
+    testFutureIsRight[Gist](response, { r =>
+      r.result.description shouldBe validGistDescription
+      r.statusCode shouldBe createdStatusCode
+    })
   }
 }

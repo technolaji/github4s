@@ -30,25 +30,23 @@ import github4s.{Github, ImplicitsJS}
 import github4s.utils.TestUtils
 import org.scalatest.{AsyncFlatSpec, FlatSpec, Matchers}
 import fr.hmil.roshttp.response.SimpleHttpResponse
-import scala.concurrent.ExecutionContext.Implicits.global
+import github4s.free.domain.{Commit, Repository, User}
+
 import scala.concurrent.Future
 
 class GHReposSpec extends AsyncFlatSpec with Matchers with TestUtils with ImplicitsJS {
+
+  override implicit val executionContext = scala.concurrent.ExecutionContext.Implicits.global
 
   "Repos >> Get" should "return the expected name when valid repo is provided" in {
 
     val response =
       Github(accessToken).repos.get(validRepoOwner, validRepoName).exec[Future, SimpleHttpResponse]
-    response should be('right)
 
-    response map { r ⇒
-      r.toOption map { rr =>
-        rr.result.name shouldBe validRepoName
-        rr.statusCode shouldBe okStatusCode
-      } match {
-        case _ => succeed
-      }
-    }
+    testFutureIsRight[Repository](response, { r =>
+      r.result.name shouldBe validRepoName
+      r.statusCode shouldBe okStatusCode
+    })
   }
 
   it should "return error when an invalid repo name is passed" in {
@@ -56,7 +54,8 @@ class GHReposSpec extends AsyncFlatSpec with Matchers with TestUtils with Implic
       Github(accessToken).repos
         .get(validRepoOwner, invalidRepoName)
         .exec[Future, SimpleHttpResponse]
-    response should be('left)
+
+    testFutureIsLeft(response)
   }
 
   "Repos >> ListCommits" should "return the expected list of commits for valid data" in {
@@ -64,16 +63,11 @@ class GHReposSpec extends AsyncFlatSpec with Matchers with TestUtils with Implic
       Github(accessToken).repos
         .listCommits(validRepoOwner, validRepoName)
         .exec[Future, SimpleHttpResponse]
-    response should be('right)
 
-    response map { r ⇒
-      r.toOption map { rr =>
-        rr.result.nonEmpty shouldBe true
-        rr.statusCode shouldBe okStatusCode
-      } match {
-        case _ => succeed
-      }
-    }
+    testFutureIsRight[List[Commit]](response, { r =>
+      r.result.nonEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    })
   }
 
   it should "return error for invalid repo name" in {
@@ -81,7 +75,8 @@ class GHReposSpec extends AsyncFlatSpec with Matchers with TestUtils with Implic
       Github(accessToken).repos
         .listCommits(invalidRepoName, validRepoName)
         .exec[Future, SimpleHttpResponse]
-    response should be('left)
+
+    testFutureIsLeft(response)
   }
 
   "Repos >> ListContributors" should "return the expected list of contributors for valid data" in {
@@ -89,16 +84,11 @@ class GHReposSpec extends AsyncFlatSpec with Matchers with TestUtils with Implic
       Github(accessToken).repos
         .listContributors(validRepoOwner, validRepoName)
         .exec[Future, SimpleHttpResponse]
-    response should be('right)
 
-    response map { r ⇒
-      r.toOption map { rr =>
-        rr.result shouldNot be(empty)
-        rr.statusCode shouldBe okStatusCode
-      } match {
-        case _ => succeed
-      }
-    }
+    testFutureIsRight[List[User]](response, { r =>
+      r.result shouldNot be(empty)
+      r.statusCode shouldBe okStatusCode
+    })
   }
 
   it should "return error for invalid repo name" in {
@@ -106,7 +96,8 @@ class GHReposSpec extends AsyncFlatSpec with Matchers with TestUtils with Implic
       Github(accessToken).repos
         .listContributors(invalidRepoName, validRepoName)
         .exec[Future, SimpleHttpResponse]
-    response should be('left)
+
+    testFutureIsLeft(response)
   }
 
 }

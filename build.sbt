@@ -77,7 +77,7 @@ lazy val github4s = (crossProject in file("github4s"))
   .enablePlugins(AutomateHeaderPlugin)
     .enablePlugins(BuildInfoPlugin).
     settings(
-      buildInfoKeys := Seq[BuildInfoKey](name, version),
+      buildInfoKeys := Seq[BuildInfoKey](name, version, "token" -> sys.props("token")),
       buildInfoPackage := "github4s"
     )
   .settings(buildSettings: _*)
