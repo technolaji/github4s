@@ -24,11 +24,15 @@ package github4s.scalaz
 import cats.implicits._
 import github4s.Github._
 import cats.{MonadError, RecursiveTailRecM}
+import github4s.HttpRequestBuilderExtensionJVM
+
 import scalaz.concurrent.Task
-import github4s.free.interpreters.Capture
+import github4s.free.interpreters.{Capture, Interpreters}
+
+import scalaj.http.HttpResponse
 import scalaz._
 
-object implicits {
+object implicits extends HttpRequestBuilderExtensionJVM {
 
   implicit val taskCaptureInstance = new Capture[Task] {
     override def capture[A](a: ⇒ A): Task[A] = Task.now(a)
@@ -54,6 +58,8 @@ object implicits {
       fa.handleWith({ case x ⇒ f(x) })
 
   }
+
+  implicit val intInstanceTaskScalaJ = new Interpreters[Task, HttpResponse[String]]
 
   private[this] def toScalazDisjunction[A, B](disj: Either[A, B]): A \/ B =
     disj.fold(l ⇒ -\/(l), r ⇒ \/-(r))
