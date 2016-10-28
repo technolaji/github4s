@@ -108,3 +108,5 @@ lazy val scalaz = (project in file("scalaz"))
 lazy val testSettings = Seq(
   fork in Test := false
 )
+
+addCommandAlias("testAllCoverable", ";docs/test;scalaz/test;github4sJVM/test")

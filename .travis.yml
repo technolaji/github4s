@@ -4,7 +4,8 @@ scala:
 jdk:
   - oraclejdk8
 script:
-  - sbt -Dtoken=$GITHUB4S_ACCESS_TOKEN clean coverage test
+  - sbt -Dtoken=$GITHUB4S_ACCESS_TOKEN clean github4sJS/test
+  - sbt -Dtoken=$GITHUB4S_ACCESS_TOKEN clean coverage testAllCoverable
   - sbt -Dtoken=$GITHUB4S_ACCESS_TOKEN 'docs/tut'
 after_success:
   - sbt coverageReport
