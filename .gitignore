@@ -3,6 +3,7 @@ target/
 .idea
 docs/src/jekyll/_site/
 docs/src/jekyll/*.md
+.DS_Store
 
 # PGP keys
 *.gpg

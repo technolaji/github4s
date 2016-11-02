@@ -24,6 +24,7 @@ lazy val buildSettings = Seq(
       "scala" -> MIT("2016", "47 Degrees, LLC. <http://www.47deg.com>")
     )
   ) ++ reformatOnCompileSettings ++
+    sharedCommonSettings ++
     miscSettings ++
     sharedReleaseProcess ++
     credentialSettings ++
@@ -39,19 +40,29 @@ lazy val micrositeSettings = Seq(
   includeFilter in makeSite := "*.html" | "*.css" | "*.png" | "*.jpg" | "*.gif" | "*.js" | "*.swf" | "*.md"
 )
 
-lazy val dependencies = addLibs(vAll,
+lazy val commonDeps = addLibs(vAll,
                                 "cats-free",
                                 "circe-core",
                                 "circe-generic",
                                 "circe-parser",
                                 "simulacrum") ++
-    addTestLibs(vAll, "scalatest") ++
     addCompilerPlugins(vAll, "paradise") ++
-    Seq(
+Seq(libraryDependencies ++= Seq(
+  "org.scalatest" %%% "scalatest" % "3.0.0" % "test",
+  "com.github.marklister" %%% "base64" % "0.2.2"
+))
+
+lazy val jvmDeps = Seq(
       libraryDependencies ++= Seq(
         "org.scalaj" %% "scalaj-http" % "2.2.1",
         "org.mock-server" % "mockserver-netty" % "3.10.4" % "test"
       ))
+
+lazy val jsDeps = Seq(
+  libraryDependencies ++= Seq(
+    "fr.hmil" %%% "roshttp" % "2.0.0-RC1"
+  )
+)
 
 lazy val docsDependencies = libraryDependencies ++= Seq(
     "com.ironcorelabs" %% "cats-scalatest"  % "1.1.2"  % "test",
@@ -60,11 +71,24 @@ lazy val docsDependencies = libraryDependencies ++= Seq(
 
 lazy val scalazDependencies = addLibs(vAll, "scalaz-concurrent")
 
-lazy val github4s = (project in file("."))
+/** github4s - cross project that provides cross platform support.*/
+lazy val github4s = (crossProject in file("github4s"))
   .settings(moduleName := "github4s")
-  .settings(buildSettings: _*)
-  .settings(dependencies: _*)
   .enablePlugins(AutomateHeaderPlugin)
+    .enablePlugins(BuildInfoPlugin).
+    settings(
+      buildInfoKeys := Seq[BuildInfoKey](name, version, "token" -> Option(sys.props("token")).getOrElse("")),
+      buildInfoPackage := "github4s"
+    )
+  .settings(buildSettings: _*)
+  .settings(commonDeps: _*)
+  .jvmSettings(jvmDeps: _*)
+  .jsSettings(sharedJsSettings: _*)
+  .jsSettings(testSettings: _*)
+  .jsSettings(jsDeps: _*)
+
+lazy val github4sJVM = github4s.jvm
+lazy val github4sJS  = github4s.js
 
 lazy val docs = (project in file("docs"))
   .dependsOn(scalaz)
@@ -79,5 +103,9 @@ lazy val scalaz = (project in file("scalaz"))
   .settings(moduleName := "github4s-scalaz")
   .settings(buildSettings: _*)
   .settings(scalazDependencies: _*)
-  .dependsOn(github4s)
+  .dependsOn(github4sJVM)
   .enablePlugins(AutomateHeaderPlugin)
+
+lazy val testSettings = Seq(
+  fork in Test := false
+)
