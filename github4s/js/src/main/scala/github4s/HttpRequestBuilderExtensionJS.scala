@@ -36,6 +36,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import github4s.GithubResponses.{GHResponse, GHResult, JsonParsingException, UnexpectedException}
 import github4s.GithubDefaultUrls._
 import github4s.Decoders._
+import github4s.HttpClient.HttpCode400
 import io.circe.Decoder
 import io.circe.parser._
 import monix.reactive.Observable
@@ -51,7 +52,7 @@ trait HttpRequestBuilderExtensionJS {
 
   import monix.execution.Scheduler.Implicits.global
 
-  def userAgent = {
+  val userAgent = {
     val name    = github4s.BuildInfo.name
     val version = github4s.BuildInfo.version
     s"$name/$version"
@@ -69,19 +70,19 @@ trait HttpRequestBuilderExtensionJS {
           .withHeaders(rb.authHeader.toList: _*)
           .withHeaders(rb.headers.toList: _*)
 
-        (rb.data match {
-          case Some(d) ⇒
-            request.send(CirceJSONBody(d))
-          case _ ⇒ request.send()
-        }).map(r => toEntity[A](r)).recoverWith[GHResponse[A]] {
-          case e => Future.successful(Either.left(UnexpectedException(e.getMessage)))
-        }
+        rb.data
+          .map(d => request.send(CirceJSONBody(d)))
+          .getOrElse(request.send())
+          .map(toEntity[A])
+          .recoverWith {
+            case e => Future.successful(Either.left(UnexpectedException(e.getMessage)))
+          }
       }
     }
 
   def toEntity[A](response: SimpleHttpResponse)(implicit D: Decoder[A]): GHResponse[A] =
     response match {
-      case r if r.statusCode < 400 ⇒
+      case r if r.statusCode < HttpCode400.statusCode ⇒
         decode[A](r.body).fold(
           e ⇒ Either.left(JsonParsingException(e.getMessage, r.body)),
           result ⇒

@@ -77,17 +77,18 @@ lazy val github4s = (crossProject in file("github4s"))
   .enablePlugins(AutomateHeaderPlugin)
     .enablePlugins(BuildInfoPlugin).
     settings(
-      buildInfoKeys := Seq[BuildInfoKey](name, version, "token" -> sys.props("token")),
+      buildInfoKeys := Seq[BuildInfoKey](name, version, "token" -> Option(sys.props("token")).getOrElse("")),
       buildInfoPackage := "github4s"
     )
   .settings(buildSettings: _*)
   .settings(commonDeps: _*)
   .jvmSettings(jvmDeps: _*)
   .jsSettings(sharedJsSettings: _*)
+  .jsSettings(testSettings: _*)
   .jsSettings(jsDeps: _*)
 
 lazy val github4sJVM = github4s.jvm
-lazy val github4sJS  = github4s.js.settings(testSettings: _*)
+lazy val github4sJS  = github4s.js
 
 lazy val docs = (project in file("docs"))
   .dependsOn(scalaz)
@@ -108,5 +109,3 @@ lazy val scalaz = (project in file("scalaz"))
 lazy val testSettings = Seq(
   fork in Test := false
 )
-
-addCommandAlias("testAllCoverable", ";docs/test;scalaz/test;github4sJVM/test")

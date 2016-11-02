@@ -63,7 +63,6 @@ trait HttpRequestBuilderExtensionJVM {
 
     }
 
-  // TODO: put it back as it was
   def toEntity[A](response: HttpResponse[String], url: String)(
       implicit D: Decoder[A]): GHResponse[A] = response match {
     case r if r.isSuccess ⇒
@@ -71,13 +70,6 @@ trait HttpRequestBuilderExtensionJVM {
         e ⇒ Either.left(JsonParsingException(e.getMessage, r.body)),
         result ⇒ Either.right(GHResult(result, r.code, toLowerCase(r.headers)))
       )
-    case r ⇒
-      Either.left(
-        UnexpectedException(s"Failed invoking get with status : ${r.code}, body : \n ${r.body}"))
-  }
-
-  def toEmpty(response: HttpResponse[String]): GHResponse[Unit] = response match {
-    case r if r.isSuccess ⇒ Either.right(GHResult(Unit, r.code, toLowerCase(r.headers)))
     case r ⇒
       Either.left(
         UnexpectedException(s"Failed invoking get with status : ${r.code}, body : \n ${r.body}"))

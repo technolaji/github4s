@@ -53,6 +53,14 @@ object HttpClient {
   case object Patch extends HttpVerb {
     def verb = "PATCH"
   }
+
+  sealed trait HttpStatus {
+    def statusCode: Int
+  }
+
+  case object HttpCode400 extends HttpStatus {
+    def statusCode = 400
+  }
 }
 
 class HttpRequestBuilder[C, M[_]](
