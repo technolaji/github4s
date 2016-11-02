@@ -19,15 +19,16 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package github4s
+package github4s.jvm
 
-import cats.{Eval, Id}
-import github4s.free.interpreters.Interpreters
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
-import scalaj.http._
-import github4s.implicits._
 import cats.instances.FutureInstances
+import cats.{Eval, _}
+import github4s.free.interpreters.Interpreters
+import github4s.{EvalInstances, HttpRequestBuilderExtensionJVM, IdInstances}
+import scala.concurrent.Future
+import scalaj.http.HttpResponse
+import scala.concurrent.ExecutionContext.Implicits.global
+import github4s.implicits._
 
 trait ImplicitsJVM
     extends IdInstances

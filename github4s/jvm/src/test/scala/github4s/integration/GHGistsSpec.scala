@@ -25,14 +25,14 @@ import cats.Id
 import cats.implicits._
 import github4s.Github._
 import github4s.free.domain.GistFile
-import github4s.implicits._
-import github4s.{Github, ImplicitsJVM}
+import github4s.Github
 import github4s.utils.TestUtils
+import github4s.jvm.Implicits._
 import org.scalatest._
 
 import scalaj.http.HttpResponse
 
-class GHGistsSpec extends FlatSpec with Matchers with TestUtils with ImplicitsJVM {
+class GHGistsSpec extends FlatSpec with Matchers with TestUtils {
   "Gists >> Post" should "return the provided gist" in {
     val response = Github(accessToken).gists
       .newGist(validGistDescription,

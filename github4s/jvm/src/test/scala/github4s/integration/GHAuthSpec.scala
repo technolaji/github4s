@@ -24,13 +24,13 @@ package github4s.integration
 import cats.Id
 import cats.implicits._
 import github4s.Github._
-import github4s.{Github, ImplicitsJVM}
-import github4s.implicits._
+import github4s.Github
 import github4s.utils.TestUtils
 import org.scalatest._
+import github4s.jvm.Implicits._
 import scalaj.http._
 
-class GHAuthSpec extends FlatSpec with Matchers with TestUtils with ImplicitsJVM {
+class GHAuthSpec extends FlatSpec with Matchers with TestUtils {
 
   "Auth >> NewAuth" should "return error on Left when invalid credential is provided" in {
     val response = Github().auth

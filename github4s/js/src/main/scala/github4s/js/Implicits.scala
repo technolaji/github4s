@@ -19,31 +19,6 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package github4s.integration
+package github4s.js
 
-import github4s.Github._
-import github4s.Github
-import github4s.utils.TestUtils
-import org.scalatest._
-import fr.hmil.roshttp.response.SimpleHttpResponse
-import github4s.free.domain.{Gist, GistFile}
-import github4s.js.Implicits._
-import scala.concurrent.Future
-
-class GHGistsSpec extends AsyncFlatSpec with Matchers with TestUtils {
-
-  override implicit val executionContext = scala.concurrent.ExecutionContext.Implicits.global
-
-  "Gists >> Post" should "return the provided gist" in {
-    val response = Github(accessToken).gists
-      .newGist(validGistDescription,
-               validGistPublic,
-               Map(validGistFilename -> GistFile(validGistFileContent)))
-      .exec[Future, SimpleHttpResponse]
-
-    testFutureIsRight[Gist](response, { r =>
-      r.result.description shouldBe validGistDescription
-      r.statusCode shouldBe createdStatusCode
-    })
-  }
-}
+object Implicits extends ImplicitsJS

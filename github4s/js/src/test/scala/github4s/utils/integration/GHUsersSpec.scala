@@ -21,18 +21,16 @@
 
 package github4s.integration
 
-import cats.Id
-import cats.implicits._
 import github4s.Github._
-import github4s.implicits._
-import github4s.{Github, ImplicitsJS}
+import github4s.Github
 import github4s.utils.TestUtils
 import org.scalatest._
 import fr.hmil.roshttp.response.SimpleHttpResponse
 import scala.concurrent.Future
 import github4s.free.domain.User
+import github4s.js.Implicits._
 
-class GHUsersSpec extends AsyncFlatSpec with Matchers with TestUtils with ImplicitsJS {
+class GHUsersSpec extends AsyncFlatSpec with Matchers with TestUtils {
 
   override implicit val executionContext = scala.concurrent.ExecutionContext.Implicits.global
 

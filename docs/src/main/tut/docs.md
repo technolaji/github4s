@@ -11,18 +11,14 @@ WIP: Import
 import github4s.Github
 ```
 
-In order for github4s to work in both JVM and scala-js environments, you'll need to place different implicits in your scope:
+In order for github4s to work in both JVM and scala-js environments, you'll need to place different implicits in your scope, depending on your needs:
 
 ```tut:silent
-object JVMProgram extends github4s.ImplicitsJVM {
-    // Your JVM-compatible code...
-}
+import github4s.jvm.Implicits._
+```
 
-/*
-object JSProgram extends github4s.ImplicitsJS {
-    // Your scala-js compatible code...
-}
-*/
+```tut:silent
+// import github4s.js.Implicits._
 ```
 
 ```tut:invisible
@@ -46,10 +42,9 @@ user1 in this case `Free[GHException Xor GHResult[User], User]` and we can run (
 ```tut:silent
 import cats.Eval
 import github4s.Github._
-import github4s.implicits._
 import scalaj.http._
 
-object ProgramEval extends github4s.ImplicitsJVM {
+object ProgramEval {
     val u1 = user1.exec[Eval, HttpResponse[String]].value
 }
 
@@ -75,7 +70,7 @@ WIP:  With `Id`
 import cats.Id
 import scalaj.http._
 
-object ProgramId extends github4s.ImplicitsJVM {
+object ProgramId {
     val u2 = Github(accessToken).users.get("raulraja").exec[Id, HttpResponse[String]]
 }
 ```
@@ -83,14 +78,14 @@ object ProgramId extends github4s.ImplicitsJVM {
 WIP: With `Future`
 
 ```tut:silent
-import github4s.implicits._
+import cats.Id
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.Await
 import scalaj.http._
 
-object ProgramFuture extends github4s.ImplicitsJVM {
+object ProgramFuture {
     val u3 = Github(accessToken).users.get("dialelo").exec[Future, HttpResponse[String]]
     Await.result(u3, 2.seconds)
 }
@@ -102,8 +97,9 @@ WIP: With `scalaz.Task`
 import scalaz.concurrent.Task
 import github4s.scalaz.implicits._
 import scalaj.http._
+import github4s.jvm.Implicits._
 
-object ProgramTask extends github4s.ImplicitsJVM {
+object ProgramTask {
     val u4 = Github(accessToken).users.get("franciscodr").exec[Task, HttpResponse[String]]
     u4.attemptRun
 }
@@ -116,14 +112,14 @@ import cats.Eval
 import cats.implicits._
 import github4s.Github
 import github4s.Github._
-import github4s.implicits._
+import github4s.jvm.Implicits._
 import scalaj.http._
 
 val accessToken = sys.props.get("token")
 ```
 
 ```tut:book
-object ProgramEval extends github4s.ImplicitsJVM {
+object ProgramEval {
     val user1 = Github(accessToken).users.get("rafaparadela").exec[Eval, HttpResponse[String]].value
 }
 

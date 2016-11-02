@@ -88,7 +88,7 @@ trait TestUtils extends Matchers {
   val invalidAnonParameter = "X"
 
   val validGistDescription = "A Gist"
-  val validGistPublic      = true
+  val validGistPublic      = false
   val validGistFileContent = "val meaningOfLife = 42"
   val validGistFilename    = "test.scala"
 }

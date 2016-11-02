@@ -24,14 +24,14 @@ package github4s.integration
 import cats.Id
 import cats.implicits._
 import github4s.Github._
-import github4s.implicits._
-import github4s.{Github, ImplicitsJVM}
+import github4s.Github
+import github4s.jvm.Implicits._
 import github4s.utils.TestUtils
 import org.scalatest._
 
 import scalaj.http.HttpResponse
 
-class GHUsersSpec extends FlatSpec with Matchers with TestUtils with ImplicitsJVM {
+class GHUsersSpec extends FlatSpec with Matchers with TestUtils {
 
   "Users >> Get" should "return the expected login for a valid username" in {
     val response = Github(accessToken).users.get(validUsername).exec[Id, HttpResponse[String]]

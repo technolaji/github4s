@@ -19,18 +19,8 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package github4s
+package github4s.jvm
 
-import cats.Id
-import cats.instances.FutureInstances
-import github4s.free.interpreters.Interpreters
-import fr.hmil.roshttp.response.SimpleHttpResponse
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-import github4s.implicits._
+import github4s.FutureCaptureInstance
 
-trait ImplicitsJS extends FutureInstances with HttpRequestBuilderExtensionJS {
-
-  implicit val intInstanceFutureRosHttp = new Interpreters[Future, SimpleHttpResponse]
-
-}
+object Implicits extends ImplicitsJVM with FutureCaptureInstance

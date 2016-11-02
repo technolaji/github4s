@@ -26,10 +26,10 @@ import github4s.free.domain.{GistFile, Pagination}
 import github4s.utils.{DummyGithubUrls, MockGithubApiServer, TestUtils}
 import org.scalatest._
 import cats.implicits._
-import github4s.ImplicitsJVM
 
 import scalaj.http._
 import cats.Id
+import github4s.jvm.ImplicitsJVM
 
 class ApiSpec
     extends FlatSpec

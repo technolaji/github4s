@@ -25,14 +25,14 @@ import cats.Id
 import cats.implicits._
 import github4s.Github._
 import github4s.GithubResponses._
-import github4s.implicits._
-import github4s.{Github, ImplicitsJVM}
+import github4s.Github
+import github4s.jvm.Implicits._
 import github4s.utils.TestUtils
 import org.scalatest.{FlatSpec, Matchers}
 
 import scalaj.http.HttpResponse
 
-class GHReposSpec extends FlatSpec with Matchers with TestUtils with ImplicitsJVM {
+class GHReposSpec extends FlatSpec with Matchers with TestUtils {
 
   "Repos >> Get" should "return the expected name when valid repo is provided" in {
 
