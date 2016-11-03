@@ -118,6 +118,7 @@ class HttpClient[C, M[_]](implicit urls: GithubApiUrls,
   def get[A](
       accessToken: Option[String] = None,
       method: String,
+      headers: Map[String, String] = Map.empty,
       params: Map[String, String] = Map.empty,
       pagination: Option[Pagination] = None
   )(implicit D: Decoder[A]): M[GHResponse[A]] =
@@ -128,8 +129,10 @@ class HttpClient[C, M[_]](implicit urls: GithubApiUrls,
           Map("page" → p.page.toString, "per_page" → p.per_page.toString)))
     )
 
-  def patch[A](accessToken: Option[String] = None, method: String, data: String)(
-      implicit D: Decoder[A]): M[GHResponse[A]] =
+  def patch[A](accessToken: Option[String] = None,
+               method: String,
+               headers: Map[String, String] = Map.empty,
+               data: String)(implicit D: Decoder[A]): M[GHResponse[A]] =
     httpRbImpl.run[A](
       httpRequestBuilder(buildURL(method)).patchMethod.withAuth(accessToken).withData(data))
 
@@ -162,6 +165,7 @@ class HttpClient[C, M[_]](implicit urls: GithubApiUrls,
 
   def postOAuth[A](
       url: String,
+      headers: Map[String, String] = Map.empty,
       data: String
   )(implicit D: Decoder[A]): M[GHResponse[A]] =
     httpRbImpl.run[A](
@@ -169,8 +173,10 @@ class HttpClient[C, M[_]](implicit urls: GithubApiUrls,
         .withHeaders(Map("Accept" → "application/json"))
         .withData(data))
 
-  def delete[A](accessToken: Option[String] = None, method: String)(
-      implicit D: Decoder[A]): M[GHResponse[A]] =
+  def delete[A](
+      accessToken: Option[String] = None,
+      method: String,
+      headers: Map[String, String] = Map.empty)(implicit D: Decoder[A]): M[GHResponse[A]] =
     httpRbImpl.run[A](httpRequestBuilder(buildURL(method)).deleteMethod.withAuth(accessToken))
 
   private def buildURL(method: String) = urls.baseUrl + method

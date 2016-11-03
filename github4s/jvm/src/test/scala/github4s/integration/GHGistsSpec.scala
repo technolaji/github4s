@@ -38,7 +38,8 @@ class GHGistsSpec extends FlatSpec with Matchers with TestUtils {
       .newGist(validGistDescription,
                validGistPublic,
                Map(validGistFilename -> GistFile(validGistFileContent)))
-      .exec[Id, HttpResponse[String]]
+      .exec[Id, HttpResponse[String]](headerUserAgent)
+
     response should be('right)
     response.toOption map { r ⇒
       r.result.description shouldBe validGistDescription

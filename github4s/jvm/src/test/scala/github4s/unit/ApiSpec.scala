@@ -45,7 +45,13 @@ class ApiSpec
   val gists = new Gists[HttpResponse[String], Id]
 
   "Auth >> NewAuth" should "return a valid token when valid credential is provided" in {
-    val response = auth.newAuth(validUsername, "", validScopes, validNote, validClientId, "")
+    val response = auth.newAuth(validUsername,
+                                "",
+                                validScopes,
+                                validNote,
+                                validClientId,
+                                "",
+                                headers = headerUserAgent)
     response should be('right)
 
     response.toOption map { r ⇒
@@ -56,7 +62,13 @@ class ApiSpec
 
   it should "return error on Left when invalid credential is provided" in {
     val response =
-      auth.newAuth(validUsername, invalidPassword, validScopes, validNote, validClientId, "")
+      auth.newAuth(validUsername,
+                   invalidPassword,
+                   validScopes,
+                   validNote,
+                   validClientId,
+                   "",
+                   headers = headerUserAgent)
     response should be('left)
   }
 
@@ -71,7 +83,7 @@ class ApiSpec
   }
 
   "Auth >> GetAccessToken" should "return a valid access_token when a valid code is provided" in {
-    val response = auth.getAccessToken("", "", validCode, "", "")
+    val response = auth.getAccessToken("", "", validCode, "", "", headers = headerUserAgent)
     response should be('right)
 
     response.toOption map { r ⇒
@@ -82,13 +94,13 @@ class ApiSpec
   }
 
   it should "return error on Left when invalid code is provided" in {
-    val response = auth.getAccessToken("", "", invalidCode, "", "")
+    val response = auth.getAccessToken("", "", invalidCode, "", "", headers = headerUserAgent)
     response should be('left)
   }
 
   "Repos >> Get" should "return the expected name when valid repo is provided" in {
 
-    val response = repos.get(accessToken, validRepoOwner, validRepoName)
+    val response = repos.get(accessToken, headerUserAgent, validRepoOwner, validRepoName)
     response should be('right)
 
     response.toOption map { r ⇒
@@ -99,13 +111,14 @@ class ApiSpec
   }
 
   it should "return error when an invalid repo name is passed" in {
-    val response = repos.get(accessToken, validRepoOwner, invalidRepoName)
+    val response = repos.get(accessToken, headerUserAgent, validRepoOwner, invalidRepoName)
     response should be('left)
   }
 
   "Repos >> ListCommits" should "return the expected list of commits for valid data" in {
     val response = repos.listCommits(
       accessToken = accessToken,
+      headers = headerUserAgent,
       owner = validRepoOwner,
       repo = validRepoName,
       pagination = Option(Pagination(validPage, validPerPage))
@@ -121,6 +134,7 @@ class ApiSpec
   it should "return an empty list of commits for invalid page parameter" in {
     val response = repos.listCommits(
       accessToken = accessToken,
+      headers = headerUserAgent,
       owner = validRepoOwner,
       repo = validRepoName,
       pagination = Option(Pagination(invalidPage, validPerPage))
@@ -136,13 +150,14 @@ class ApiSpec
   }
 
   it should "return error for invalid repo name" in {
-    val response = repos.listCommits(accessToken, validRepoOwner, invalidRepoName)
+    val response = repos.listCommits(accessToken, headerUserAgent, validRepoOwner, invalidRepoName)
     response should be('left)
   }
 
   "Repos >> ListContributors" should "return the expected list of contributors for valid data" in {
     val response = repos.listContributors(
       accessToken = accessToken,
+      headers = headerUserAgent,
       owner = validRepoOwner,
       repo = validRepoName
     )
@@ -159,6 +174,7 @@ class ApiSpec
   it should "return the expected list of contributors for valid data, including a valid anon parameter" in {
     val response = repos.listContributors(
       accessToken = accessToken,
+      headers = headerUserAgent,
       owner = validRepoOwner,
       repo = validRepoName,
       anon = Option(validAnonParameter)
@@ -175,6 +191,7 @@ class ApiSpec
   it should "return an empty list of contributors for invalid anon parameter" in {
     val response = repos.listContributors(
       accessToken = accessToken,
+      headers = headerUserAgent,
       owner = validRepoOwner,
       repo = validRepoName,
       anon = Some(invalidAnonParameter)
@@ -189,13 +206,14 @@ class ApiSpec
   }
 
   it should "return error for invalid repo name" in {
-    val response = repos.listContributors(accessToken, validRepoOwner, invalidRepoName)
+    val response =
+      repos.listContributors(accessToken, headerUserAgent, validRepoOwner, invalidRepoName)
     response should be('left)
   }
 
   "Users >> Get" should "return the expected login for a valid username" in {
 
-    val response = users.get(accessToken, validUsername)
+    val response = users.get(accessToken, headerUserAgent, validUsername)
 
     response should be('right)
     response.toOption map { r ⇒
@@ -206,12 +224,12 @@ class ApiSpec
   }
 
   it should "return error on Left for invalid username" in {
-    val response = users.get(accessToken, invalidUsername)
+    val response = users.get(accessToken, headerUserAgent, invalidUsername)
     response should be('left)
   }
 
   "Users >> GetAuth" should "return the expected login for a valid accessToken" in {
-    val response = users.getAuth(accessToken)
+    val response = users.getAuth(accessToken, headerUserAgent)
     response should be('right)
 
     response.toOption map { r ⇒
@@ -222,12 +240,12 @@ class ApiSpec
   }
 
   it should "return error on Left when no accessToken is provided" in {
-    val response = users.getAuth(None)
+    val response = users.getAuth(None, headerUserAgent)
     response should be('left)
   }
 
   "Users >> GetUsers" should "return users for a valid since value" in {
-    val response = users.getUsers(accessToken, validSinceInt)
+    val response = users.getUsers(accessToken, headerUserAgent, validSinceInt)
     response should be('right)
 
     response.toOption map { r ⇒
@@ -238,7 +256,7 @@ class ApiSpec
   }
 
   it should "return an empty list when a invalid since value is provided" in {
-    val response = users.getUsers(accessToken, invalidSinceInt)
+    val response = users.getUsers(accessToken, headerUserAgent, invalidSinceInt)
     response should be('right)
 
     response.toOption map { r ⇒
@@ -253,6 +271,7 @@ class ApiSpec
       gists.newGist(validGistDescription,
                     validGistPublic,
                     Map(validGistFilename -> GistFile(validGistFileContent)),
+                    headerUserAgent,
                     accessToken)
     response should be('right)
 

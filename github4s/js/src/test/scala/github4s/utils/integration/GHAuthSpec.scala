@@ -43,7 +43,7 @@ class GHAuthSpec extends AsyncFlatSpec with Matchers with TestUtils {
                validNote,
                validClientId,
                invalidClientSecret)
-      .exec[Future, SimpleHttpResponse]
+      .execFuture(headerUserAgent)
 
     testFutureIsLeft(response)
   }
@@ -52,7 +52,7 @@ class GHAuthSpec extends AsyncFlatSpec with Matchers with TestUtils {
     val response =
       Github().auth
         .authorizeUrl(validClientId, validRedirectUri, validScopes)
-        .exec[Future, SimpleHttpResponse]
+        .execFuture(headerUserAgent)
 
     testFutureIsRight[Authorize](response, { r =>
       r.result.url.contains(validRedirectUri) shouldBe true
@@ -63,7 +63,7 @@ class GHAuthSpec extends AsyncFlatSpec with Matchers with TestUtils {
   "Auth >> GetAccessToken" should "return error on Left for invalid code value" in {
     val response = Github().auth
       .getAccessToken(validClientId, invalidClientSecret, "", validRedirectUri, "")
-      .exec[Future, SimpleHttpResponse]
+      .execFuture(headerUserAgent)
 
     testFutureIsLeft(response)
   }

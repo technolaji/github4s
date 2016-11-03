@@ -52,6 +52,7 @@ class Auth[C, M[_]](implicit urls: GithubApiUrls,
     * @param note to remind you what the OAuth token is for
     * @param client_id the 20 character OAuth app client key for which to create the token
     * @param client_secret the 40 character OAuth app client secret for which to create the token
+    * @param headers optional user headers to include in the request
     * @return GHResponse[Authorization] new authorization with access_token
     */
   def newAuth(
@@ -60,11 +61,12 @@ class Auth[C, M[_]](implicit urls: GithubApiUrls,
       scopes: List[String],
       note: String,
       client_id: String,
-      client_secret: String
+      client_secret: String,
+      headers: Map[String, String] = Map()
   ): M[GHResponse[Authorization]] =
     httpClient.postAuth[Authorization](
       method = "authorizations",
-      headers = Map("Authorization" → s"Basic ${s"$username:$password".getBytes.toBase64}"),
+      headers = Map("Authorization" → s"Basic ${s"$username:$password".getBytes.toBase64}") ++ headers,
       data = NewAuthRequest(scopes, note, client_id, client_secret).asJson.noSpaces
     )
 
@@ -103,6 +105,7 @@ class Auth[C, M[_]](implicit urls: GithubApiUrls,
     * @param code the code you received as a response to Step 1
     * @param redirect_uri the URL in your app where users will be sent after authorization
     * @param state the unguessable random string you optionally provided in Step 1
+    * @param headers optional user headers to include in the request
     * @return GHResponse[OAuthToken] new access_token: second step oAuth
     */
   def getAccessToken(
@@ -110,9 +113,11 @@ class Auth[C, M[_]](implicit urls: GithubApiUrls,
       client_secret: String,
       code: String,
       redirect_uri: String,
-      state: String
+      state: String,
+      headers: Map[String, String] = Map()
   ): M[GHResponse[OAuthToken]] = httpClient.postOAuth[OAuthToken](
     url = accessTokenUrl,
+    headers = headers,
     data = NewOAuthRequest(client_id, client_secret, code, redirect_uri, state).asJson.noSpaces
   )
 

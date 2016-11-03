@@ -38,7 +38,7 @@ class GHReposSpec extends AsyncFlatSpec with Matchers with TestUtils {
   "Repos >> Get" should "return the expected name when valid repo is provided" in {
 
     val response =
-      Github(accessToken).repos.get(validRepoOwner, validRepoName).exec[Future, SimpleHttpResponse]
+      Github(accessToken).repos.get(validRepoOwner, validRepoName).execFuture(headerUserAgent)
 
     testFutureIsRight[Repository](response, { r =>
       r.result.name shouldBe validRepoName
@@ -48,9 +48,7 @@ class GHReposSpec extends AsyncFlatSpec with Matchers with TestUtils {
 
   it should "return error when an invalid repo name is passed" in {
     val response =
-      Github(accessToken).repos
-        .get(validRepoOwner, invalidRepoName)
-        .exec[Future, SimpleHttpResponse]
+      Github(accessToken).repos.get(validRepoOwner, invalidRepoName).execFuture(headerUserAgent)
 
     testFutureIsLeft(response)
   }
@@ -59,7 +57,7 @@ class GHReposSpec extends AsyncFlatSpec with Matchers with TestUtils {
     val response =
       Github(accessToken).repos
         .listCommits(validRepoOwner, validRepoName)
-        .exec[Future, SimpleHttpResponse]
+        .execFuture(headerUserAgent)
 
     testFutureIsRight[List[Commit]](response, { r =>
       r.result.nonEmpty shouldBe true
@@ -71,7 +69,7 @@ class GHReposSpec extends AsyncFlatSpec with Matchers with TestUtils {
     val response =
       Github(accessToken).repos
         .listCommits(invalidRepoName, validRepoName)
-        .exec[Future, SimpleHttpResponse]
+        .execFuture(headerUserAgent)
 
     testFutureIsLeft(response)
   }
@@ -80,7 +78,7 @@ class GHReposSpec extends AsyncFlatSpec with Matchers with TestUtils {
     val response =
       Github(accessToken).repos
         .listContributors(validRepoOwner, validRepoName)
-        .exec[Future, SimpleHttpResponse]
+        .execFuture(headerUserAgent)
 
     testFutureIsRight[List[User]](response, { r =>
       r.result shouldNot be(empty)
@@ -92,7 +90,7 @@ class GHReposSpec extends AsyncFlatSpec with Matchers with TestUtils {
     val response =
       Github(accessToken).repos
         .listContributors(invalidRepoName, validRepoName)
-        .exec[Future, SimpleHttpResponse]
+        .execFuture(headerUserAgent)
 
     testFutureIsLeft(response)
   }
