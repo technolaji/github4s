@@ -31,7 +31,7 @@ WIP: Every Github4s api returns a `Free[GHResponse[A], A]` where `GHResponse[A]`
 case class GHResult[A](result: A, statusCode: Int, headers: Map[String, IndexedSeq[String]])
 ```
 
-For getting an user
+To get an user
 
 ```tut:silent
 val user1 = Github(accessToken).users.get("rafaparadela")
@@ -45,7 +45,7 @@ import github4s.Github._
 import scalaj.http._
 
 object ProgramEval {
-    val u1 = user1.exec[Eval, HttpResponse[String]].value
+    val u1 = user1.exec[Eval, HttpResponse[String]]().value
 }
 
 ```
@@ -71,7 +71,7 @@ import cats.Id
 import scalaj.http._
 
 object ProgramId {
-    val u2 = Github(accessToken).users.get("raulraja").exec[Id, HttpResponse[String]]
+    val u2 = Github(accessToken).users.get("raulraja").exec[Id, HttpResponse[String]]()
 }
 ```
 
@@ -86,7 +86,8 @@ import scala.concurrent.Await
 import scalaj.http._
 
 object ProgramFuture {
-    val u3 = Github(accessToken).users.get("dialelo").exec[Future, HttpResponse[String]]
+    // execFuture[C] is a convenience access to exec[Future, C]
+    val u3 = Github(accessToken).users.get("dialelo").execFuture[HttpResponse[String]]()
     Await.result(u3, 2.seconds)
 }
 ```
@@ -100,7 +101,7 @@ import scalaj.http._
 import github4s.jvm.Implicits._
 
 object ProgramTask {
-    val u4 = Github(accessToken).users.get("franciscodr").exec[Task, HttpResponse[String]]
+    val u4 = Github(accessToken).users.get("franciscodr").exec[Task, HttpResponse[String]]()
     u4.attemptRun
 }
 ```
@@ -120,7 +121,9 @@ val accessToken = sys.props.get("token")
 
 ```tut:book
 object ProgramEval {
-    val user1 = Github(accessToken).users.get("rafaparadela").exec[Eval, HttpResponse[String]].value
+    // exec methods let users to include optional headers for any GitHub API request:
+    val userHeaders = Map("user-agent" -> "github4s")
+    val user1 = Github(accessToken).users.get("rafaparadela").exec[Eval, HttpResponse[String]](userHeaders).value
 }
 
 ProgramEval.user1 should be ('right)
