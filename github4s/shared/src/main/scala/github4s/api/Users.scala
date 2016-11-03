@@ -38,33 +38,41 @@ class Users[C, M[_]](implicit urls: GithubApiUrls,
     * Get information for a particular user
     *
     * @param accessToken to identify the authenticated user
+    * @param headers optional user headers to include in the request
     * @param username of the user to retrieve
     * @return GHResponse[User] User details
     */
-  def get(accessToken: Option[String] = None, username: String): M[GHResponse[User]] =
-    httpClient.get[User](accessToken, s"users/$username")
+  def get(accessToken: Option[String] = None,
+          headers: Map[String, String] = Map(),
+          username: String): M[GHResponse[User]] =
+    httpClient.get[User](accessToken, s"users/$username", headers)
 
   /**
     * Get information of the authenticated user
     * @param accessToken to identify the authenticated user
+    * @param headers optional user headers to include in the request
     * @return GHResponse[User] User details
     */
-  def getAuth(accessToken: Option[String] = None): M[GHResponse[User]] =
-    httpClient.get[User](accessToken, "user")
+  def getAuth(accessToken: Option[String] = None,
+              headers: Map[String, String] = Map()): M[GHResponse[User]] =
+    httpClient.get[User](accessToken, "user", headers)
 
   /**
     * Get users
     *
     * @param accessToken to identify the authenticated user
+    * @param headers optional user headers to include in the request
     * @param since The integer ID of the last User that you've seen.
     * @param pagination Limit and Offset for pagination
     * @return GHResponse[List[User] ] List of user's details
     */
   def getUsers(
       accessToken: Option[String] = None,
+      headers: Map[String, String] = Map(),
       since: Int,
       pagination: Option[Pagination] = None
   ): M[GHResponse[List[User]]] =
-    httpClient.get[List[User]](accessToken, "users", Map("since" → since.toString), pagination)
+    httpClient
+      .get[List[User]](accessToken, "users", headers, Map("since" → since.toString), pagination)
 
 }

@@ -35,7 +35,7 @@ class GHUsersSpec extends AsyncFlatSpec with Matchers with TestUtils {
   override implicit val executionContext = scala.concurrent.ExecutionContext.Implicits.global
 
   "Users >> Get" should "return the expected login for a valid username" in {
-    val response = Github(accessToken).users.get(validUsername).exec[Future, SimpleHttpResponse]
+    val response = Github(accessToken).users.get(validUsername).execFuture(headerUserAgent)
 
     testFutureIsRight[User](response, { r =>
       r.result.login shouldBe validUsername
@@ -44,18 +44,20 @@ class GHUsersSpec extends AsyncFlatSpec with Matchers with TestUtils {
   }
 
   it should "return error on Left for invalid username" in {
-    val response = Github(accessToken).users.get(invalidUsername).exec[Future, SimpleHttpResponse]
+    val response = Github(accessToken).users.get(invalidUsername).execFuture(headerUserAgent)
+
     testFutureIsLeft(response)
   }
 
   "Users >> GetAuth" should "return error on Left when no accessToken is provided" in {
-    val response = Github().users.getAuth.exec[Future, SimpleHttpResponse]
+    val response = Github().users.getAuth.exec[Future, SimpleHttpResponse](headerUserAgent)
+
     testFutureIsLeft(response)
   }
 
   "Users >> GetUsers" should "return users for a valid since value" in {
     val response =
-      Github(accessToken).users.getUsers(validSinceInt).exec[Future, SimpleHttpResponse]
+      Github(accessToken).users.getUsers(validSinceInt).execFuture(headerUserAgent)
 
     testFutureIsRight[List[User]](response, { r =>
       r.result.nonEmpty shouldBe true
@@ -65,7 +67,7 @@ class GHUsersSpec extends AsyncFlatSpec with Matchers with TestUtils {
 
   it should "return an empty list when a invalid since value is provided" in {
     val response =
-      Github(accessToken).users.getUsers(invalidSinceInt).exec[Future, SimpleHttpResponse]
+      Github(accessToken).users.getUsers(invalidSinceInt).execFuture(headerUserAgent)
 
     testFutureIsRight[List[User]](response, { r =>
       r.result.isEmpty shouldBe true

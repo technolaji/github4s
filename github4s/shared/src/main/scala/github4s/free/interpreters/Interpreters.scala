@@ -21,6 +21,7 @@
 
 package github4s.free.interpreters
 
+import cats.data.Kleisli
 import cats.implicits._
 import cats.{ApplicativeError, Eval, MonadError, ~>}
 import github4s.GithubDefaultUrls._
@@ -40,76 +41,95 @@ class Interpreters[M[_], C](implicit A: ApplicativeError[M, Throwable],
                             C: Capture[M],
                             httpClientImpl: HttpRequestBuilderExtension[C, M]) {
 
+  type K[A] = Kleisli[M, Map[String, String], A]
+
   implicit def interpreters(
       implicit A: MonadError[M, Throwable]
-  ): GitHub4s ~> M = {
-    val c01interpreter: COGH01 ~> M = repositoryOpsInterpreter or userOpsInterpreter
-    val c02interpreter: COGH02 ~> M = gistOpsInterpreter or c01interpreter
-    val all: GitHub4s ~> M          = authOpsInterpreter or c02interpreter
+  ): GitHub4s ~> K = {
+    val c01interpreter: COGH01 ~> K = repositoryOpsInterpreter or userOpsInterpreter
+    val c02interpreter: COGH02 ~> K = gistOpsInterpreter or c01interpreter
+    val all: GitHub4s ~> K          = authOpsInterpreter or c02interpreter
     all
   }
 
   /**
     * Lifts Repository Ops to an effect capturing Monad such as Task via natural transformations
     */
-  def repositoryOpsInterpreter: RepositoryOp ~> M = new (RepositoryOp ~> M) {
+  def repositoryOpsInterpreter: RepositoryOp ~> K = new (RepositoryOp ~> K) {
 
     val repos = new Repos()
 
-    def apply[A](fa: RepositoryOp[A]): M[A] = fa match {
-      case GetRepo(owner, repo, accessToken) ⇒ repos.get(accessToken, owner, repo)
-      case ListCommits(owner, repo, sha, path, author, since, until, pagination, accessToken) ⇒
-        repos.listCommits(accessToken, owner, repo, sha, path, author, since, until, pagination)
-      case ListContributors(owner, repo, anon, accessToken) ⇒
-        repos.listContributors(accessToken, owner, repo, anon)
+    def apply[A](fa: RepositoryOp[A]): K[A] = Kleisli[M, Map[String, String], A] { headers =>
+      fa match {
+        case GetRepo(owner, repo, accessToken) ⇒ repos.get(accessToken, headers, owner, repo)
+        case ListCommits(owner, repo, sha, path, author, since, until, pagination, accessToken) ⇒
+          repos.listCommits(accessToken,
+                            headers,
+                            owner,
+                            repo,
+                            sha,
+                            path,
+                            author,
+                            since,
+                            until,
+                            pagination)
+        case ListContributors(owner, repo, anon, accessToken) ⇒
+          repos.listContributors(accessToken, headers, owner, repo, anon)
+      }
     }
   }
 
   /**
     * Lifts User Ops to an effect capturing Monad such as Task via natural transformations
     */
-  def userOpsInterpreter: UserOp ~> M =
-    new (UserOp ~> M) {
+  def userOpsInterpreter: UserOp ~> K =
+    new (UserOp ~> K) {
 
       val users = new Users()
 
-      def apply[A](fa: UserOp[A]): M[A] = fa match {
-        case GetUser(username, accessToken) ⇒ users.get(accessToken, username)
-        case GetAuthUser(accessToken)       ⇒ users.getAuth(accessToken)
-        case GetUsers(since, pagination, accessToken) ⇒
-          users.getUsers(accessToken, since, pagination)
+      def apply[A](fa: UserOp[A]): K[A] = Kleisli[M, Map[String, String], A] { headers =>
+        fa match {
+          case GetUser(username, accessToken) ⇒ users.get(accessToken, headers, username)
+          case GetAuthUser(accessToken)       ⇒ users.getAuth(accessToken, headers)
+          case GetUsers(since, pagination, accessToken) ⇒
+            users.getUsers(accessToken, headers, since, pagination)
+        }
       }
     }
 
   /**
     * Lifts Auth Ops to an effect capturing Monad such as Task via natural transformations
     */
-  def authOpsInterpreter: AuthOp ~> M =
-    new (AuthOp ~> M) {
+  def authOpsInterpreter: AuthOp ~> K =
+    new (AuthOp ~> K) {
 
       val auth = new Auth()
 
-      def apply[A](fa: AuthOp[A]): M[A] = fa match {
-        case NewAuth(username, password, scopes, note, client_id, client_secret) ⇒
-          auth.newAuth(username, password, scopes, note, client_id, client_secret)
-        case AuthorizeUrl(client_id, redirect_uri, scopes) ⇒
-          auth.authorizeUrl(client_id, redirect_uri, scopes)
-        case GetAccessToken(client_id, client_secret, code, redirect_uri, state) ⇒
-          auth.getAccessToken(client_id, client_secret, code, redirect_uri, state)
+      def apply[A](fa: AuthOp[A]): K[A] = Kleisli[M, Map[String, String], A] { headers =>
+        fa match {
+          case NewAuth(username, password, scopes, note, client_id, client_secret) ⇒
+            auth.newAuth(username, password, scopes, note, client_id, client_secret, headers)
+          case AuthorizeUrl(client_id, redirect_uri, scopes) ⇒
+            auth.authorizeUrl(client_id, redirect_uri, scopes)
+          case GetAccessToken(client_id, client_secret, code, redirect_uri, state) ⇒
+            auth.getAccessToken(client_id, client_secret, code, redirect_uri, state, headers)
+        }
       }
     }
 
   /**
     * Lifts Gist Ops to an effect capturing Monad such as Task via natural transformations
     */
-  def gistOpsInterpreter: GistOp ~> M =
-    new (GistOp ~> M) {
+  def gistOpsInterpreter: GistOp ~> K =
+    new (GistOp ~> K) {
 
       val gists = new Gists()
 
-      def apply[A](fa: GistOp[A]): M[A] = fa match {
-        case NewGist(description, public, files, accessToken) ⇒
-          gists.newGist(description, public, files, accessToken)
+      def apply[A](fa: GistOp[A]): K[A] = Kleisli[M, Map[String, String], A] { headers =>
+        fa match {
+          case NewGist(description, public, files, accessToken) ⇒
+            gists.newGist(description, public, files, headers, accessToken)
+        }
       }
     }
 

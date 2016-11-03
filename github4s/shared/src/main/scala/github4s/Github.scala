@@ -21,12 +21,14 @@
 
 package github4s
 
-import cats.data.{EitherT, OptionT}
+import cats.data.{EitherT, Kleisli, OptionT}
 import cats.{MonadError, RecursiveTailRecM, ~>}
 import cats.implicits._
 import github4s.GithubResponses._
 import github4s.app._
 import github4s.free.interpreters.Interpreters
+
+import scala.concurrent.Future
 
 /**
   * Represent the Github API wrapper
@@ -43,16 +45,30 @@ class Github(accessToken: Option[String] = None) {
 
 /** Companion object for [[github4s.Github]] */
 object Github {
-
   def apply(accessToken: Option[String] = None) = new Github(accessToken)
 
   implicit class GithubIOSyntaxEither[A](gio: GHIO[GHResponse[A]]) {
 
-    def exec[M[_], C](implicit I: Interpreters[M, C],
-                      A: MonadError[M, Throwable],
-                      TR: RecursiveTailRecM[M],
-                      H: HttpRequestBuilderExtension[C, M]): M[GHResponse[A]] =
+    def execK[M[_], C](
+        implicit I: Interpreters[M, C],
+        A: MonadError[M, Throwable],
+        TR: RecursiveTailRecM[M],
+        H: HttpRequestBuilderExtension[C, M]): Kleisli[M, Map[String, String], GHResponse[A]] =
       gio foldMap I.interpreters
+
+    def exec[M[_], C](headers: Map[String, String] = Map())(
+        implicit I: Interpreters[M, C],
+        A: MonadError[M, Throwable],
+        TR: RecursiveTailRecM[M],
+        H: HttpRequestBuilderExtension[C, M]): M[GHResponse[A]] =
+      execK.run(headers)
+
+    def execFuture[C](headers: Map[String, String] = Map())(
+        implicit I: Interpreters[Future, C],
+        A: MonadError[Future, Throwable],
+        TR: RecursiveTailRecM[Future],
+        H: HttpRequestBuilderExtension[C, Future]): Future[GHResponse[A]] =
+      exec[Future, C](headers)
 
     def liftGH: EitherT[GHIO, GHException, GHResult[A]] =
       EitherT[GHIO, GHException, GHResult[A]](gio)

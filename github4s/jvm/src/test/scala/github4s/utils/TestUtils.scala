@@ -25,8 +25,9 @@ import com.github.marklister.base64.Base64.Encoder
 
 trait TestUtils {
 
-  val accessToken = sys.props.get("token")
-  def tokenHeader = "token " + accessToken.getOrElse("")
+  val accessToken     = sys.props.get("token")
+  def tokenHeader     = "token " + accessToken.getOrElse("")
+  val headerUserAgent = Map("user-agent" -> "github4s")
 
   val validUsername   = "rafaparadela"
   val invalidUsername = "GHInvalidaUserName"

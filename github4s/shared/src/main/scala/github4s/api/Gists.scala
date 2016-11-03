@@ -43,15 +43,18 @@ class Gists[C, M[_]](implicit urls: GithubApiUrls,
     * @param description of the gist
     * @param public boolean value that describes if the Gist should be public or not
     * @param files map describing the filenames of the Gist and its contents
+    * @param headers optional user headers to include in the request
     * @param accessToken to identify the authenticated user
     */
   def newGist(description: String,
               public: Boolean,
               files: Map[String, GistFile],
+              headers: Map[String, String] = Map(),
               accessToken: Option[String] = None): M[GHResponse[Gist]] =
     httpClient.post[Gist](
       accessToken,
       "gists",
+      headers,
       data = NewGistRequest(description, public, files).asJson.noSpaces
     )
 

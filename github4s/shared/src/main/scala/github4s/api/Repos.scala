@@ -40,19 +40,22 @@ class Repos[C, M[_]](implicit urls: GithubApiUrls,
     * Get information of a particular repository
     *
     * @param accessToken to identify the authenticated user
+    * @param headers optional user headers to include in the request
     * @param owner of the repo
     * @param repo name of the repo
     * @return GHResponse[Repository] repository details
     */
   def get(accessToken: Option[String] = None,
+          headers: Map[String, String] = Map(),
           owner: String,
           repo: String): M[GHResponse[Repository]] =
-    httpClient.get[Repository](accessToken, s"repos/$owner/$repo")
+    httpClient.get[Repository](accessToken, s"repos/$owner/$repo", headers)
 
   /**
     * Retrieve the list of commits for a particular repo
     *
     * @param accessToken to identify the authenticated user
+    * @param headers optional user headers to include in the request
     * @param owner of the repo
     * @param repo name of the repo
     * @param sha branch to start listing commits from
@@ -65,6 +68,7 @@ class Repos[C, M[_]](implicit urls: GithubApiUrls,
     */
   def listCommits(
       accessToken: Option[String] = None,
+      headers: Map[String, String] = Map(),
       owner: String,
       repo: String,
       sha: Option[String] = None,
@@ -76,6 +80,7 @@ class Repos[C, M[_]](implicit urls: GithubApiUrls,
   ): M[GHResponse[List[Commit]]] =
     httpClient.get[List[Commit]](accessToken,
                                  s"repos/$owner/$repo/commits",
+                                 headers,
                                  Map(
                                    "sha"    → sha,
                                    "path"   → path,
@@ -92,6 +97,7 @@ class Repos[C, M[_]](implicit urls: GithubApiUrls,
     * sorted by the number of commits per contributor in descending order.
     *
     * @param accessToken to identify the authenticated user
+    * @param headers optional user headers to include in the request
     * @param owner of the repo
     * @param repo name of the repo
     * @param anon Set to 1 or true to include anonymous contributors in results
@@ -99,12 +105,14 @@ class Repos[C, M[_]](implicit urls: GithubApiUrls,
     */
   def listContributors(
       accessToken: Option[String] = None,
+      headers: Map[String, String] = Map(),
       owner: String,
       repo: String,
       anon: Option[String] = None
   ): M[GHResponse[List[User]]] =
     httpClient.get[List[User]](accessToken,
                                s"repos/$owner/$repo/contributors",
+                               headers,
                                Map(
                                  "anon" → anon
                                ).collect {

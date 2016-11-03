@@ -37,7 +37,9 @@ class GHReposSpec extends FlatSpec with Matchers with TestUtils {
   "Repos >> Get" should "return the expected name when valid repo is provided" in {
 
     val response =
-      Github(accessToken).repos.get(validRepoOwner, validRepoName).exec[Id, HttpResponse[String]]
+      Github(accessToken).repos
+        .get(validRepoOwner, validRepoName)
+        .exec[Id, HttpResponse[String]](headerUserAgent)
     response should be('right)
     response.toOption map { r ⇒
       r.result.name shouldBe validRepoName
@@ -47,14 +49,16 @@ class GHReposSpec extends FlatSpec with Matchers with TestUtils {
 
   it should "return error when an invalid repo name is passed" in {
     val response =
-      Github(accessToken).repos.get(validRepoOwner, invalidRepoName).exec[Id, HttpResponse[String]]
+      Github(accessToken).repos
+        .get(validRepoOwner, invalidRepoName)
+        .exec[Id, HttpResponse[String]](headerUserAgent)
     response should be('left)
   }
 
   "Repos >> ListCommits" should "return the expected list of commits for valid data" in {
     val response = Github(accessToken).repos
       .listCommits(validRepoOwner, validRepoName)
-      .exec[Id, HttpResponse[String]]
+      .exec[Id, HttpResponse[String]](headerUserAgent)
     response should be('right)
 
     response.toOption map { r ⇒
@@ -66,7 +70,7 @@ class GHReposSpec extends FlatSpec with Matchers with TestUtils {
   it should "return error for invalid repo name" in {
     val response = Github(accessToken).repos
       .listCommits(invalidRepoName, validRepoName)
-      .exec[Id, HttpResponse[String]]
+      .exec[Id, HttpResponse[String]](headerUserAgent)
     response should be('left)
   }
 
@@ -74,7 +78,7 @@ class GHReposSpec extends FlatSpec with Matchers with TestUtils {
     val response =
       Github(accessToken).repos
         .listContributors(validRepoOwner, validRepoName)
-        .exec[Id, HttpResponse[String]]
+        .exec[Id, HttpResponse[String]](headerUserAgent)
     response should be('right)
 
     response.toOption map { r ⇒
@@ -88,7 +92,7 @@ class GHReposSpec extends FlatSpec with Matchers with TestUtils {
     val response =
       Github(accessToken).repos
         .listContributors(invalidRepoName, validRepoName)
-        .exec[Id, HttpResponse[String]]
+        .exec[Id, HttpResponse[String]](headerUserAgent)
     response should be('left)
   }
 

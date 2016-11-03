@@ -39,7 +39,7 @@ class GHGistsSpec extends AsyncFlatSpec with Matchers with TestUtils {
       .newGist(validGistDescription,
                validGistPublic,
                Map(validGistFilename -> GistFile(validGistFileContent)))
-      .exec[Future, SimpleHttpResponse]
+      .execFuture(headerUserAgent)
 
     testFutureIsRight[Gist](response, { r =>
       r.result.description shouldBe validGistDescription

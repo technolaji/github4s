@@ -51,8 +51,9 @@ trait TestUtils extends Matchers {
     }
   }
 
-  val accessToken = Option(github4s.BuildInfo.token)
-  def tokenHeader = "token " + accessToken.getOrElse("")
+  val accessToken     = Option(github4s.BuildInfo.token)
+  def tokenHeader     = "token " + accessToken.getOrElse("")
+  val headerUserAgent = Map("user-agent" -> "github4s")
 
   val validUsername   = "rafaparadela"
   val invalidUsername = "GHInvalidaUserName"

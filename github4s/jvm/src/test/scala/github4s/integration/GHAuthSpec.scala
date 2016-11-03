@@ -40,7 +40,8 @@ class GHAuthSpec extends FlatSpec with Matchers with TestUtils {
                validNote,
                validClientId,
                invalidClientSecret)
-      .exec[Id, HttpResponse[String]]
+      .exec[Id, HttpResponse[String]](headerUserAgent)
+
     response should be('left)
   }
 
@@ -48,7 +49,8 @@ class GHAuthSpec extends FlatSpec with Matchers with TestUtils {
     val response =
       Github().auth
         .authorizeUrl(validClientId, validRedirectUri, validScopes)
-        .exec[Id, HttpResponse[String]]
+        .exec[Id, HttpResponse[String]](headerUserAgent)
+
     response should be('right)
 
     response.toOption map { r ⇒
@@ -61,7 +63,7 @@ class GHAuthSpec extends FlatSpec with Matchers with TestUtils {
   "Auth >> GetAccessToken" should "return error on Left for invalid code value" in {
     val response = Github().auth
       .getAccessToken(validClientId, invalidClientSecret, "", validRedirectUri, "")
-      .exec[Id, HttpResponse[String]]
+      .exec[Id, HttpResponse[String]](headerUserAgent)
     response should be('left)
   }
 
