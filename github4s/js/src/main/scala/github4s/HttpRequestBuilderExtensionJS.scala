@@ -66,7 +66,6 @@ trait HttpRequestBuilderExtensionJS {
           .withMethod(Method(rb.httpVerb.verb))
           .withQueryParameters(rb.params.toSeq: _*)
           .withHeader("content-type", "application/json")
-          .withHeader("user-agent", userAgent)
           .withHeaders(rb.authHeader.toList: _*)
           .withHeaders(rb.headers.toList: _*)
 
