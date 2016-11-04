@@ -125,6 +125,7 @@ class HttpClient[C, M[_]](implicit urls: GithubApiUrls,
     httpRbImpl.run[A](
       httpRequestBuilder(buildURL(method))
         .withAuth(accessToken)
+        .withHeaders(headers)
         .withParams(params ++ pagination.fold(Map.empty[String, String])(p ⇒
           Map("page" → p.page.toString, "per_page" → p.per_page.toString)))
     )
@@ -134,14 +135,18 @@ class HttpClient[C, M[_]](implicit urls: GithubApiUrls,
                headers: Map[String, String] = Map.empty,
                data: String)(implicit D: Decoder[A]): M[GHResponse[A]] =
     httpRbImpl.run[A](
-      httpRequestBuilder(buildURL(method)).patchMethod.withAuth(accessToken).withData(data))
+      httpRequestBuilder(buildURL(method)).patchMethod
+        .withAuth(accessToken)
+        .withHeaders(headers)
+        .withData(data))
 
-  def put[A](accessToken: Option[String] = None, method: String)(
-      implicit D: Decoder[A]): M[GHResponse[A]] =
+  def put[A](accessToken: Option[String] = None,
+             headers: Map[String, String] = Map(),
+             method: String)(implicit D: Decoder[A]): M[GHResponse[A]] =
     httpRbImpl.run[A](
       httpRequestBuilder(buildURL(method)).putMethod
         .withAuth(accessToken)
-        .withHeaders(Map("Content-Length" → "0")))
+        .withHeaders(Map("Content-Length" → "0") ++ headers))
 
   def post[A](
       accessToken: Option[String] = None,
@@ -170,14 +175,15 @@ class HttpClient[C, M[_]](implicit urls: GithubApiUrls,
   )(implicit D: Decoder[A]): M[GHResponse[A]] =
     httpRbImpl.run[A](
       httpRequestBuilder(url).postMethod
-        .withHeaders(Map("Accept" → "application/json"))
+        .withHeaders(Map("Accept" → "application/json") ++ headers)
         .withData(data))
 
   def delete[A](
       accessToken: Option[String] = None,
       method: String,
       headers: Map[String, String] = Map.empty)(implicit D: Decoder[A]): M[GHResponse[A]] =
-    httpRbImpl.run[A](httpRequestBuilder(buildURL(method)).deleteMethod.withAuth(accessToken))
+    httpRbImpl.run[A](
+      httpRequestBuilder(buildURL(method)).deleteMethod.withHeaders(headers).withAuth(accessToken))
 
   private def buildURL(method: String) = urls.baseUrl + method
 
