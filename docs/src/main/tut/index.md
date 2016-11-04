@@ -1,9 +1,9 @@
 ---
 layout: home
 technologies:
- - first: ["Scala", "Lorem ipsum dolor sit amet, conse ctetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolo…"]
- - second: ["Sbt", "Lorem ipsum dolor sit amet, conse ctetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolo…"]
- - third: ["Free", "Lorem ipsum dolor sit amet, conse ctetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolo…"]
+ - first: ["Scala", "Github4s is a Github API wrapper purely written in Scala"]
+ - second: ["ScalaJS", "Now, with Scala.js support"]
+ - third: ["Free Monads", "Github4s is based on a Free Monad Architecture, which helps decoupling of program declaration from program interpretation"]
 ---
 
 # Github4s
@@ -15,7 +15,7 @@ Github4s is a GitHub API wrapper written in Scala.
 To get started with SBT, simply add the following to your build.sbt file:
 
 ```
-libraryDependencies += "com.fortysevendeg" %% "github4s" % "0.8.1"
+libraryDependencies += "com.fortysevendeg" %% "github4s" % "0.9.0"
 ```
 
 ## License

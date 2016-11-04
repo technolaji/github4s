@@ -134,5 +134,6 @@ ProgramEval.user1.toOption map (_.result.login shouldBe "rafaparadela")
 
 Note that for github4s to have access to the GitHub API during the test phases, you need to provide a valid access token with the right credentials (i.e.: users + gists scopes), through the sbt configuration variable "token":
 
+```
 sbt -Dtoken=ACCESS_TOKEN_STRING
 ```
