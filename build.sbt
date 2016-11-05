@@ -41,13 +41,14 @@ lazy val micrositeSettings = Seq(
 )
 
 lazy val commonDeps = addLibs(vAll,
-                                "cats-free",
+  "cats-free",
                                 "circe-core",
                                 "circe-generic",
                                 "circe-parser",
                                 "simulacrum") ++
     addCompilerPlugins(vAll, "paradise") ++
 Seq(libraryDependencies ++= Seq(
+  "com.fortysevendeg" %%% "freestyle" % "0.1.0-SNAPSHOT",
   "org.scalatest" %%% "scalatest" % "3.0.0" % "test",
   "com.github.marklister" %%% "base64" % "0.2.2"
 ))

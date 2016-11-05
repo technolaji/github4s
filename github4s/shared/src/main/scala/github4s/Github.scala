@@ -23,55 +23,65 @@ package github4s
 
 import cats.data.{EitherT, Kleisli, OptionT}
 import cats.{MonadError, RecursiveTailRecM, ~>}
+import cats.arrow.FunctionK
+import cats.free.Inject._
 import cats.implicits._
 import github4s.GithubResponses._
 import github4s.app._
 import github4s.free.interpreters.Interpreters
+import cats.free.Free
 
 import scala.concurrent.Future
 
-/**
-  * Represent the Github API wrapper
-  * @param accessToken to identify the authenticated user
-  */
-class Github(accessToken: Option[String] = None) {
+case class Config(accessToken: Option[String] = None,
+                  headers: Map[String, String] = Map.empty[String, String])
 
-  lazy val users = new GHUsers(accessToken)
-  lazy val repos = new GHRepos(accessToken)
-  lazy val auth  = new GHAuth(accessToken)
-  lazy val gists = new GHGists(accessToken)
-
+object Config {
+  val empty = Config()
 }
 
-/** Companion object for [[github4s.Github]] */
 object Github {
-  def apply(accessToken: Option[String] = None) = new Github(accessToken)
 
-  implicit class GithubIOSyntaxEither[A](gio: GHIO[GHResponse[A]]) {
+  import io.freestyle.syntax._
 
-    def execK[M[_], C](
-        implicit I: Interpreters[M, C],
-        A: MonadError[M, Throwable],
-        TR: RecursiveTailRecM[M],
-        H: HttpRequestBuilderExtension[C, M]): Kleisli[M, Map[String, String], GHResponse[A]] =
-      gio foldMap I.interpreters
+  private[this] val gh: GitHub4s[GitHub4s.T] = GitHub4s[GitHub4s.T]
 
-    def exec[M[_], C](headers: Map[String, String] = Map())(
+  val users = gh.userOps
+  val repos = gh.repositoryOps
+  val auth  = gh.authOps
+  val gists = gh.gistOps
+
+  implicit class GithubIOSyntaxEither[F[_], A](gio: Free[F, GHResponse[A]]) {
+
+    type GHIO[A] = Free[F, A]
+
+    def execK[M[_], C](implicit I: Interpreters[M, C],
+                       A: MonadError[M, Throwable],
+                       TR: RecursiveTailRecM[M],
+                       H: HttpRequestBuilderExtension[C, M]): Kleisli[M, Config, GHResponse[A]] = {
+      import I._
+      type K[A] = Kleisli[M, Config, A]
+      gio.foldMap(implicitly[FunctionK[F, K]])
+    }
+
+    def exec[M[_], C](config: Config = Config.empty)(
         implicit I: Interpreters[M, C],
         A: MonadError[M, Throwable],
         TR: RecursiveTailRecM[M],
         H: HttpRequestBuilderExtension[C, M]): M[GHResponse[A]] =
-      execK.run(headers)
+      execK.run(config)
 
-    def execFuture[C](headers: Map[String, String] = Map())(
+    def execFuture[C](config: Config = Config.empty)(
         implicit I: Interpreters[Future, C],
+        ec: scala.concurrent.ExecutionContext,
         A: MonadError[Future, Throwable],
         TR: RecursiveTailRecM[Future],
         H: HttpRequestBuilderExtension[C, Future]): Future[GHResponse[A]] =
-      exec[Future, C](headers)
+      exec[Future, C](config)
 
     def liftGH: EitherT[GHIO, GHException, GHResult[A]] =
       EitherT[GHIO, GHException, GHResult[A]](gio)
 
   }
+
 }

@@ -23,9 +23,16 @@ package github4s
 
 import cats.data.Coproduct
 import github4s.free.algebra._
+import io.freestyle._
 
 object app {
-  type COGH01[A]   = Coproduct[RepositoryOp, UserOp, A]
-  type COGH02[A]   = Coproduct[GistOp, COGH01, A]
-  type GitHub4s[A] = Coproduct[AuthOp, COGH02, A]
+
+  @module
+  trait GitHub4s[F[_]] {
+    val repositoryOps: RepositoryOps[F]
+    val userOps: UserOps[F]
+    val gistOps: GistOps[F]
+    val authOps: AuthOps[F]
+  }
+
 }

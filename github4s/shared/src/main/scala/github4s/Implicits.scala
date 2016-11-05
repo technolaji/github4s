@@ -35,8 +35,8 @@ object implicits
 
 trait FutureCaptureInstance {
   //Future Capture evidence:
-  implicit val futureCaptureInstance = new Capture[Future] {
-    override def capture[A](a: ⇒ A): Future[A] = Future.successful(a)
+  implicit def futureCaptureInstance(implicit ec: ExecutionContext) = new Capture[Future] {
+    override def capture[A](a: ⇒ A): Future[A] = Future(a)
   }
 }
 
