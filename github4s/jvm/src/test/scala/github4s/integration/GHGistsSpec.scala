@@ -29,16 +29,18 @@ import github4s.Github
 import github4s.utils.TestUtils
 import github4s.jvm.Implicits._
 import org.scalatest._
+import io.freestyle.syntax._
 
 import scalaj.http.HttpResponse
 
 class GHGistsSpec extends FlatSpec with Matchers with TestUtils {
+
   "Gists >> Post" should "return the provided gist" in {
-    val response = Github(accessToken).gists
+    val response = Github.gists
       .newGist(validGistDescription,
                validGistPublic,
                Map(validGistFilename -> GistFile(validGistFileContent)))
-      .exec[Id, HttpResponse[String]](headerUserAgent)
+      .exec[Id, HttpResponse[String]](config)
 
     response should be('right)
     response.toOption map { r ⇒

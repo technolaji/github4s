@@ -35,11 +35,11 @@ class GHGistsSpec extends AsyncFlatSpec with Matchers with TestUtils {
   override implicit val executionContext = scala.concurrent.ExecutionContext.Implicits.global
 
   "Gists >> Post" should "return the provided gist" in {
-    val response = Github(accessToken).gists
+    val response = Github.gists
       .newGist(validGistDescription,
                validGistPublic,
                Map(validGistFilename -> GistFile(validGistFileContent)))
-      .execFuture(headerUserAgent)
+      .execFuture(config)
 
     testFutureIsRight[Gist](response, { r =>
       r.result.description shouldBe validGistDescription

@@ -21,9 +21,10 @@
 
 package github4s.free.interpreters
 
+import cats._
 import cats.data.Kleisli
+import cats.arrow.FunctionK
 import cats.implicits._
-import cats.{ApplicativeError, Eval, MonadError, ~>}
 import github4s.Config
 import github4s.GithubDefaultUrls._
 import github4s.GithubResponses._
@@ -39,17 +40,16 @@ trait Capture[M[_]] {
   def capture[A](a: ⇒ A): M[A]
 }
 
-class Interpreters[M[_], C](implicit A: ApplicativeError[M, Throwable],
-                            C: Capture[M],
-                            httpClientImpl: HttpRequestBuilderExtension[C, M]) {
+class Interpreters[M[_]: Monad: RecursiveTailRecM: Capture, C](
+    implicit httpClientImpl: HttpRequestBuilderExtension[C, M]) {
 
   type K[A] = Kleisli[M, Config, A]
 
   /**
     * Lifts Repository Ops to an effect capturing Monad such as Task via natural transformations
     */
-  implicit def repositoryOpsInterpreter: RepositoryOps.Interpreter[K] =
-    new RepositoryOps.Interpreter[K] {
+  implicit def repositoryOpsInterpreter: RepositoryOps.Interpreter[Kleisli[M, Config, ?]] =
+    new RepositoryOps.Interpreter[Kleisli[M, Config, ?]] {
 
       val repos = new Repos()
 
@@ -94,8 +94,8 @@ class Interpreters[M[_], C](implicit A: ApplicativeError[M, Throwable],
   /**
     * Lifts User Ops to an effect capturing Monad such as Task via natural transformations
     */
-  implicit def userOpsInterpreter: UserOps.Interpreter[K] =
-    new UserOps.Interpreter[K] {
+  implicit def userOpsInterpreter: UserOps.Interpreter[Kleisli[M, Config, ?]] =
+    new UserOps.Interpreter[Kleisli[M, Config, ?]] {
 
       val users = new Users()
 
@@ -120,8 +120,8 @@ class Interpreters[M[_], C](implicit A: ApplicativeError[M, Throwable],
   /**
     * Lifts Auth Ops to an effect capturing Monad such as Task via natural transformations
     */
-  implicit def authOpsInterpreter: AuthOps.Interpreter[K] =
-    new AuthOps.Interpreter[K] {
+  implicit def authOpsInterpreter: AuthOps.Interpreter[Kleisli[M, Config, ?]] =
+    new AuthOps.Interpreter[Kleisli[M, Config, ?]] {
 
       val auth = new Auth()
 
@@ -159,8 +159,8 @@ class Interpreters[M[_], C](implicit A: ApplicativeError[M, Throwable],
   /**
     * Lifts Gist Ops to an effect capturing Monad such as Task via natural transformations
     */
-  implicit def gistOpsInterpreter: GistOps.Interpreter[K] =
-    new GistOps.Interpreter[K] {
+  implicit def gistOpsInterpreter: GistOps.Interpreter[Kleisli[M, Config, ?]] =
+    new GistOps.Interpreter[Kleisli[M, Config, ?]] {
 
       val gists = new Gists()
 

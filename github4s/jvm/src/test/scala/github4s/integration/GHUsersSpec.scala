@@ -28,6 +28,7 @@ import github4s.Github
 import github4s.jvm.Implicits._
 import github4s.utils.TestUtils
 import org.scalatest._
+import io.freestyle.syntax._
 
 import scalaj.http.HttpResponse
 
@@ -35,7 +36,7 @@ class GHUsersSpec extends FlatSpec with Matchers with TestUtils {
 
   "Users >> Get" should "return the expected login for a valid username" in {
     val response =
-      Github(accessToken).users.get(validUsername).exec[Id, HttpResponse[String]](headerUserAgent)
+      Github.users.getUser(validUsername).exec[Id, HttpResponse[String]](config)
 
     response should be('right)
     response.toOption map { r ⇒
@@ -45,22 +46,19 @@ class GHUsersSpec extends FlatSpec with Matchers with TestUtils {
   }
 
   it should "return error on Left for invalid username" in {
-    val response = Github(accessToken).users
-      .get(invalidUsername)
-      .exec[Id, HttpResponse[String]](headerUserAgent)
+    val response = Github.users.getUser(invalidUsername).exec[Id, HttpResponse[String]](config)
 
     response should be('left)
   }
 
   "Users >> GetAuth" should "return error on Left when no accessToken is provided" in {
-    val response = Github().users.getAuth.exec[Id, HttpResponse[String]](headerUserAgent)
+    val response =
+      Github.users.getAuthUser.exec[Id, HttpResponse[String]](config.copy(accessToken = None))
     response should be('left)
   }
 
   "Users >> GetUsers" should "return users for a valid since value" in {
-    val response = Github(accessToken).users
-      .getUsers(validSinceInt)
-      .exec[Id, HttpResponse[String]](headerUserAgent)
+    val response = Github.users.getUsers(validSinceInt).exec[Id, HttpResponse[String]](config)
     response should be('right)
 
     response.toOption map { r ⇒
@@ -71,9 +69,7 @@ class GHUsersSpec extends FlatSpec with Matchers with TestUtils {
 
   it should "return an empty list when a invalid since value is provided" in {
     val response =
-      Github(accessToken).users
-        .getUsers(invalidSinceInt)
-        .exec[Id, HttpResponse[String]](headerUserAgent)
+      Github.users.getUsers(invalidSinceInt).exec[Id, HttpResponse[String]](config)
     response should be('right)
 
     response.toOption map { r ⇒

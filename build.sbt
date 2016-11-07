@@ -44,9 +44,9 @@ lazy val commonDeps = addLibs(vAll,
   "cats-free",
                                 "circe-core",
                                 "circe-generic",
-                                "circe-parser",
+  "circe-parser",
                                 "simulacrum") ++
-    addCompilerPlugins(vAll, "paradise") ++
+    addCompilerPlugins(vAll, "paradise", "kind-projector") ++
 Seq(libraryDependencies ++= Seq(
   "com.fortysevendeg" %%% "freestyle" % "0.1.0-SNAPSHOT",
   "org.scalatest" %%% "scalatest" % "3.0.0" % "test",

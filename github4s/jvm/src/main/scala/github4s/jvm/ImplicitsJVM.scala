@@ -22,7 +22,6 @@
 package github4s.jvm
 
 import cats.instances.FutureInstances
-import cats.{Eval, _}
 import github4s.free.interpreters.Interpreters
 import github4s.{EvalInstances, HttpRequestBuilderExtensionJVM, IdInstances}
 import scala.concurrent.Future
@@ -36,8 +35,9 @@ trait ImplicitsJVM
     with FutureInstances
     with HttpRequestBuilderExtensionJVM {
 
-  implicit val intInstanceIdScalaJ     = new Interpreters[Id, HttpResponse[String]]
-  implicit val intInstanceEvalScalaJ   = new Interpreters[Eval, HttpResponse[String]]
-  implicit val intInstanceFutureScalaJ = new Interpreters[Future, HttpResponse[String]]
+  implicit val intInstanceIdScalaJ   = new Interpreters[cats.Id, HttpResponse[String]]
+  implicit val intInstanceEvalScalaJ = new Interpreters[cats.Eval, HttpResponse[String]]
+  implicit val intInstanceFutureScalaJ =
+    new Interpreters[scala.concurrent.Future, HttpResponse[String]]
 
 }

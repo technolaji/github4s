@@ -38,7 +38,7 @@ class GHReposSpec extends AsyncFlatSpec with Matchers with TestUtils {
   "Repos >> Get" should "return the expected name when valid repo is provided" in {
 
     val response =
-      Github(accessToken).repos.get(validRepoOwner, validRepoName).execFuture(headerUserAgent)
+      Github.repos.getRepo(validRepoOwner, validRepoName).execFuture(config)
 
     testFutureIsRight[Repository](response, { r =>
       r.result.name shouldBe validRepoName
@@ -48,16 +48,14 @@ class GHReposSpec extends AsyncFlatSpec with Matchers with TestUtils {
 
   it should "return error when an invalid repo name is passed" in {
     val response =
-      Github(accessToken).repos.get(validRepoOwner, invalidRepoName).execFuture(headerUserAgent)
+      Github.repos.getRepo(validRepoOwner, invalidRepoName).execFuture(config)
 
     testFutureIsLeft(response)
   }
 
   "Repos >> ListCommits" should "return the expected list of commits for valid data" in {
     val response =
-      Github(accessToken).repos
-        .listCommits(validRepoOwner, validRepoName)
-        .execFuture(headerUserAgent)
+      Github.repos.listCommits(validRepoOwner, validRepoName).execFuture(config)
 
     testFutureIsRight[List[Commit]](response, { r =>
       r.result.nonEmpty shouldBe true
@@ -67,18 +65,14 @@ class GHReposSpec extends AsyncFlatSpec with Matchers with TestUtils {
 
   it should "return error for invalid repo name" in {
     val response =
-      Github(accessToken).repos
-        .listCommits(invalidRepoName, validRepoName)
-        .execFuture(headerUserAgent)
+      Github.repos.listCommits(invalidRepoName, validRepoName).execFuture(config)
 
     testFutureIsLeft(response)
   }
 
   "Repos >> ListContributors" should "return the expected list of contributors for valid data" in {
     val response =
-      Github(accessToken).repos
-        .listContributors(validRepoOwner, validRepoName)
-        .execFuture(headerUserAgent)
+      Github.repos.listContributors(validRepoOwner, validRepoName).execFuture(config)
 
     testFutureIsRight[List[User]](response, { r =>
       r.result shouldNot be(empty)
@@ -88,9 +82,7 @@ class GHReposSpec extends AsyncFlatSpec with Matchers with TestUtils {
 
   it should "return error for invalid repo name" in {
     val response =
-      Github(accessToken).repos
-        .listContributors(invalidRepoName, validRepoName)
-        .execFuture(headerUserAgent)
+      Github.repos.listContributors(invalidRepoName, validRepoName).execFuture(config)
 
     testFutureIsLeft(response)
   }

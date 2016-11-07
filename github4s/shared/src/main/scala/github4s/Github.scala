@@ -22,14 +22,14 @@
 package github4s
 
 import cats.data.{EitherT, Kleisli, OptionT}
-import cats.{MonadError, RecursiveTailRecM, ~>}
+import cats.{Monad, RecursiveTailRecM}
+import scala.concurrent.ExecutionContext
 import cats.arrow.FunctionK
-import cats.free.Inject._
-import cats.implicits._
 import github4s.GithubResponses._
 import github4s.app._
-import github4s.free.interpreters.Interpreters
+import github4s.free.interpreters._
 import cats.free.Free
+import cats.instances.future._
 
 import scala.concurrent.Future
 
@@ -42,8 +42,6 @@ object Config {
 
 object Github {
 
-  import io.freestyle.syntax._
-
   private[this] val gh: GitHub4s[GitHub4s.T] = GitHub4s[GitHub4s.T]
 
   val users = gh.userOps
@@ -51,37 +49,27 @@ object Github {
   val auth  = gh.authOps
   val gists = gh.gistOps
 
-  implicit class GithubIOSyntaxEither[F[_], A](gio: Free[F, GHResponse[A]]) {
+  implicit class GithubIOSyntaxM[F[_], A](gio: Free[F, GHResponse[A]]) {
 
-    type GHIO[A] = Free[F, A]
-
-    def execK[M[_], C](implicit I: Interpreters[M, C],
-                       A: MonadError[M, Throwable],
-                       TR: RecursiveTailRecM[M],
-                       H: HttpRequestBuilderExtension[C, M]): Kleisli[M, Config, GHResponse[A]] = {
-      import I._
-      type K[A] = Kleisli[M, Config, A]
-      gio.foldMap(implicitly[FunctionK[F, K]])
+    def execK[M[_]: Monad: RecursiveTailRecM, C](
+        implicit I: Interpreters[M, C],
+        H: HttpRequestBuilderExtension[C, M]): I.K[GHResponse[A]] = {
+      import io.freestyle.syntax._
+      gio.foldMap(implicitly[FunctionK[F, I.K]])
     }
 
-    def exec[M[_], C](config: Config = Config.empty)(
+    def exec[M[_]: Monad: RecursiveTailRecM, C](config: Config = Config.empty)(
         implicit I: Interpreters[M, C],
-        A: MonadError[M, Throwable],
-        TR: RecursiveTailRecM[M],
         H: HttpRequestBuilderExtension[C, M]): M[GHResponse[A]] =
       execK.run(config)
 
-    def execFuture[C](config: Config = Config.empty)(
-        implicit I: Interpreters[Future, C],
-        ec: scala.concurrent.ExecutionContext,
-        A: MonadError[Future, Throwable],
-        TR: RecursiveTailRecM[Future],
-        H: HttpRequestBuilderExtension[C, Future]): Future[GHResponse[A]] =
+    def execFuture[C](config: Config = Config.empty)(implicit I: Interpreters[Future, C],
+                                                     H: HttpRequestBuilderExtension[C, Future],
+                                                     ec: ExecutionContext): Future[GHResponse[A]] =
       exec[Future, C](config)
 
-    def liftGH: EitherT[GHIO, GHException, GHResult[A]] =
-      EitherT[GHIO, GHException, GHResult[A]](gio)
-
+    def liftGH: EitherT[Free[F, ?], GHException, GHResult[A]] =
+      EitherT[Free[F, ?], GHException, GHResult[A]](gio)
   }
 
 }

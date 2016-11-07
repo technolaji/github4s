@@ -29,27 +29,28 @@ import github4s.utils.TestUtils
 import org.scalatest._
 import github4s.jvm.Implicits._
 import scalaj.http._
+import io.freestyle.syntax._
 
 class GHAuthSpec extends FlatSpec with Matchers with TestUtils {
 
   "Auth >> NewAuth" should "return error on Left when invalid credential is provided" in {
-    val response = Github().auth
+    val response = Github.auth
       .newAuth(validUsername,
                invalidPassword,
                validScopes,
                validNote,
                validClientId,
                invalidClientSecret)
-      .exec[Id, HttpResponse[String]](headerUserAgent)
+      .exec[Id, HttpResponse[String]](config)
 
     response should be('left)
   }
 
   "Auth >> AuthorizeUrl" should "return the expected URL for valid username" in {
     val response =
-      Github().auth
+      Github.auth
         .authorizeUrl(validClientId, validRedirectUri, validScopes)
-        .exec[Id, HttpResponse[String]](headerUserAgent)
+        .exec[Id, HttpResponse[String]](config)
 
     response should be('right)
 
@@ -61,9 +62,9 @@ class GHAuthSpec extends FlatSpec with Matchers with TestUtils {
   }
 
   "Auth >> GetAccessToken" should "return error on Left for invalid code value" in {
-    val response = Github().auth
+    val response = Github.auth
       .getAccessToken(validClientId, invalidClientSecret, "", validRedirectUri, "")
-      .exec[Id, HttpResponse[String]](headerUserAgent)
+      .exec[Id, HttpResponse[String]](config)
     response should be('left)
   }
 

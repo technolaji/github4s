@@ -22,6 +22,7 @@
 package github4s.utils
 
 import com.github.marklister.base64.Base64.Encoder
+import github4s.Config
 
 trait TestUtils {
 
@@ -66,4 +67,5 @@ trait TestUtils {
   val validGistPublic      = true
   val validGistFileContent = "val meaningOfLife = 42"
   val validGistFilename    = "test.scala"
+  val config               = Config(accessToken = accessToken, headers = headerUserAgent)
 }

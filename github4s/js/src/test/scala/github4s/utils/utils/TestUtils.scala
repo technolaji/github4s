@@ -21,14 +21,17 @@
 
 package github4s.utils
 
+import cats.data.Kleisli
 import com.github.marklister.base64.Base64._
 import org.scalatest.{Assertion, Matchers}
 import cats.implicits._
 import github4s.GithubResponses.{GHResponse, GHResult}
+import github4s.Config
 
 import scala.concurrent.Future
 
 trait TestUtils extends Matchers {
+
   def testFutureIsLeft[A](response: Future[GHResponse[A]])(
       implicit ec: scala.concurrent.ExecutionContext) = {
     response map { r =>
@@ -92,4 +95,5 @@ trait TestUtils extends Matchers {
   val validGistPublic      = false
   val validGistFileContent = "val meaningOfLife = 42"
   val validGistFilename    = "test.scala"
+  val config               = Config(accessToken = accessToken, headers = headerUserAgent)
 }

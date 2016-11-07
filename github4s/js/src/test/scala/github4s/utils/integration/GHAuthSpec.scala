@@ -36,23 +36,21 @@ class GHAuthSpec extends AsyncFlatSpec with Matchers with TestUtils {
 
   "Auth >> NewAuth" should "return error on Left when invalid credential is provided" in {
 
-    val response = Github().auth
+    val response = Github.auth
       .newAuth(validUsername,
                invalidPassword,
                validScopes,
                validNote,
                validClientId,
                invalidClientSecret)
-      .execFuture(headerUserAgent)
+      .execFuture(config.copy(accessToken = None))
 
     testFutureIsLeft(response)
   }
 
   "Auth >> AuthorizeUrl" should "return the expected URL for valid username" in {
     val response =
-      Github().auth
-        .authorizeUrl(validClientId, validRedirectUri, validScopes)
-        .execFuture(headerUserAgent)
+      Github.auth.authorizeUrl(validClientId, validRedirectUri, validScopes).execFuture(config)
 
     testFutureIsRight[Authorize](response, { r =>
       r.result.url.contains(validRedirectUri) shouldBe true
@@ -61,9 +59,9 @@ class GHAuthSpec extends AsyncFlatSpec with Matchers with TestUtils {
   }
 
   "Auth >> GetAccessToken" should "return error on Left for invalid code value" in {
-    val response = Github().auth
+    val response = Github.auth
       .getAccessToken(validClientId, invalidClientSecret, "", validRedirectUri, "")
-      .execFuture(headerUserAgent)
+      .execFuture(config)
 
     testFutureIsLeft(response)
   }
