@@ -174,4 +174,13 @@ class Interpreters[M[_]: Monad: RecursiveTailRecM: Capture, C](
 
     }
 
+  import github4s.app._
+
+  implicit val interpreter: GitHub4s.T ~> K = {
+    val i1: GitHub4s.X.C1 ~> K = repositoryOpsInterpreter or userOpsInterpreter
+    val i2: GitHub4s.X.C2 ~> K = gistOpsInterpreter or i1
+    val i3: GitHub4s.T ~> K    = authOpsInterpreter or i2
+    i3
+  }
+
 }

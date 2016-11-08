@@ -49,13 +49,13 @@ object Github {
   val auth  = gh.authOps
   val gists = gh.gistOps
 
-  implicit class GithubIOSyntaxM[F[_], A](gio: Free[F, GHResponse[A]]) {
+  implicit class GithubIOSyntaxM[A](gio: Free[GitHub4s.T, GHResponse[A]]) {
 
     def execK[M[_]: Monad: RecursiveTailRecM, C](
         implicit I: Interpreters[M, C],
         H: HttpRequestBuilderExtension[C, M]): I.K[GHResponse[A]] = {
       import io.freestyle.syntax._
-      gio.foldMap(implicitly[FunctionK[F, I.K]])
+      gio.foldMap[I.K](I.interpreter)
     }
 
     def exec[M[_]: Monad: RecursiveTailRecM, C](config: Config = Config.empty)(
@@ -68,6 +68,9 @@ object Github {
                                                      ec: ExecutionContext): Future[GHResponse[A]] =
       exec[Future, C](config)
 
+  }
+
+  implicit class GithubIOSyntaxEither[F[_], A](gio: Free[F, GHResponse[A]]) {
     def liftGH: EitherT[Free[F, ?], GHException, GHResult[A]] =
       EitherT[Free[F, ?], GHException, GHResult[A]](gio)
   }
