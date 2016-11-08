@@ -54,8 +54,9 @@ object Github {
     def execK[M[_]: Monad: RecursiveTailRecM, C](
         implicit I: Interpreters[M, C],
         H: HttpRequestBuilderExtension[C, M]): I.K[GHResponse[A]] = {
+      import I._
       import io.freestyle.syntax._
-      gio.foldMap[I.K](I.interpreter)
+      gio.foldMap[I.K](implicitly[FunctionK[GitHub4s.T, I.K]])
     }
 
     def exec[M[_]: Monad: RecursiveTailRecM, C](config: Config = Config.empty)(
