@@ -23,7 +23,7 @@ package github4s.scalaz
 
 import cats.implicits._
 import github4s.Github._
-import cats.{MonadError, RecursiveTailRecM}
+import cats.MonadError
 import github4s.HttpRequestBuilderExtensionJVM
 
 import scalaz.concurrent.Task
@@ -37,9 +37,6 @@ object implicits extends HttpRequestBuilderExtensionJVM {
   implicit val taskCaptureInstance = new Capture[Task] {
     override def capture[A](a: ⇒ A): Task[A] = Task.now(a)
   }
-
-  implicit val g4sTaskcatsRecursiveTailRecM: RecursiveTailRecM[Task] =
-    new RecursiveTailRecM[Task] {}
 
   implicit def g4sTaskMonadError: MonadError[Task, Throwable] = new MonadError[Task, Throwable] {
 

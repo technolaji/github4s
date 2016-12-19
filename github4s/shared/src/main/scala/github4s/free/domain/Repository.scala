@@ -62,40 +62,83 @@ case class RepoUrls(
     ssh_url: String,
     clone_url: String,
     svn_url: String,
-    forks_url: Option[String] = None,
-    keys_url: Option[String] = None,
-    collaborators_url: Option[String] = None,
-    teams_url: Option[String] = None,
-    hooks_url: Option[String] = None,
-    issue_events_url: Option[String] = None,
-    events_url: Option[String] = None,
-    assignees_url: Option[String] = None,
-    branches_url: Option[String] = None,
-    tags_url: Option[String] = None,
-    blobs_url: Option[String] = None,
-    git_tags_url: Option[String] = None,
-    git_refs_url: Option[String] = None,
-    trees_url: Option[String] = None,
-    statuses_url: Option[String] = None,
-    languages_url: Option[String] = None,
-    stargazers_url: Option[String] = None,
-    contributors_url: Option[String] = None,
-    subscribers_url: Option[String] = None,
-    subscription_url: Option[String] = None,
-    commits_url: Option[String] = None,
-    git_commits_url: Option[String] = None,
-    comments_url: Option[String] = None,
-    issue_comment_url: Option[String] = None,
-    contents_url: Option[String] = None,
-    compare_url: Option[String] = None,
-    merges_url: Option[String] = None,
-    archive_url: Option[String] = None,
-    downloads_url: Option[String] = None,
-    issues_url: Option[String] = None,
-    pulls_url: Option[String] = None,
-    milestones_url: Option[String] = None,
-    notifications_url: Option[String] = None,
-    labels_url: Option[String] = None,
-    releases_url: Option[String] = None,
-    deployments_url: Option[String] = None
+    otherUrls: Map[String, String]
 )
+
+object RepoUrlKeys {
+
+  val forks_url         = "forks_url"
+  val keys_url          = "keys_url"
+  val collaborators_url = "collaborators_url"
+  val teams_url         = "teams_url"
+  val hooks_url         = "hooks_url"
+  val issue_events_url  = "issue_events_url"
+  val events_url        = "events_url"
+  val assignees_url     = "assignees_url"
+  val branches_url      = "branches_url"
+  val tags_url          = "tags_url"
+  val blobs_url         = "blobs_url"
+  val git_tags_url      = "git_tags_url"
+  val git_refs_url      = "git_refs_url"
+  val trees_url         = "trees_url"
+  val statuses_url      = "statuses_url"
+  val languages_url     = "languages_url"
+  val stargazers_url    = "stargazers_url"
+  val contributors_url  = "contributors_url"
+  val subscribers_url   = "subscribers_url"
+  val subscription_url  = "subscription_url"
+  val commits_url       = "commits_url"
+  val git_commits_url   = "git_commits_url"
+  val comments_url      = "comments_url"
+  val issue_comment_url = "issue_comment_url"
+  val contents_url      = "contents_url"
+  val compare_url       = "compare_url"
+  val merges_url        = "merges_url"
+  val archive_url       = "archive_url"
+  val downloads_url     = "downloads_url"
+  val issues_url        = "issues_url"
+  val pulls_url         = "pulls_url"
+  val milestones_url    = "milestones_url"
+  val notifications_url = "notifications_url"
+  val labels_url        = "labels_url"
+  val releases_url      = "releases_url"
+  val deployments_url   = "deployments_url"
+
+  val allFields = List(forks_url,
+                       keys_url,
+                       collaborators_url,
+                       teams_url,
+                       hooks_url,
+                       issue_events_url,
+                       events_url,
+                       assignees_url,
+                       branches_url,
+                       tags_url,
+                       blobs_url,
+                       git_tags_url,
+                       git_refs_url,
+                       trees_url,
+                       statuses_url,
+                       languages_url,
+                       stargazers_url,
+                       contributors_url,
+                       subscribers_url,
+                       subscription_url,
+                       commits_url,
+                       git_commits_url,
+                       comments_url,
+                       issue_comment_url,
+                       contents_url,
+                       compare_url,
+                       merges_url,
+                       archive_url,
+                       downloads_url,
+                       issues_url,
+                       pulls_url,
+                       milestones_url,
+                       notifications_url,
+                       labels_url,
+                       releases_url,
+                       deployments_url)
+
+}

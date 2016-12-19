@@ -19,6 +19,11 @@ lazy val buildSettings = Seq(
     homepage := Option(url("http://47deg.github.io/github4s/")),
     organizationHomepage := Option(new URL("http://47deg.com")),
     scalaVersion := "2.11.8",
+    crossScalaVersions := Seq("2.10.6", scalaVersion.value),
+    scalacOptions ++= (scalaBinaryVersion.value match {
+      case "2.10" => Seq("-Xdivergence211")
+      case _      => Nil
+    }),
     scalafmtConfig in ThisBuild := Some(file(".scalafmt")),
     headers := Map(
       "scala" -> MIT("2016", "47 Degrees, LLC. <http://www.47deg.com>")
@@ -49,7 +54,7 @@ lazy val commonDeps = addLibs(vAll,
     addCompilerPlugins(vAll, "paradise") ++
 Seq(libraryDependencies ++= Seq(
   "org.scalatest" %%% "scalatest" % "3.0.0" % "test",
-  "com.github.marklister" %%% "base64" % "0.2.2"
+  "com.github.marklister" %%% "base64" % "0.2.3"
 ))
 
 lazy val jvmDeps = Seq(
