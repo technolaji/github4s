@@ -59,7 +59,7 @@ Seq(libraryDependencies ++= Seq(
 
 lazy val jvmDeps = Seq(
       libraryDependencies ++= Seq(
-        "org.scalaj" %% "scalaj-http" % "2.2.1",
+        "org.scalaj" %% "scalaj-http" % "2.3.0",
         "org.mock-server" % "mockserver-netty" % "3.10.4" % "test"
       ))
 
