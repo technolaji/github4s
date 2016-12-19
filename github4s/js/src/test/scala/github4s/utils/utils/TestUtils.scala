@@ -25,6 +25,7 @@ import com.github.marklister.base64.Base64._
 import org.scalatest.{Assertion, Matchers}
 import cats.implicits._
 import github4s.GithubResponses.{GHResponse, GHResult}
+import github4s.free.domain.{IssueTypeIssue, SearchIn, SearchInTitle}
 
 import scala.concurrent.Future
 
@@ -92,4 +93,11 @@ trait TestUtils extends Matchers {
   val validGistPublic      = false
   val validGistFileContent = "val meaningOfLife = 42"
   val validGistFilename    = "test.scala"
+
+  val validSearchQuery       = "Scala 2.12"
+  val nonExistentSearchQuery = "nonExistentSearchQueryString"
+  val validSearchParams = List(
+    IssueTypeIssue,
+    SearchIn(Set(SearchInTitle))
+  )
 }
