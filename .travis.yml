@@ -1,11 +1,12 @@
 language: scala
 scala:
+  - 2.10.6
   - 2.11.8
 jdk:
   - oraclejdk8
 script:
-  - sbt -Dtoken=$GITHUB4S_ACCESS_TOKEN clean coverage test
-  - sbt -Dtoken=$GITHUB4S_ACCESS_TOKEN 'docs/tut'
+  - sbt ++$TRAVIS_SCALA_VERSION -Dtoken=$GITHUB4S_ACCESS_TOKEN clean coverage test
+  - sbt ++$TRAVIS_SCALA_VERSION -Dtoken=$GITHUB4S_ACCESS_TOKEN 'docs/tut'
 after_success:
-  - sbt coverageReport
+  - sbt ++$TRAVIS_SCALA_VERSION coverageReport
   - bash <(curl -s https://codecov.io/bash) -t 744f05ba-f905-4468-aef1-f5016fc2909d
