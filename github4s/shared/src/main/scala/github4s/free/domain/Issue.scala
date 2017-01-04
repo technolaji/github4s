@@ -54,3 +54,16 @@ case class PullRequest(url: Option[String],
                        patch_url: Option[String])
 
 case class SearchIssuesResult(total_count: Int, incomplete_results: Boolean, items: List[Issue])
+
+case class NewIssueRequest(title: String,
+                           body: Option[String],
+                           milestone: Option[Int],
+                           labels: Option[List[String]],
+                           assignees: Option[List[String]])
+
+case class EditIssueRequest(state: String,
+                            title: String,
+                            body: String,
+                            milestone: Option[Int],
+                            labels: List[String],
+                            assignees: List[String])
