@@ -19,14 +19,10 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package github4s
+package github4s.util
 
-import cats.data.Coproduct
-import github4s.free.algebra._
+object URLEncoder {
 
-object app {
-  type COGH01[A]   = Coproduct[RepositoryOp, UserOp, A]
-  type COGH02[A]   = Coproduct[GistOp, COGH01, A]
-  type COGH03[A]   = Coproduct[IssueOp, COGH02, A]
-  type GitHub4s[A] = Coproduct[AuthOp, COGH03, A]
+  def encode(string: String): String = fr.hmil.roshttp.util.Utils.encodeQueryString(string)
+
 }

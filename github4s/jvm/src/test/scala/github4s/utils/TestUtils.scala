@@ -22,6 +22,7 @@
 package github4s.utils
 
 import com.github.marklister.base64.Base64.Encoder
+import github4s.free.domain._
 
 trait TestUtils {
 
@@ -66,4 +67,12 @@ trait TestUtils {
   val validGistPublic      = true
   val validGistFileContent = "val meaningOfLife = 42"
   val validGistFilename    = "test.scala"
+
+  val validSearchQuery       = "Scala 2.12"
+  val nonExistentSearchQuery = "nonExistentSearchQueryString"
+  val validSearchParams = List(
+    OwnerParamInRepository(s"$validRepoOwner/$validRepoName"),
+    IssueTypeIssue,
+    SearchIn(Set(SearchInTitle))
+  )
 }

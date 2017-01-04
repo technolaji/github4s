@@ -62,9 +62,14 @@ trait HttpRequestBuilderExtensionJS {
     new HttpRequestBuilderExtension[SimpleHttpResponse, Future] {
       def run[A](rb: HttpRequestBuilder[SimpleHttpResponse, Future])(
           implicit D: Decoder[A]): Future[GHResponse[A]] = {
+
+        val params = rb.params.map {
+          case (key, value) => s"$key=$value"
+        } mkString "&"
+
         val request = HttpRequest(rb.url)
           .withMethod(Method(rb.httpVerb.verb))
-          .withQueryParameters(rb.params.toSeq: _*)
+          .withQueryStringRaw(params)
           .withHeader("content-type", "application/json")
           .withHeaders(rb.authHeader.toList: _*)
           .withHeaders(rb.headers.toList: _*)

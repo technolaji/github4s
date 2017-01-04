@@ -23,7 +23,7 @@ package github4s
 
 import github4s.GithubResponses.{GHIO, GHResponse}
 import github4s.app._
-import github4s.free.algebra.{AuthOps, GistOps, RepositoryOps, UserOps}
+import github4s.free.algebra._
 import github4s.free.domain._
 
 class GHUsers(accessToken: Option[String] = None)(implicit O: UserOps[GitHub4s]) {
@@ -99,4 +99,19 @@ class GHGists(accessToken: Option[String] = None)(implicit O: GistOps[GitHub4s])
       files: Map[String, GistFile]
   ): GHIO[GHResponse[Gist]] =
     O.newGist(description, public, files, accessToken)
+}
+
+class GHIssues(accessToken: Option[String] = None)(implicit O: IssueOps[GitHub4s]) {
+
+  def listIssues(
+      owner: String,
+      repo: String
+  ): GHIO[GHResponse[List[Issue]]] =
+    O.listIssues(owner, repo, accessToken)
+
+  def searchIssues(
+      query: String,
+      searchParams: List[SearchParam]
+  ): GHIO[GHResponse[SearchIssuesResult]] =
+    O.searchIssues(query, searchParams, accessToken)
 }

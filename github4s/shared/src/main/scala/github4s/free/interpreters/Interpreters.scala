@@ -26,8 +26,8 @@ import cats.implicits._
 import cats.{ApplicativeError, Eval, MonadError, ~>}
 import github4s.GithubDefaultUrls._
 import github4s.HttpRequestBuilderExtension
-import github4s.api.{Auth, Gists, Repos, Users}
-import github4s.app.{COGH01, COGH02, GitHub4s}
+import github4s.api._
+import github4s.app.{COGH01, COGH02, COGH03, GitHub4s}
 import github4s.free.algebra._
 import io.circe.Decoder
 import simulacrum.typeclass
@@ -48,7 +48,8 @@ class Interpreters[M[_], C](implicit A: ApplicativeError[M, Throwable],
   ): GitHub4s ~> K = {
     val c01interpreter: COGH01 ~> K = repositoryOpsInterpreter or userOpsInterpreter
     val c02interpreter: COGH02 ~> K = gistOpsInterpreter or c01interpreter
-    val all: GitHub4s ~> K          = authOpsInterpreter or c02interpreter
+    val c03interpreter: COGH03 ~> K = issueOpsInterpreter or c02interpreter
+    val all: GitHub4s ~> K          = authOpsInterpreter or c03interpreter
     all
   }
 
@@ -129,6 +130,24 @@ class Interpreters[M[_], C](implicit A: ApplicativeError[M, Throwable],
         fa match {
           case NewGist(description, public, files, accessToken) ⇒
             gists.newGist(description, public, files, headers, accessToken)
+        }
+      }
+    }
+
+  /**
+    * Lifts Issue Ops to an effect capturing Monad such as Task via natural transformations
+    */
+  def issueOpsInterpreter: IssueOp ~> K =
+    new (IssueOp ~> K) {
+
+      val issues = new Issues()
+
+      def apply[A](fa: IssueOp[A]): K[A] = Kleisli[M, Map[String, String], A] { headers =>
+        fa match {
+          case ListIssues(owner, repo, accessToken) ⇒
+            issues.list(accessToken, headers, owner, repo)
+          case SearchIssues(query, searchParams, accessToken) ⇒
+            issues.search(accessToken, headers, query, searchParams)
         }
       }
     }
