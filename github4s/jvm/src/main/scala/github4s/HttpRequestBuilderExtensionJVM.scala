@@ -44,13 +44,18 @@ trait HttpRequestBuilderExtensionJVM {
         val connTimeoutMs: Int = 1000
         val readTimeoutMs: Int = 5000
 
-        val request = Http(rb.url)
+        val params = rb.params.map {
+          case (key, value) => s"$key=$value"
+        } mkString ("?", "&", "")
+
+        val request = Http(url = rb.url)
           .method(rb.httpVerb.verb)
           .option(HttpOptions.connTimeout(connTimeoutMs))
           .option(HttpOptions.readTimeout(readTimeoutMs))
           .params(rb.params)
           .headers(rb.authHeader)
           .headers(rb.headers)
+          .copy(urlBuilder = (req: HttpRequest) => s"${req.url}$params")
 
         rb.data match {
           case Some(d) ⇒

@@ -69,6 +69,7 @@ class Issues[C, M[_]](implicit urls: GithubApiUrls,
     *
     * @param accessToken to identify the authenticated user
     * @param headers optional user headers to include in the request
+    * @param query the query string for the search
     * @param searchParams list of search params
     * @return a GHResponse with the result of the search.
     */
@@ -76,10 +77,9 @@ class Issues[C, M[_]](implicit urls: GithubApiUrls,
              headers: Map[String, String] = Map(),
              query: String,
              searchParams: List[SearchParam]): M[GHResponse[SearchIssuesResult]] = {
-    val queryString = s"search/issues?q=$query+${searchParams.map(_.value).mkString("+")}"
-    httpClient.get[SearchIssuesResult](accessToken,
-                                       s"search/issues?q=${URLEncoder.encode(queryString)}",
-                                       headers)
+    val queryString = s"${URLEncoder.encode(query)}+${searchParams.map(_.value).mkString("+")}"
+    httpClient
+      .get[SearchIssuesResult](accessToken, "search/issues", headers, Map("q" -> queryString))
   }
 
 }

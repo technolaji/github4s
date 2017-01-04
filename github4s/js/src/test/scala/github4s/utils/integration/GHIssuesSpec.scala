@@ -49,7 +49,7 @@ class GHIssuesSpec extends AsyncFlatSpec with Matchers with TestUtils {
       .execFuture(headerUserAgent)
 
     testFutureIsRight[SearchIssuesResult](response, { r =>
-      r.result.total_count > 1 shouldBe true
+      r.result.total_count > 0 shouldBe true
       r.result.items.nonEmpty shouldBe true
       r.statusCode shouldBe okStatusCode
     })

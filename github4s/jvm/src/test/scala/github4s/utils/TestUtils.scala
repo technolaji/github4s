@@ -22,7 +22,7 @@
 package github4s.utils
 
 import com.github.marklister.base64.Base64.Encoder
-import github4s.free.domain.{IssueTypeIssue, SearchIn, SearchInTitle}
+import github4s.free.domain._
 
 trait TestUtils {
 
@@ -71,6 +71,7 @@ trait TestUtils {
   val validSearchQuery       = "Scala 2.12"
   val nonExistentSearchQuery = "nonExistentSearchQueryString"
   val validSearchParams = List(
+    OwnerParamInRepository(s"$validRepoOwner/$validRepoName"),
     IssueTypeIssue,
     SearchIn(Set(SearchInTitle))
   )

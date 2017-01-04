@@ -52,7 +52,7 @@ class GHIssuesSpec extends FlatSpec with Matchers with TestUtils {
 
     response should be('right)
     response.toOption map { r ⇒
-      r.result.total_count > 1 shouldBe true
+      r.result.total_count > 0 shouldBe true
       r.result.items.nonEmpty shouldBe true
       r.statusCode shouldBe okStatusCode
     }
