@@ -21,9 +21,9 @@ lazy val buildSettings = Seq(
     scalaVersion := "2.11.8",
     crossScalaVersions := Seq("2.10.6", scalaVersion.value),
     scalacOptions ++= (scalaBinaryVersion.value match {
-      case "2.10" => Seq("-Xdivergence211")
-      case _      => Nil
-    }),
+    case "2.10" => Seq("-Xdivergence211")
+    case _      => Nil
+  }),
     scalafmtConfig in ThisBuild := Some(file(".scalafmt")),
     headers := Map(
       "scala" -> MIT("2016", "47 Degrees, LLC. <http://www.47deg.com>")
@@ -46,22 +46,23 @@ lazy val micrositeSettings = Seq(
 )
 
 lazy val commonDeps = addLibs(vAll,
-                                "cats-free",
-                                "circe-core",
-                                "circe-generic",
-                                "circe-parser",
-                                "simulacrum") ++
+                              "cats-free",
+                              "circe-core",
+                              "circe-generic",
+                              "circe-parser",
+                              "simulacrum") ++
     addCompilerPlugins(vAll, "paradise") ++
-Seq(libraryDependencies ++= Seq(
-  "org.scalatest" %%% "scalatest" % "3.0.0" % "test",
-  "com.github.marklister" %%% "base64" % "0.2.3"
-))
+    Seq(
+      libraryDependencies ++= Seq(
+        "org.scalatest" %%% "scalatest" % "3.0.0" % "test",
+        "com.github.marklister" %%% "base64" % "0.2.3"
+      ))
 
 lazy val jvmDeps = Seq(
-      libraryDependencies ++= Seq(
-        "org.scalaj" %% "scalaj-http" % "2.3.0",
-        "org.mock-server" % "mockserver-netty" % "3.10.4" % "test"
-      ))
+  libraryDependencies ++= Seq(
+    "org.scalaj" %% "scalaj-http" % "2.3.0",
+    "org.mock-server" % "mockserver-netty" % "3.10.4" % "test"
+  ))
 
 lazy val jsDeps = Seq(
   libraryDependencies ++= Seq(
@@ -76,15 +77,21 @@ lazy val docsDependencies = libraryDependencies ++= Seq(
 
 lazy val scalazDependencies = addLibs(vAll, "scalaz-concurrent")
 
+lazy val root = (project in file("."))
+  .settings(buildSettings: _*)
+  .aggregate(github4sJVM, github4sJS, scalaz, docs)
+
 /** github4s - cross project that provides cross platform support.*/
 lazy val github4s = (crossProject in file("github4s"))
   .settings(moduleName := "github4s")
   .enablePlugins(AutomateHeaderPlugin)
-    .enablePlugins(BuildInfoPlugin).
-    settings(
-      buildInfoKeys := Seq[BuildInfoKey](name, version, "token" -> Option(sys.props("token")).getOrElse("")),
-      buildInfoPackage := "github4s"
-    )
+  .enablePlugins(BuildInfoPlugin)
+  .settings(
+    buildInfoKeys := Seq[BuildInfoKey](name,
+                                       version,
+                                       "token" -> Option(sys.props("token")).getOrElse("")),
+    buildInfoPackage := "github4s"
+  )
   .settings(buildSettings: _*)
   .settings(commonDeps: _*)
   .jvmSettings(jvmDeps: _*)
