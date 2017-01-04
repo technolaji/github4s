@@ -70,4 +70,25 @@ class GHIssuesSpec extends FlatSpec with Matchers with TestUtils {
       r.statusCode shouldBe okStatusCode
     }
   }
+
+  "Issues >> Edit" should "edit the specified issue" in {
+    val response = Github(accessToken).issues
+      .editIssue(validRepoOwner,
+                 validRepoName,
+                 validIssue,
+                 validIssueState,
+                 validIssueTitle,
+                 validIssueBody,
+                 None,
+                 validIssueLabel,
+                 validAssignees)
+      .exec[Id, HttpResponse[String]](headerUserAgent)
+
+    response should be('right)
+    response.toOption map { r ⇒
+      r.result.state shouldBe validIssueState
+      r.result.title shouldBe validIssueTitle
+      r.statusCode shouldBe okStatusCode
+    }
+  }
 }

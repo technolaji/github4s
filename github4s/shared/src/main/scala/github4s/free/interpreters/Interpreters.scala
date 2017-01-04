@@ -148,6 +148,30 @@ class Interpreters[M[_], C](implicit A: ApplicativeError[M, Throwable],
             issues.list(accessToken, headers, owner, repo)
           case SearchIssues(query, searchParams, accessToken) ⇒
             issues.search(accessToken, headers, query, searchParams)
+          case CreateIssue(owner, repo, title, body, milestone, labels, assignees, accessToken) ⇒
+            issues
+              .create(accessToken, headers, owner, repo, title, body, milestone, labels, assignees)
+          case EditIssue(owner,
+                         repo,
+                         issue,
+                         state,
+                         title,
+                         body,
+                         milestone,
+                         labels,
+                         assignees,
+                         accessToken) ⇒
+            issues.edit(accessToken,
+                        headers,
+                        owner,
+                        repo,
+                        issue,
+                        state,
+                        title,
+                        body,
+                        milestone,
+                        labels,
+                        assignees)
         }
       }
     }

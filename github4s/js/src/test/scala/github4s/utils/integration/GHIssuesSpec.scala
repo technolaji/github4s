@@ -66,4 +66,24 @@ class GHIssuesSpec extends AsyncFlatSpec with Matchers with TestUtils {
       r.statusCode shouldBe okStatusCode
     })
   }
+
+  "Issues >> Edit" should "edit the specified issue" in {
+    val response = Github(accessToken).issues
+      .editIssue(validRepoOwner,
+                 validRepoName,
+                 validIssue,
+                 validIssueState,
+                 validIssueTitle,
+                 validIssueBody,
+                 None,
+                 validIssueLabel,
+                 validAssignees)
+      .execFuture(headerUserAgent)
+
+    testFutureIsRight[Issue](response, { r =>
+      r.result.state shouldBe validIssueState
+      r.result.title shouldBe validIssueTitle
+      r.statusCode shouldBe okStatusCode
+    })
+  }
 }

@@ -114,4 +114,28 @@ class GHIssues(accessToken: Option[String] = None)(implicit O: IssueOps[GitHub4s
       searchParams: List[SearchParam]
   ): GHIO[GHResponse[SearchIssuesResult]] =
     O.searchIssues(query, searchParams, accessToken)
+
+  def createIssue(
+      owner: String,
+      repo: String,
+      title: String,
+      body: Option[String] = None,
+      milestone: Option[Int] = None,
+      labels: Option[List[String]] = None,
+      assignees: Option[List[String]] = None
+  ): GHIO[GHResponse[Issue]] =
+    O.createIssue(owner, repo, title, body, milestone, labels, assignees, accessToken)
+
+  def editIssue(
+      owner: String,
+      repo: String,
+      issue: Int,
+      state: String,
+      title: String,
+      body: String,
+      milestone: Option[Int] = None,
+      labels: List[String] = List.empty,
+      assignees: List[String] = List.empty
+  ): GHIO[GHResponse[Issue]] =
+    O.editIssue(owner, repo, issue, state, title, body, milestone, labels, assignees, accessToken)
 }

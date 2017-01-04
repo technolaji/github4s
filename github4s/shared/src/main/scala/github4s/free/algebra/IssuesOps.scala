@@ -42,6 +42,30 @@ final case class SearchIssues(
     accessToken: Option[String] = None
 ) extends IssueOp[GHResponse[SearchIssuesResult]]
 
+final case class CreateIssue(
+    owner: String,
+    repo: String,
+    title: String,
+    body: Option[String],
+    milestone: Option[Int],
+    labels: Option[List[String]],
+    assignees: Option[List[String]],
+    accessToken: Option[String] = None
+) extends IssueOp[GHResponse[Issue]]
+
+final case class EditIssue(
+    owner: String,
+    repo: String,
+    issue: Int,
+    state: String,
+    title: String,
+    body: String,
+    milestone: Option[Int],
+    labels: List[String],
+    assignees: List[String],
+    accessToken: Option[String] = None
+) extends IssueOp[GHResponse[Issue]]
+
 /**
   * Exposes Issue operations as a Free monadic algebra that may be combined with other Algebras via
   * Coproduct
@@ -61,6 +85,34 @@ class IssueOps[F[_]](implicit I: Inject[IssueOp, F]) {
       accessToken: Option[String] = None
   ): Free[F, GHResponse[SearchIssuesResult]] =
     Free.inject[IssueOp, F](SearchIssues(query, searchParams, accessToken))
+
+  def createIssue(
+      owner: String,
+      repo: String,
+      title: String,
+      body: Option[String],
+      milestone: Option[Int],
+      labels: Option[List[String]],
+      assignees: Option[List[String]],
+      accessToken: Option[String] = None
+  ): Free[F, GHResponse[Issue]] =
+    Free.inject[IssueOp, F](
+      CreateIssue(owner, repo, title, body, milestone, labels, assignees, accessToken))
+
+  def editIssue(
+      owner: String,
+      repo: String,
+      issue: Int,
+      state: String,
+      title: String,
+      body: String,
+      milestone: Option[Int],
+      labels: List[String],
+      assignees: List[String],
+      accessToken: Option[String] = None
+  ): Free[F, GHResponse[Issue]] =
+    Free.inject[IssueOp, F](
+      EditIssue(owner, repo, issue, state, title, body, milestone, labels, assignees, accessToken))
 }
 
 /**

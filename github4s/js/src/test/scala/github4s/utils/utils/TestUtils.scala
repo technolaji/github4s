@@ -101,4 +101,11 @@ trait TestUtils extends Matchers {
     IssueTypeIssue,
     SearchIn(Set(SearchInTitle))
   )
+
+  val validIssue      = 48
+  val validIssueTitle = "Sample Title"
+  val validIssueBody  = "Sample Body"
+  val validIssueState = "closed"
+  val validIssueLabel = List("bug", "code review")
+  val validAssignees  = List(validUsername)
 }

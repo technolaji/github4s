@@ -23,9 +23,10 @@ package github4s.api
 
 import github4s.GithubResponses.GHResponse
 import github4s.{GithubApiUrls, HttpClient, HttpRequestBuilderExtension}
-import github4s.free.domain.{Issue, SearchIssuesResult, SearchParam}
+import github4s.free.domain._
 import github4s.free.interpreters.Capture
 import github4s.util.URLEncoder
+import io.circe.syntax._
 import io.circe.generic.auto._
 
 /** Factory to encapsulate calls related to Issues operations  */
@@ -81,5 +82,66 @@ class Issues[C, M[_]](implicit urls: GithubApiUrls,
     httpClient
       .get[SearchIssuesResult](accessToken, "search/issues", headers, Map("q" -> queryString))
   }
+
+  /**
+    * Create an issue
+    *
+    * @param accessToken to identify the authenticated user
+    * @param headers optional user headers to include in the request
+    * @param owner of the repo
+    * @param repo name of the repo
+    * @param title The title of the issue.
+    * @param body The contents of the issue.
+    * @param milestone The number of the milestone to associate this issue with.
+    * @param labels Labels to associate with this issue.
+    * @param assignees Logins for Users to assign to this issue.
+    */
+  def create(accessToken: Option[String] = None,
+             headers: Map[String, String] = Map(),
+             owner: String,
+             repo: String,
+             title: String,
+             body: Option[String],
+             milestone: Option[Int],
+             labels: Option[List[String]],
+             assignees: Option[List[String]]): M[GHResponse[Issue]] =
+    httpClient.post[Issue](
+      accessToken,
+      s"repos/$owner/$repo/issues",
+      headers,
+      data = NewIssueRequest(title, body, milestone, labels, assignees).asJson.noSpaces)
+
+  /**
+    * Edit an issue
+    *
+    * @param accessToken to identify the authenticated user
+    * @param headers optional user headers to include in the request
+    * @param title The title of the issue.
+    * @param body The contents of the issue.
+    * @param state State of the issue. Either open or closed.
+    * @param milestone The number of the milestone to associate this issue with.
+    * @param labels Labels to associate with this issue.
+    *               Pass one or more Labels to replace the set of Labels on this Issue.
+    *               Send an empty list to clear all Labels from the Issue.
+    * @param assignees Logins for Users to assign to this issue.
+    *                  Pass one or more user logins to replace the set of assignees on this Issue.
+    *                  Send an empty list to clear all assignees from the Issue.
+    */
+  def edit(accessToken: Option[String] = None,
+           headers: Map[String, String] = Map(),
+           owner: String,
+           repo: String,
+           issue: Int,
+           state: String,
+           title: String,
+           body: String,
+           milestone: Option[Int],
+           labels: List[String],
+           assignees: List[String]): M[GHResponse[Issue]] =
+    httpClient.patch[Issue](
+      accessToken,
+      s"repos/$owner/$repo/issues/$issue",
+      headers,
+      data = EditIssueRequest(state, title, body, milestone, labels, assignees).asJson.noSpaces)
 
 }
