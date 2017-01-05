@@ -56,10 +56,10 @@ case class PullRequest(url: Option[String],
 case class SearchIssuesResult(total_count: Int, incomplete_results: Boolean, items: List[Issue])
 
 case class NewIssueRequest(title: String,
-                           body: Option[String],
+                           body: String,
                            milestone: Option[Int],
-                           labels: Option[List[String]],
-                           assignees: Option[List[String]])
+                           labels: List[String],
+                           assignees: List[String])
 
 case class EditIssueRequest(state: String,
                             title: String,
