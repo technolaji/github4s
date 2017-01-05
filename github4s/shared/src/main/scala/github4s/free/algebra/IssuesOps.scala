@@ -46,10 +46,10 @@ final case class CreateIssue(
     owner: String,
     repo: String,
     title: String,
-    body: Option[String],
+    body: String,
     milestone: Option[Int],
-    labels: Option[List[String]],
-    assignees: Option[List[String]],
+    labels: List[String],
+    assignees: List[String],
     accessToken: Option[String] = None
 ) extends IssueOp[GHResponse[Issue]]
 
@@ -90,10 +90,10 @@ class IssueOps[F[_]](implicit I: Inject[IssueOp, F]) {
       owner: String,
       repo: String,
       title: String,
-      body: Option[String],
+      body: String,
       milestone: Option[Int],
-      labels: Option[List[String]],
-      assignees: Option[List[String]],
+      labels: List[String],
+      assignees: List[String],
       accessToken: Option[String] = None
   ): Free[F, GHResponse[Issue]] =
     Free.inject[IssueOp, F](

@@ -101,10 +101,10 @@ class Issues[C, M[_]](implicit urls: GithubApiUrls,
              owner: String,
              repo: String,
              title: String,
-             body: Option[String],
+             body: String,
              milestone: Option[Int],
-             labels: Option[List[String]],
-             assignees: Option[List[String]]): M[GHResponse[Issue]] =
+             labels: List[String],
+             assignees: List[String]): M[GHResponse[Issue]] =
     httpClient.post[Issue](
       accessToken,
       s"repos/$owner/$repo/issues",

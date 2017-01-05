@@ -119,10 +119,10 @@ class GHIssues(accessToken: Option[String] = None)(implicit O: IssueOps[GitHub4s
       owner: String,
       repo: String,
       title: String,
-      body: Option[String] = None,
+      body: String,
       milestone: Option[Int] = None,
-      labels: Option[List[String]] = None,
-      assignees: Option[List[String]] = None
+      labels: List[String] = List.empty,
+      assignees: List[String] = List.empty
   ): GHIO[GHResponse[Issue]] =
     O.createIssue(owner, repo, title, body, milestone, labels, assignees, accessToken)
 
