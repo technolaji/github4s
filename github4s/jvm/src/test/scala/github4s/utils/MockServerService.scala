@@ -33,6 +33,9 @@ trait MockServerService extends FlatSpec with BeforeAndAfterAll {
 
   override def beforeAll = ConfigurationProperties.overrideLogLevel("OFF")
 
-  override def afterAll = mockServer.stop
+  override def afterAll = {
+    mockServer.stop
+    ()
+  }
 
 }
