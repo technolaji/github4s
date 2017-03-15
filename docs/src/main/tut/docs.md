@@ -102,7 +102,7 @@ import github4s.jvm.Implicits._
 
 object ProgramTask {
     val u4 = Github(accessToken).users.get("franciscodr").exec[Task, HttpResponse[String]]()
-    u4.attemptRun
+    u4.unsafePerformSyncAttempt
 }
 ```
 
@@ -126,7 +126,7 @@ object ProgramEval {
     val user1 = Github(accessToken).users.get("rafaparadela").exec[Eval, HttpResponse[String]](userHeaders).value
 }
 
-ProgramEval.user1 should be ('right)
+ProgramEval.user1 should matchPattern { case Right(GHResult(_, 200, _)) => }
 ProgramEval.user1.toOption map (_.result.login shouldBe "rafaparadela")
 ```
 
