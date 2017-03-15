@@ -7,8 +7,8 @@ pgpSecretRing := file(s"${sys.env.getOrElse("PGP_FOLDER", ".")}/secring.gpg")
 
 lazy val buildSettings = Seq(
     name := "github4s",
-    organization := "47 Degrees",
-    organizationName := "com.47deg",
+    organization := "com.47deg",
+    organizationName := "47 Degrees",
     description := "Github API wrapper written in Scala",
     startYear := Option(2016),
     homepage := Option(url("http://47deg.github.io/github4s/")),
