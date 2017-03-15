@@ -42,14 +42,15 @@ lazy val micrositeSettings = Seq(
 lazy val commonDeps =
   Seq(
     libraryDependencies ++= Seq(
-      dep("cats-free"),
-      dep("circe-core"),
-      dep("circe-generic"),
-      dep("circe-parser"),
-      dep("simulacrum"),
-      depJS("scalatest"),
+      "org.typelevel" %%% "cats"          % "0.9.0",
+      "io.circe"      %%% "circe-core"    % "0.7.0",
+      "io.circe"      %%% "circe-generic" % "0.7.0",
+      "io.circe"      %%% "circe-parser"  % "0.7.0",
+      "org.scalatest" %%% "scalatest" % "3.0.0" % "test",
       "com.github.marklister" %%% "base64" % "0.2.3",
-      compilerPlugin(dep("paradise") cross CrossVersion.full)
+      compilerPlugin(
+        "org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full
+      )
     ))
 
 lazy val jvmDeps = Seq(
@@ -69,11 +70,10 @@ lazy val docsDependencies = libraryDependencies ++= Seq(
     "org.mock-server"  % "mockserver-netty" % "3.10.4" % "test"
   )
 
-lazy val scalazDependencies =
-  Seq(
-    libraryDependencies ++= Seq(
-      dep("scalaz-concurrent")
-    ))
+lazy val scalazDependencies = Seq(
+  libraryDependencies +=
+    "org.scalaz" %% "scalaz-concurrent" % "7.2.9"
+)
 
 lazy val root = (project in file("."))
   .settings(buildSettings: _*)
