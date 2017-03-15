@@ -150,12 +150,12 @@ class HttpClient[C, M[_]](implicit urls: GithubApiUrls,
 
   def post[A](
       accessToken: Option[String] = None,
-      method: String,
+      url: String,
       headers: Map[String, String] = Map.empty,
       data: String
   )(implicit D: Decoder[A]): M[GHResponse[A]] =
     httpRbImpl.run[A](
-      httpRequestBuilder(buildURL(method)).postMethod
+      httpRequestBuilder(buildURL(url)).postMethod
         .withAuth(accessToken)
         .withHeaders(headers)
         .withData(data))
