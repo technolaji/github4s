@@ -5,10 +5,13 @@ pgpPassphrase := Some(sys.env.getOrElse("PGP_PASSPHRASE", "").toCharArray)
 pgpPublicRing := file(s"${sys.env.getOrElse("PGP_FOLDER", ".")}/pubring.gpg")
 pgpSecretRing := file(s"${sys.env.getOrElse("PGP_FOLDER", ".")}/secring.gpg")
 
+val dev = Seq(Dev("47 Degrees (twitter: @47deg)", "47 Degrees"))
+val gh = GitHubSettings("com.47deg", "github4s", "47 Degrees", mit)
+
 lazy val buildSettings = Seq(
-    name := "github4s",
-    organization := "com.47deg",
-    organizationName := "47 Degrees",
+    name := gh.proj,
+    organization := gh.org,
+    organizationName := gh.publishOrg,
     description := "Github API wrapper written in Scala",
     startYear := Option(2016),
     homepage := Option(url("http://47deg.github.io/github4s/")),
@@ -27,7 +30,8 @@ lazy val buildSettings = Seq(
     sharedCommonSettings ++
     miscSettings ++
     sharedReleaseProcess ++
-    credentialSettings
+    credentialSettings ++
+    sharedPublishSettings(gh, dev)
 
 lazy val micrositeSettings = Seq(
   micrositeName := "github4s",
