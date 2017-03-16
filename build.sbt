@@ -6,7 +6,7 @@ pgpPublicRing := file(s"${sys.env.getOrElse("PGP_FOLDER", ".")}/pubring.gpg")
 pgpSecretRing := file(s"${sys.env.getOrElse("PGP_FOLDER", ".")}/secring.gpg")
 
 val dev = Seq(Dev("47 Degrees (twitter: @47deg)", "47 Degrees"))
-val gh = GitHubSettings("com.47deg", "github4s", "47 Degrees", mit)
+val gh = GitHubSettings("com.fortysevendeg", "github4s", "47 Degrees", mit)
 
 lazy val buildSettings = Seq(
     name := gh.proj,
