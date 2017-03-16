@@ -1,14 +1,12 @@
 import de.heikoseeberger.sbtheader.license.MIT
-import catext.Dependencies._
 import PgpKeys.gpgCommand
-
-val dev  = Seq(Dev("47 Degrees (twitter: @47deg)", "47 Degrees"))
-val gh   = GitHubSettings("com.fortysevendeg", "github4s", "47 Degrees", mit)
-val vAll = Versions(versions, libraries, scalacPlugins)
 
 pgpPassphrase := Some(sys.env.getOrElse("PGP_PASSPHRASE", "").toCharArray)
 pgpPublicRing := file(s"${sys.env.getOrElse("PGP_FOLDER", ".")}/pubring.gpg")
 pgpSecretRing := file(s"${sys.env.getOrElse("PGP_FOLDER", ".")}/secring.gpg")
+
+val dev = Seq(Dev("47 Degrees (twitter: @47deg)", "47 Degrees"))
+val gh = GitHubSettings("com.fortysevendeg", "github4s", "47 Degrees", mit)
 
 lazy val buildSettings = Seq(
     name := gh.proj,
@@ -45,18 +43,19 @@ lazy val micrositeSettings = Seq(
   includeFilter in makeSite := "*.html" | "*.css" | "*.png" | "*.jpg" | "*.gif" | "*.js" | "*.swf" | "*.md"
 )
 
-lazy val commonDeps = addLibs(vAll,
-                              "cats-free",
-                              "circe-core",
-                              "circe-generic",
-                              "circe-parser",
-                              "simulacrum") ++
-    addCompilerPlugins(vAll, "paradise") ++
-    Seq(
-      libraryDependencies ++= Seq(
-        "org.scalatest" %%% "scalatest" % "3.0.0" % "test",
-        "com.github.marklister" %%% "base64" % "0.2.3"
-      ))
+lazy val commonDeps =
+  Seq(
+    libraryDependencies ++= Seq(
+      "org.typelevel" %%% "cats"          % "0.9.0",
+      "io.circe"      %%% "circe-core"    % "0.7.0",
+      "io.circe"      %%% "circe-generic" % "0.7.0",
+      "io.circe"      %%% "circe-parser"  % "0.7.0",
+      "org.scalatest" %%% "scalatest" % "3.0.0" % "test",
+      "com.github.marklister" %%% "base64" % "0.2.3",
+      compilerPlugin(
+        "org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full
+      )
+    ))
 
 lazy val jvmDeps = Seq(
   libraryDependencies ++= Seq(
@@ -75,7 +74,10 @@ lazy val docsDependencies = libraryDependencies ++= Seq(
     "org.mock-server"  % "mockserver-netty" % "3.10.4" % "test"
   )
 
-lazy val scalazDependencies = addLibs(vAll, "scalaz-concurrent")
+lazy val scalazDependencies = Seq(
+  libraryDependencies +=
+    "org.scalaz" %% "scalaz-concurrent" % "7.2.9"
+)
 
 lazy val root = (project in file("."))
   .settings(buildSettings: _*)
