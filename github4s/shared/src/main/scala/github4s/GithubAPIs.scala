@@ -21,6 +21,7 @@
 
 package github4s
 
+import cats.data.NonEmptyList
 import github4s.GithubResponses.{GHIO, GHResponse}
 import github4s.app._
 import github4s.free.algebra._
@@ -138,4 +139,56 @@ class GHIssues(accessToken: Option[String] = None)(implicit O: IssueOps[GitHub4s
       assignees: List[String] = List.empty
   ): GHIO[GHResponse[Issue]] =
     O.editIssue(owner, repo, issue, state, title, body, milestone, labels, assignees, accessToken)
+}
+
+class GHGitData(accessToken: Option[String] = None)(implicit O: GitDataOps[GitHub4s]) {
+
+  def getReference(
+      owner: String,
+      repo: String,
+      ref: String
+  ): GHIO[GHResponse[NonEmptyList[Ref]]] =
+    O.getReference(owner, repo, ref, accessToken)
+
+  def updateReference(
+      owner: String,
+      repo: String,
+      ref: String,
+      sha: String,
+      force: Option[Boolean] = None
+  ): GHIO[GHResponse[Ref]] =
+    O.updateReference(owner, repo, ref, sha, force, accessToken)
+
+  def getCommit(
+      owner: String,
+      repo: String,
+      sha: String
+  ): GHIO[GHResponse[RefCommit]] =
+    O.getCommit(owner, repo, sha, accessToken)
+
+  def createCommit(
+      owner: String,
+      repo: String,
+      message: String,
+      tree: String,
+      parents: List[String] = Nil,
+      author: Option[RefCommitAuthor] = None
+  ): GHIO[GHResponse[RefCommit]] =
+    O.createCommit(owner, repo, message, tree, parents, author, accessToken)
+
+  def createBlob(
+      owner: String,
+      repo: String,
+      content: String,
+      encoding: Option[String]
+  ): GHIO[GHResponse[RefInfo]] =
+    O.createBlob(owner, repo, content, encoding, accessToken)
+
+  def createTree(
+      owner: String,
+      repo: String,
+      baseTree: Option[String],
+      treeDataList: List[TreeData]
+  ): GHIO[GHResponse[TreeResult]] =
+    O.createTree(owner, repo, baseTree, treeDataList, accessToken)
 }

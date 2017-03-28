@@ -21,7 +21,7 @@
 
 package github4s.unit
 
-import github4s.api.{Auth, Gists, Repos, Users}
+import github4s.api._
 import github4s.free.domain.{GistFile, Pagination}
 import github4s.utils.{DummyGithubUrls, MockGithubApiServer, TestUtils}
 import org.scalatest._
@@ -39,10 +39,11 @@ class ApiSpec
     with DummyGithubUrls
     with ImplicitsJVM {
 
-  val auth  = new Auth[HttpResponse[String], Id]
-  val repos = new Repos[HttpResponse[String], Id]
-  val users = new Users[HttpResponse[String], Id]
-  val gists = new Gists[HttpResponse[String], Id]
+  val auth    = new Auth[HttpResponse[String], Id]
+  val repos   = new Repos[HttpResponse[String], Id]
+  val users   = new Users[HttpResponse[String], Id]
+  val gists   = new Gists[HttpResponse[String], Id]
+  val gitData = new GitData[HttpResponse[String], Id]
 
   "Auth >> NewAuth" should "return a valid token when valid credential is provided" in {
     val response = auth.newAuth(
@@ -287,6 +288,160 @@ class ApiSpec
       r.statusCode shouldBe createdStatusCode
     }
 
+  }
+
+  "GitData >> GetReference" should "return the single reference" in {
+    val response =
+      gitData.reference(
+        accessToken,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        validRefSingle)
+    response should be('right)
+
+    response.toOption map { r =>
+      r.statusCode shouldBe okStatusCode
+    }
+  }
+
+  it should "return multiple references" in {
+    val response =
+      gitData.reference(
+        accessToken,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        validRefMultiple)
+    response should be('right)
+
+    response.toOption map { r =>
+      r.statusCode shouldBe okStatusCode
+    }
+  }
+
+  it should "return error Left for non existent reference" in {
+    val response =
+      gitData.reference(accessToken, headerUserAgent, validRepoOwner, validRepoName, invalidRef)
+    response should be('left)
+  }
+
+  "GitData >> UpdateReference" should "return the single reference" in {
+    val response =
+      gitData.updateReference(
+        accessToken,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        validRefSingle,
+        validCommitSha)
+    response should be('right)
+
+    response.toOption map { r =>
+      r.statusCode shouldBe okStatusCode
+    }
+  }
+
+  it should "return error Left for non authenticated request" in {
+    val response =
+      gitData.updateReference(
+        None,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        validRefSingle,
+        validCommitSha)
+    response should be('left)
+  }
+
+  "GitData >> GetCommit" should "return the single commit" in {
+    val response =
+      gitData.commit(accessToken, headerUserAgent, validRepoOwner, validRepoName, validCommitSha)
+    response should be('right)
+
+    response.toOption map { r =>
+      r.statusCode shouldBe okStatusCode
+    }
+  }
+
+  it should "return error Left for non existent commit" in {
+    val response =
+      gitData.commit(accessToken, headerUserAgent, validRepoOwner, validRepoName, invalidCommitSha)
+    response should be('left)
+  }
+
+  "GitData >> CreateCommit" should "return the single commit" in {
+    val response =
+      gitData.createCommit(
+        accessToken,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        validNote,
+        validTreeSha,
+        List(validCommitSha))
+    response should be('right)
+
+    response.toOption map { r =>
+      r.statusCode shouldBe createdStatusCode
+    }
+  }
+
+  it should "return error Left for non authenticated request" in {
+    val response =
+      gitData.createCommit(
+        None,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        validNote,
+        validTreeSha,
+        List(validCommitSha))
+    response should be('left)
+  }
+
+  "GitData >> CreateBlob" should "return the created blob" in {
+    val response =
+      gitData.createBlob(accessToken, headerUserAgent, validRepoOwner, validRepoName, validNote)
+    response should be('right)
+
+    response.toOption map { r =>
+      r.statusCode shouldBe createdStatusCode
+    }
+  }
+
+  it should "return error Left for non authenticated request" in {
+    val response =
+      gitData.createBlob(None, headerUserAgent, validRepoOwner, validRepoName, validNote)
+    response should be('left)
+  }
+
+  "GitData >> CreateTree" should "return the created tree" in {
+    val response =
+      gitData.createTree(
+        accessToken,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        Some(validTreeSha),
+        treeDataList)
+    response should be('right)
+
+    response.toOption map { r =>
+      r.statusCode shouldBe createdStatusCode
+    }
+  }
+
+  it should "return error Left for non authenticated request" in {
+    val response =
+      gitData.createTree(
+        None,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        Some(validTreeSha),
+        treeDataList)
+    response should be('left)
   }
 
 }
