@@ -40,6 +40,7 @@ object ProjectPlugin extends AutoPlugin {
           %%("base64"),
           %%("circe-parser"),
           %%("scalatest") % "test",
+          "org.mockito" % "mockito-core" % "2.7.19" % "test",
           compilerPlugin(%%("paradise") cross CrossVersion.full)
         ))
 
@@ -64,15 +65,7 @@ object ProjectPlugin extends AutoPlugin {
       description := "Github API wrapper written in Scala",
       startYear := Option(2016),
       resolvers += Resolver.sonatypeRepo("snapshots"),
-      orgGithubSettings := GitHubSettings(
-        organization = "47deg",
-        project = name.value,
-        organizationName = "47 Degrees",
-        groupId = "com.47deg",
-        organizationHomePage = url("http://47deg.com"),
-        organizationEmail = "hello@47deg.com",
-        license = sbtorgpolicies.model.MITLicense
-      ),
+      orgLicenseSetting := sbtorgpolicies.model.MITLicense,
       scalaVersion := scalac.`2.12`,
       crossScalaVersions := "2.10.6" :: scalac.crossScalaVersions,
       scalaOrganization := "org.scala-lang",
@@ -82,6 +75,14 @@ object ProjectPlugin extends AutoPlugin {
       }),
       headers := Map(
         "scala" -> MIT("2016", "47 Degrees, LLC. <http://www.47deg.com>")
-      )
+      ),
+      // This is necessary to prevent packaging the BuildInfo with
+      // sensible information like the Github token. Do not remove.
+      mappings in (Compile, packageBin) ~= { (ms: Seq[(File, String)]) =>
+        ms filter {
+          case (_, toPath) =>
+            !toPath.startsWith("github4s/BuildInfo")
+        }
+      }
     ) ++ shellPromptSettings
 }
