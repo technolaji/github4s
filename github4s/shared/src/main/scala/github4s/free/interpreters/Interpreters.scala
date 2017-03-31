@@ -189,6 +189,8 @@ class Interpreters[M[_], C](
         fa match {
           case GetReference(owner, repo, ref, accessToken) ⇒
             gitData.reference(accessToken, headers, owner, repo, ref)
+          case CreateReference(owner, repo, ref, sha, accessToken) ⇒
+            gitData.createReference(accessToken, headers, owner, repo, ref, sha)
           case UpdateReference(owner, repo, ref, sha, force, accessToken) ⇒
             gitData.updateReference(accessToken, headers, owner, repo, ref, sha, force)
           case GetCommit(owner, repo, sha, accessToken) ⇒
@@ -199,6 +201,8 @@ class Interpreters[M[_], C](
             gitData.createBlob(accessToken, headers, owner, repo, content, encoding)
           case CreateTree(owner, repo, baseTree, treeDataList, accessToken) ⇒
             gitData.createTree(accessToken, headers, owner, repo, baseTree, treeDataList)
+          case CreateTag(owner, repo, tag, message, objectSha, objectType, author, accessToken) ⇒
+            gitData.createTag(accessToken, headers, owner, repo, tag, message, objectSha, objectType, author)
         }
       }
     }
