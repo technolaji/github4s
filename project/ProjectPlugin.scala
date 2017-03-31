@@ -1,6 +1,6 @@
 import com.typesafe.sbt.site.jekyll.JekyllPlugin.autoImport._
 import de.heikoseeberger.sbtheader.HeaderKey.headers
-import de.heikoseeberger.sbtheader.license.MIT
+import de.heikoseeberger.sbtheader.license.Apache2_0
 import microsites.MicrositesPlugin.autoImport._
 import sbt.Keys._
 import sbt._
@@ -74,7 +74,7 @@ object ProjectPlugin extends AutoPlugin {
         case _      => Nil
       }),
       headers := Map(
-        "scala" -> MIT("2016", "47 Degrees, LLC. <http://www.47deg.com>")
+        "scala" -> Apache2_0("2016-2017", "47 Degrees, LLC. <http://www.47deg.com>")
       ),
       // This is necessary to prevent packaging the BuildInfo with
       // sensible information like the Github token. Do not remove.
