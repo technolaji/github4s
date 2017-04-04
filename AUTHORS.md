@@ -9,3 +9,11 @@ The maintainers of the project are:
 ## Contributors
 
 These are the people that have contributed to the github4s project:
+
+* Rafa Paradela <[rafaparadela](https://github.com/rafaparadela)>
+* Juan Pedro Moreno <[juanpedromoreno](https://github.com/juanpedromoreno)>
+* Fede Fernández <[fedefernandez](https://github.com/fedefernandez)>
+* Javier de Silóniz Sandino <[jdesiloniz](https://github.com/jdesiloniz)>
+* Alejandro Gómez <[dialelo](https://github.com/dialelo)>
+* Ana Mª Marquez <[anamariamv](https://github.com/anamariamv)>
+* Raúl Raja Martínez <[raulraja](https://github.com/raulraja)>

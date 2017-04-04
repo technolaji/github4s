@@ -13,3 +13,10 @@ To get started with SBT, simply add the following to your build.sbt file:
 ```
 libraryDependencies += "com.47deg" %% "github4s" % "0.14.0"
 ```
+
+# Copyright
+
+github4s is designed and developed by 47 Degrees
+
+Copyright (C) 2016-2017 47 Degrees. <http://47deg.com>
+      
