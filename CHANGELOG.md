@@ -1,5 +1,16 @@
 # Changelog
 
+## 04/05/2017 - Version 0.14.1
+
+Release changes:
+
+* Updates changelog ([#75](https://github.com/47deg/github4s/pull/75))
+* Bumps sbt-org-policies plugin version ([#76](https://github.com/47deg/github4s/pull/76))
+* Fixes Github token through env var ([#77](https://github.com/47deg/github4s/pull/77))
+* Upgrades sbt-org-policies plugin ([#78](https://github.com/47deg/github4s/pull/78))
+* Adds the get contents operation ([#80](https://github.com/47deg/github4s/pull/80)) 
+      
+
 ## 2017/04/03 - Version 0.14.0
 
 This release:
