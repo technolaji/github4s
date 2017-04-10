@@ -1,5 +1,13 @@
 # Changelog
 
+## 04/10/2017 - Version 0.14.2
+
+Release changes:
+
+* Upgrades sbt-org-policies ([#81](https://github.com/47deg/github4s/pull/81))
+* Fixes BuildInfo Code Dependency ([#82](https://github.com/47deg/github4s/pull/82)) 
+      
+
 ## 04/05/2017 - Version 0.14.1
 
 Release changes:
