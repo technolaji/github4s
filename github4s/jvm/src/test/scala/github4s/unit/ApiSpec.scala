@@ -40,6 +40,7 @@ class ApiSpec
   val gists        = new Gists[HttpResponse[String], Id]
   val gitData      = new GitData[HttpResponse[String], Id]
   val pullRequests = new PullRequests[HttpResponse[String], Id]
+  val statuses     = new Statuses[HttpResponse[String], Id]
 
   "Auth >> NewAuth" should "return a valid token when valid credential is provided" in {
     val response = auth.newAuth(
@@ -571,7 +572,6 @@ class ApiSpec
   }
 
   "PullRequests >> List" should "return the expected pull request list when valid repo is provided" in {
-
     val response =
       pullRequests.list(accessToken, headerUserAgent, validRepoOwner, validRepoName)
     response should be('right)
@@ -580,13 +580,107 @@ class ApiSpec
       r.result.nonEmpty shouldBe true
       r.statusCode shouldBe okStatusCode
     }
-
   }
 
   it should "return error when an invalid repo name is passed" in {
     val response =
-      repos.get(accessToken, headerUserAgent, validRepoOwner, invalidRepoName)
+      pullRequests.list(accessToken, headerUserAgent, validRepoOwner, invalidRepoName)
     response should be('left)
   }
 
+  "Statuses >> Get" should "return the expected combined status when a valid ref is provided" in {
+    val response =
+      statuses.get(accessToken, headerUserAgent, validRepoOwner, validRepoName, validRefSingle)
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.statusCode shouldBe okStatusCode
+    }
+  }
+
+  it should "return an error if no tokens are provided" in {
+    val response =
+      statuses.get(None, headerUserAgent, validRepoOwner, validRepoName, validRefSingle)
+    response should be('left)
+  }
+
+  it should "return an error if an invalid ref is passed" in {
+    val response =
+      statuses.get(accessToken, headerUserAgent, validRepoOwner, validRepoName, invalidRef)
+    response should be('left)
+  }
+
+  "Statuses >> List" should "return the expected statuses when a valid ref is provided" in {
+    val response =
+      statuses.list(accessToken, headerUserAgent, validRepoOwner, validRepoName, validRefSingle)
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.result.nonEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    }
+  }
+
+  it should "return an error if no tokens are provided" in {
+    val response =
+      statuses.list(None, headerUserAgent, validRepoOwner, validRepoName, validRefSingle)
+    response should be('left)
+  }
+
+  it should "return an empty list when an invalid ref is passed" in {
+    val response =
+      statuses.list(accessToken, headerUserAgent, validRepoOwner, validRepoName, invalidRef)
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.result.isEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    }
+  }
+
+  "Statuses >> Create" should "return the create status if a valid sha is provided" in {
+    val response = statuses.create(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      validCommitSha,
+      validStatusState,
+      None,
+      None,
+      None)
+    response should be('right)
+
+    response.toOption map { r =>
+      r.statusCode shouldBe createdStatusCode
+    }
+  }
+
+  it should "return an error if no tokens are provided" in {
+    val response = statuses.create(
+      None,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      validCommitSha,
+      validStatusState,
+      None,
+      None,
+      None)
+    response should be('left)
+  }
+
+  it should "return an error when an invalid sha is passed" in {
+    val response = statuses.create(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      invalidCommitSha,
+      validStatusState,
+      None,
+      None,
+      None)
+    response should be('left)
+  }
 }

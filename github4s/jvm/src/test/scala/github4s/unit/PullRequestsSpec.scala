@@ -17,7 +17,6 @@
 package github4s.unit
 
 import cats.Id
-import cats.data.NonEmptyList
 import github4s.GithubResponses.{GHResponse, GHResult}
 import github4s.api.PullRequests
 import github4s.free.domain._

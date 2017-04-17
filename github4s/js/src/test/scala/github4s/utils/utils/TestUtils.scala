@@ -108,7 +108,11 @@ trait TestUtils extends Matchers {
   val validAssignees  = List(validUsername)
 
   val validRefSingle = "heads/master"
+  val invalidRef     = "heads/feature-branch-that-no-longer-exists"
 
-  val validCommitSha = "d3b048c1f500ee5450e5d7b3d1921ed3e7645891"
-  val validCommitMsg = "Add SBT project settings"
+  val validCommitSha   = "d3b048c1f500ee5450e5d7b3d1921ed3e7645891"
+  val invalidCommitSha = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  val validCommitMsg   = "Add SBT project settings"
+
+  val validStatusState = "success"
 }
