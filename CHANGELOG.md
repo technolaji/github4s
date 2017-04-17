@@ -1,5 +1,13 @@
 # Changelog
 
+## 04/17/2017 - Version 0.14.3
+
+Release changes:
+
+* Status API ([#83](https://github.com/47deg/github4s/pull/83))
+* Bumps library version ([#85](https://github.com/47deg/github4s/pull/85)) 
+      
+
 ## 04/10/2017 - Version 0.14.2
 
 Release changes:
