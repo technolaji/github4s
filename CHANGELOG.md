@@ -1,5 +1,16 @@
 # Changelog
 
+## 04/21/2017 - Version 0.14.4
+
+Release changes:
+
+* Updated advertised version in the readme to 0.14.3 ([#86](https://github.com/47deg/github4s/pull/86))
+* Remove duplicated circe-parser dependency ([#87](https://github.com/47deg/github4s/pull/87))
+* Documentation for the status API ([#88](https://github.com/47deg/github4s/pull/88))
+* PullRequest's head ([#90](https://github.com/47deg/github4s/pull/90))
+* Upgrades Project ([#91](https://github.com/47deg/github4s/pull/91))
+
+
 ## 04/17/2017 - Version 0.14.3
 
 Release changes:
