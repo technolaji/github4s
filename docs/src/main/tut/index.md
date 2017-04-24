@@ -17,7 +17,7 @@ To get started with SBT, simply add the following to your build.sbt file:
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "com.47deg" %% "github4s" % "0.14.4"
+libraryDependencies += "com.47deg" %% "github4s" % "0.14.5"
 ```
 
 [comment]: # (End Replace)
