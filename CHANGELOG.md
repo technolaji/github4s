@@ -1,5 +1,15 @@
 # Changelog
 
+## 04/24/2017 - Version 0.14.5
+
+Release changes:
+
+* Doc for the issue api ([#93](https://github.com/47deg/github4s/pull/93))
+* Avoids executing create and edit issue operations ([#95](https://github.com/47deg/github4s/pull/95))
+* Tries to fix OOM issues. Bumps sbt version ([#92](https://github.com/47deg/github4s/pull/92))
+* Releases 0.14.5 ([#98](https://github.com/47deg/github4s/pull/98))
+
+
 ## 04/21/2017 - Version 0.14.4
 
 Release changes:
