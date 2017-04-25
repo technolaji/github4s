@@ -1,5 +1,13 @@
 # Changelog
 
+## 04/25/2017 - Version 0.14.6
+
+Release changes:
+
+* List pull request files endpoint ([#99](https://github.com/47deg/github4s/pull/99))
+* Fixes head repo decode failure ([#100](https://github.com/47deg/github4s/pull/100))
+
+
 ## 04/24/2017 - Version 0.14.5
 
 Release changes:
