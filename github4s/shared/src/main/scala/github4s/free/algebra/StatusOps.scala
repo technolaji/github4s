@@ -16,74 +16,37 @@
 
 package github4s.free.algebra
 
-import cats.free.{Free, Inject}
 import github4s.GithubResponses.GHResponse
 import github4s.free.domain.{CombinedStatus, Status}
 
-/** Statuses ops ADT */
-sealed trait StatusOp[A]
-
-final case class GetCombinedStatus(
-  owner: String,
-  repo: String,
-  ref: String,
-  accessToken: Option[String] = None
-) extends StatusOp[GHResponse[CombinedStatus]]
-
-final case class ListStatuses(
-  owner: String,
-  repo: String,
-  ref: String,
-  accessToken: Option[String] = None
-) extends StatusOp[GHResponse[List[Status]]]
-
-final case class CreateStatus(
-  owner: String,
-  repo: String,
-  sha: String,
-  state: String,
-  target_url: Option[String],
-  description: Option[String],
-  context: Option[String],
-  accessToken: Option[String] = None
-) extends StatusOp[GHResponse[Status]]
+import freestyle._
 
 /**
-  * Exposes Status operations as a Free monadic algebra that may be combined with other Coproducts
-  */
-class StatusOps[F[_]](implicit I: Inject[StatusOp, F]) {
+ * Exposes Status operations as a Free monadic algebra that may be combined with other Coproducts
+ */
+@free trait StatusOps {
   def getCombinedStatus(
-    owner: String,
-    repo: String,
-    ref: String,
-    accessToken: Option[String] = None
-  ): Free[F, GHResponse[CombinedStatus]] =
-    Free.inject[StatusOp, F](GetCombinedStatus(owner, repo, ref, accessToken))
+      owner: String,
+      repo: String,
+      ref: String,
+      accessToken: Option[String] = None
+  ): FS[GHResponse[CombinedStatus]]
 
   def listStatuses(
-    owner: String,
-    repo: String,
-    ref: String,
-    accessToken: Option[String] = None
-  ): Free[F, GHResponse[List[Status]]] =
-    Free.inject[StatusOp, F](ListStatuses(owner, repo, ref, accessToken))
+      owner: String,
+      repo: String,
+      ref: String,
+      accessToken: Option[String] = None
+  ): FS[GHResponse[List[Status]]]
 
   def createStatus(
-    owner: String,
-    repo: String,
-    sha: String,
-    state: String,
-    target_url: Option[String],
-    description: Option[String],
-    context: Option[String],
-    accessToken: Option[String] = None
-  ): Free[F, GHResponse[Status]] =
-    Free.inject[StatusOp, F](
-      CreateStatus(owner, repo, sha, state, target_url, description, context, accessToken))
-}
-
-/** Default implicit based DI factory from which instances of the StatusOps may be obtained */
-object StatusOps {
-  implicit def instance[F[_]](implicit I: Inject[StatusOp, F]): StatusOps[F] =
-    new StatusOps[F]
+      owner: String,
+      repo: String,
+      sha: String,
+      state: String,
+      target_url: Option[String],
+      description: Option[String],
+      context: Option[String],
+      accessToken: Option[String] = None
+  ): FS[GHResponse[Status]]
 }

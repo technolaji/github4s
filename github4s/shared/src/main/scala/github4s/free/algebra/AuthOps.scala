@@ -16,43 +16,16 @@
 
 package github4s.free.algebra
 
-import cats.free.{Free, Inject}
 import github4s.GithubResponses._
-import github4s.free.domain.{OAuthToken, Authorize, Authorization}
+import github4s.free.domain.{Authorization, Authorize, OAuthToken}
+
+import freestyle._
 
 /**
-  * Auths ops ADT
-  */
-sealed trait AuthOp[A]
-
-final case class NewAuth(
-    username: String,
-    password: String,
-    scopes: List[String],
-    note: String,
-    client_id: String,
-    client_secret: String
-) extends AuthOp[GHResponse[Authorization]]
-
-final case class AuthorizeUrl(
-    client_id: String,
-    redirect_uri: String,
-    scopes: List[String]
-) extends AuthOp[GHResponse[Authorize]]
-
-final case class GetAccessToken(
-    client_id: String,
-    client_secret: String,
-    code: String,
-    redirect_uri: String,
-    state: String
-) extends AuthOp[GHResponse[OAuthToken]]
-
-/**
-  * Exposes Auths operations as a Free monadic algebra that may be combined with other Algebras via
-  * Coproduct
-  */
-class AuthOps[F[_]](implicit I: Inject[AuthOp, F]) {
+ * Exposes Auths operations as a Free monadic algebra that may be combined with other Algebras via
+ * Coproduct
+ */
+@free trait AuthOps {
 
   def newAuth(
       username: String,
@@ -61,15 +34,13 @@ class AuthOps[F[_]](implicit I: Inject[AuthOp, F]) {
       note: String,
       client_id: String,
       client_secret: String
-  ): Free[F, GHResponse[Authorization]] =
-    Free.inject[AuthOp, F](NewAuth(username, password, scopes, note, client_id, client_secret))
+  ): FS[GHResponse[Authorization]]
 
   def authorizeUrl(
       client_id: String,
       redirect_uri: String,
       scopes: List[String]
-  ): Free[F, GHResponse[Authorize]] =
-    Free.inject[AuthOp, F](AuthorizeUrl(client_id, redirect_uri, scopes))
+  ): FS[GHResponse[Authorize]]
 
   def getAccessToken(
       client_id: String,
@@ -77,16 +48,6 @@ class AuthOps[F[_]](implicit I: Inject[AuthOp, F]) {
       code: String,
       redirect_uri: String,
       state: String
-  ): Free[F, GHResponse[OAuthToken]] =
-    Free.inject[AuthOp, F](GetAccessToken(client_id, client_secret, code, redirect_uri, state))
-
-}
-
-/**
-  * Default implicit based DI factory from which instances of the AuthOps may be obtained
-  */
-object AuthOps {
-
-  implicit def instance[F[_]](implicit I: Inject[AuthOp, F]): AuthOps[F] = new AuthOps[F]
+  ): FS[GHResponse[OAuthToken]]
 
 }

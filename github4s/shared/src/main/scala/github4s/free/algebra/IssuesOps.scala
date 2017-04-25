@@ -16,70 +16,28 @@
 
 package github4s.free.algebra
 
-import cats.free.{Free, Inject}
 import github4s.GithubResponses._
 import github4s.free.domain.{Issue, SearchIssuesResult, SearchParam}
 
-/**
-  * Issues ops ADT
-  */
-sealed trait IssueOp[A]
-
-final case class ListIssues(
-    owner: String,
-    repo: String,
-    accessToken: Option[String] = None
-) extends IssueOp[GHResponse[List[Issue]]]
-
-final case class SearchIssues(
-    query: String,
-    searchParams: List[SearchParam],
-    accessToken: Option[String] = None
-) extends IssueOp[GHResponse[SearchIssuesResult]]
-
-final case class CreateIssue(
-    owner: String,
-    repo: String,
-    title: String,
-    body: String,
-    milestone: Option[Int],
-    labels: List[String],
-    assignees: List[String],
-    accessToken: Option[String] = None
-) extends IssueOp[GHResponse[Issue]]
-
-final case class EditIssue(
-    owner: String,
-    repo: String,
-    issue: Int,
-    state: String,
-    title: String,
-    body: String,
-    milestone: Option[Int],
-    labels: List[String],
-    assignees: List[String],
-    accessToken: Option[String] = None
-) extends IssueOp[GHResponse[Issue]]
+import freestyle._
 
 /**
-  * Exposes Issue operations as a Free monadic algebra that may be combined with other Algebras via
-  * Coproduct
-  */
-class IssueOps[F[_]](implicit I: Inject[IssueOp, F]) {
+ * Exposes Issue operations as a Free monadic algebra that may be combined with other Algebras via
+ * Coproduct
+ */
+@free trait IssueOps {
 
   def listIssues(
       owner: String,
       repo: String,
       accessToken: Option[String] = None
-  ): Free[F, GHResponse[List[Issue]]] =
-    Free.inject[IssueOp, F](ListIssues(owner, repo, accessToken))
+  ): FS[GHResponse[List[Issue]]]
 
   def searchIssues(
       query: String,
       searchParams: List[SearchParam],
       accessToken: Option[String] = None
-  ): Free[F, GHResponse[SearchIssuesResult]] =
-    Free.inject[IssueOp, F](SearchIssues(query, searchParams, accessToken))
+  ): FS[GHResponse[SearchIssuesResult]]
 
   def createIssue(
       owner: String,
@@ -90,9 +48,7 @@ class IssueOps[F[_]](implicit I: Inject[IssueOp, F]) {
       labels: List[String],
       assignees: List[String],
       accessToken: Option[String] = None
-  ): Free[F, GHResponse[Issue]] =
-    Free.inject[IssueOp, F](
-      CreateIssue(owner, repo, title, body, milestone, labels, assignees, accessToken))
+  ): FS[GHResponse[Issue]]
 
   def editIssue(
       owner: String,
@@ -105,16 +61,5 @@ class IssueOps[F[_]](implicit I: Inject[IssueOp, F]) {
       labels: List[String],
       assignees: List[String],
       accessToken: Option[String] = None
-  ): Free[F, GHResponse[Issue]] =
-    Free.inject[IssueOp, F](
-      EditIssue(owner, repo, issue, state, title, body, milestone, labels, assignees, accessToken))
-}
-
-/**
-  * Default implicit based DI factory from which instances of the IssueOps may be obtained
-  */
-object IssueOps {
-
-  implicit def instance[F[_]](implicit I: Inject[IssueOp, F]): IssueOps[F] = new IssueOps[F]
-
+  ): FS[GHResponse[Issue]]
 }

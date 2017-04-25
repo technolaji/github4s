@@ -16,58 +16,28 @@
 
 package github4s.free.algebra
 
-import cats.free.{Free, Inject}
 import github4s.GithubResponses._
 import github4s.free.domain._
 
-/**
- * PullRequests ops ADT
- */
-sealed trait PullRequestOp[A]
-
-final case class ListPullRequests(
-    owner: String,
-    repo: String,
-    filters: List[PRFilter] = Nil,
-    accessToken: Option[String] = None
-) extends PullRequestOp[GHResponse[List[PullRequest]]]
-
-final case class ListPullRequestFiles(
-    owner: String,
-    repo: String,
-    number: Int,
-    accessToken: Option[String] = None
-) extends PullRequestOp[GHResponse[List[PullRequestFile]]]
+import freestyle._
 
 /**
  * Exposes Pull Request operations as a Free monadic algebra that may be combined with other
  * Algebras via Coproduct
  */
-class PullRequestOps[F[_]](implicit I: Inject[PullRequestOp, F]) {
+@free trait PullRequestOps {
 
   def listPullRequests(
       owner: String,
       repo: String,
       filters: List[PRFilter] = Nil,
       accessToken: Option[String] = None
-  ): Free[F, GHResponse[List[PullRequest]]] =
-    Free.inject[PullRequestOp, F](ListPullRequests(owner, repo, filters, accessToken))
+  ): FS[GHResponse[List[PullRequest]]]
 
   def listPullRequestFiles(
       owner: String,
       repo: String,
       number: Int,
       accessToken: Option[String] = None
-  ): Free[F, GHResponse[List[PullRequestFile]]] =
-    Free.inject[PullRequestOp, F](ListPullRequestFiles(owner, repo, number, accessToken))
-}
-
-/**
- * Default implicit based DI factory from which instances of the PullRequestOps may be obtained
- */
-object PullRequestOps {
-
-  implicit def instance[F[_]](implicit I: Inject[PullRequestOp, F]): PullRequestOps[F] =
-    new PullRequestOps[F]
-
+  ): FS[GHResponse[List[PullRequestFile]]]
 }
