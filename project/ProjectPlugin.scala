@@ -11,6 +11,7 @@ import sbtorgpolicies.runnable.syntax._
 import scoverage.ScoverageKeys
 import scoverage.ScoverageKeys._
 import tut.Plugin._
+import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
 
 object ProjectPlugin extends AutoPlugin {
 
@@ -45,6 +46,7 @@ object ProjectPlugin extends AutoPlugin {
 
     lazy val standardCommonDeps = Seq(
       libraryDependencies ++= Seq(
+        "com.47deg"       %%% "freestyle" % "0.1.0-SNAPSHOT",
         %("mockito-core") % "test",
         compilerPlugin(%%("paradise") cross CrossVersion.full)
       )
