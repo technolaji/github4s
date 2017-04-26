@@ -22,7 +22,6 @@ import github4s.free.interpreters.Interpreters
 
 import scala.concurrent.Future
 import scala.language.higherKinds
-import freestyle.implicits._
 
 /**
  * Represent the Github API wrapper
