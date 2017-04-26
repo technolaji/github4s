@@ -27,13 +27,13 @@ import freestyle._
  */
 @free trait UserOps {
 
-  def getUser(username: String, accessToken: Option[String] = None): FS[GHResponse[User]]
+  def getUser(username: String, accessToken: Option[String]): FS[GHResponse[User]]
 
-  def getAuthUser(accessToken: Option[String] = None): FS[GHResponse[User]]
+  def getAuthUser(accessToken: Option[String]): FS[GHResponse[User]]
 
   def getUsers(
       since: Int,
-      pagination: Option[Pagination] = None,
-      accessToken: Option[String] = None): FS[GHResponse[List[User]]]
+      pagination: Option[Pagination],
+      accessToken: Option[String]): FS[GHResponse[List[User]]]
 
 }

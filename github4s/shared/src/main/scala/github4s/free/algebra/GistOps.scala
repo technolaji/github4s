@@ -30,6 +30,6 @@ import freestyle._
       description: String,
       public: Boolean,
       files: Map[String, GistFile],
-      accessToken: Option[String] = None
+      accessToken: Option[String]
   ): FS[GHResponse[Gist]]
 }

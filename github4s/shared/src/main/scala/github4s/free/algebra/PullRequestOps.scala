@@ -31,13 +31,13 @@ import freestyle._
       owner: String,
       repo: String,
       filters: List[PRFilter] = Nil,
-      accessToken: Option[String] = None
+      accessToken: Option[String]
   ): FS[GHResponse[List[PullRequest]]]
 
   def listPullRequestFiles(
       owner: String,
       repo: String,
       number: Int,
-      accessToken: Option[String] = None
+      accessToken: Option[String]
   ): FS[GHResponse[List[PullRequestFile]]]
 }

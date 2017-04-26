@@ -22,8 +22,6 @@ import github4s.free.domain._
 
 import freestyle._
 
-import cats.implicits._
-
 /**
  * Exposes Repositories operations as a Free monadic algebra that may be combined with other Algebras via
  * Coproduct

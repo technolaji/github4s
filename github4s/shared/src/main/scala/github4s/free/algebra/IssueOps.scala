@@ -30,13 +30,13 @@ import freestyle._
   def listIssues(
       owner: String,
       repo: String,
-      accessToken: Option[String] = None
+      accessToken: Option[String]
   ): FS[GHResponse[List[Issue]]]
 
   def searchIssues(
       query: String,
       searchParams: List[SearchParam],
-      accessToken: Option[String] = None
+      accessToken: Option[String]
   ): FS[GHResponse[SearchIssuesResult]]
 
   def createIssue(
@@ -47,7 +47,7 @@ import freestyle._
       milestone: Option[Int],
       labels: List[String],
       assignees: List[String],
-      accessToken: Option[String] = None
+      accessToken: Option[String]
   ): FS[GHResponse[Issue]]
 
   def editIssue(
@@ -60,6 +60,6 @@ import freestyle._
       milestone: Option[Int],
       labels: List[String],
       assignees: List[String],
-      accessToken: Option[String] = None
+      accessToken: Option[String]
   ): FS[GHResponse[Issue]]
 }

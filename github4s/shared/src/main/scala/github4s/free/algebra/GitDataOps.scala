@@ -21,7 +21,6 @@ import github4s.GithubResponses._
 import github4s.free.domain._
 
 import freestyle._
-import freestyle.implicits._
 
 /**
  * Exposes Git Data operations as a Free monadic algebra that may be combined with other Algebras via
