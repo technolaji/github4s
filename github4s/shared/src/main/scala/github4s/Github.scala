@@ -16,14 +16,13 @@
 
 package github4s
 
-import cats.data.{EitherT, Kleisli}
-import cats.MonadError
-import cats.implicits._
+import cats.data.EitherT
 import github4s.GithubResponses._
 import github4s.free.interpreters.Interpreters
 
 import scala.concurrent.Future
 import scala.language.higherKinds
+import freestyle.implicits._
 
 /**
  * Represent the Github API wrapper
@@ -48,22 +47,13 @@ object Github {
 
   implicit class GithubIOSyntaxEither[A](gio: GHIO[GHResponse[A]]) {
 
-    def execK[M[_], C](
-        implicit I: Interpreters[M, C],
-        A: MonadError[M, Throwable],
-        H: HttpRequestBuilderExtension[C, M]): Kleisli[M, Map[String, String], GHResponse[A]] =
-      gio foldMap I.interpreters
+    def execK[M[_], C](implicit I: Interpreters[M, C]): Unit
+    gio foldMap I.interpreters
 
-    def exec[M[_], C](headers: Map[String, String] = Map())(
-        implicit I: Interpreters[M, C],
-        A: MonadError[M, Throwable],
-        H: HttpRequestBuilderExtension[C, M]): M[GHResponse[A]] =
+    def exec[M[_], C](headers: Map[String, String] = Map()): M[GHResponse[A]] =
       execK.run(headers)
 
-    def execFuture[C](headers: Map[String, String] = Map())(
-        implicit I: Interpreters[Future, C],
-        A: MonadError[Future, Throwable],
-        H: HttpRequestBuilderExtension[C, Future]): Future[GHResponse[A]] =
+    def execFuture[C](headers: Map[String, String] = Map()): Future[GHResponse[A]] =
       exec[Future, C](headers)
 
     def liftGH: EitherT[GHIO, GHException, GHResult[A]] =

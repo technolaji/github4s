@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package github4s
+package github4s.free
 
 import io.circe.{Json, Printer}
 
-package object api {
+package object interpreters {
 
   def dropNullPrint(json: Json): String =
     Printer.noSpaces.copy(dropNullKeys = true).pretty(json)

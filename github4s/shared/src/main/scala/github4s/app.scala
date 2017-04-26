@@ -16,15 +16,17 @@
 
 package github4s
 
-import cats.data.Coproduct
+import freestyle._
 import github4s.free.algebra._
 
 object app {
-  type COGH01[A]   = Coproduct[RepositoryOp, UserOp, A]
-  type COGH02[A]   = Coproduct[GistOp, COGH01, A]
-  type COGH03[A]   = Coproduct[IssueOp, COGH02, A]
-  type COGH04[A]   = Coproduct[AuthOp, COGH03, A]
-  type COGH05[A]   = Coproduct[GitDataOp, COGH04, A]
-  type COGH06[A]   = Coproduct[PullRequestOp, COGH05, A]
-  type GitHub4s[A] = Coproduct[StatusOp, COGH06, A]
+  @module trait GitHub4s {
+    val repository: RepositoryOps
+    val user: UserOps
+    val gist: GistOps
+    val issue: IssueOps
+    val gitData: GitDataOps
+    val pullRequest: PullRequestOps
+    val status: StatusOps
+  }
 }
