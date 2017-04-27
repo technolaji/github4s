@@ -16,47 +16,53 @@
 
 package github4s
 
-import cats.data.EitherT
+import cats.data.{EitherT, Kleisli}
 import github4s.GithubResponses._
-import github4s.free.interpreters.Interpreters
 
 import scala.concurrent.Future
 import scala.language.higherKinds
+import freestyle._
+import freestyle.implicits._
+import github4s.app._
 
 /**
  * Represent the Github API wrapper
  * @param accessToken to identify the authenticated user
  */
-class Github(accessToken: Option[String] = None) {
+class Github(config: Config) {
 
-  lazy val users        = new GHUsers(accessToken)
-  lazy val repos        = new GHRepos(accessToken)
-  lazy val auth         = new GHAuth(accessToken)
-  lazy val gists        = new GHGists(accessToken)
-  lazy val issues       = new GHIssues(accessToken)
-  lazy val gitData      = new GHGitData(accessToken)
-  lazy val pullRequests = new GHPullRequests(accessToken)
-  lazy val statuses     = new GHStatuses(accessToken)
+  lazy val users        = new GHUsers[GitHub4s.Op]
+  lazy val repos        = new GHRepos[GitHub4s.Op]
+  lazy val auth         = new GHAuth[GitHub4s.Op]
+  lazy val gists        = new GHGists[GitHub4s.Op]
+  lazy val issues       = new GHIssues[GitHub4s.Op]
+  lazy val gitData      = new GHGitData[GitHub4s.Op]
+  lazy val pullRequests = new GHPullRequests[GitHub4s.Op]
+  lazy val statuses     = new GHStatuses[GitHub4s.Op]
 
 }
 
 /** Companion object for [[github4s.Github]] */
 object Github {
-  def apply(accessToken: Option[String] = None) = new Github(accessToken)
 
-  implicit class GithubIOSyntaxEither[A](gio: GHIO[GHResponse[A]]) {
+  def apply(config: Config) = new Github(config)
 
-    def execK[M[_], C](implicit I: Interpreters[M, C]): Unit
-    gio foldMap I.interpreters
+  implicit class GithubIOSyntaxEither[A](gio: FreeS[GitHub4s.Op, GHResponse[A]]) {
+    def execK[M[_], C]: Kleisli[M, Config, GHResponse[A]] =
+      gio.foldMap(implicitly[FSHandler[GitHub4s.Op, M]])
+    def exec[M[_], C](config: Config): M[GHResponse[A]] =
+      execK.run(config)
 
-    def exec[M[_], C](headers: Map[String, String] = Map()): M[GHResponse[A]] =
-      execK.run(headers)
+    def execFuture[C](config: Config): Future[GHResponse[A]] =
+      exec[Future, C](config)
 
-    def execFuture[C](headers: Map[String, String] = Map()): Future[GHResponse[A]] =
-      exec[Future, C](headers)
-
-    def liftGH: EitherT[GHIO, GHException, GHResult[A]] =
-      EitherT[GHIO, GHException, GHResult[A]](gio)
+    def liftGH: EitherT[FreeS[GitHub4s.Op, ?], GHException, GHResult[A]] =
+      EitherT[FreeS[GitHub4s.Op, ?], GHException, GHResult[A]](gio)
 
   }
+}
+case class Config(accessToken: Option[String] = None, headers: Map[String, String] = Map.empty)
+
+object Config {
+  val empty = Config()
 }

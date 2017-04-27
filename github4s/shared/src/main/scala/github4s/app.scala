@@ -22,6 +22,7 @@ import github4s.free.algebra._
 object app {
   @module trait GitHub4s {
     val repository: RepositoryOps
+    val auth: AuthOps
     val user: UserOps
     val gist: GistOps
     val issue: IssueOps

@@ -17,33 +17,35 @@
 package github4s
 
 import cats.data.NonEmptyList
-import github4s.GithubResponses.{GHIO, GHResponse}
-import github4s.app._
+import github4s.GithubResponses.GHResponse
 import github4s.free.algebra._
 import github4s.free.domain._
+import freestyle._
 
-class GHUsers(accessToken: Option[String] = None)(implicit O: UserOps[GitHub4s]) {
+class GHUsers[F[_]](implicit O: UserOps[F]) {
 
-  def get(username: String): GHIO[GHResponse[User]] = O.getUser(username, accessToken)
+  def get(username: String): FreeS[F, GHResponse[User]] = O.getUser(username )
 
-  def getAuth: GHIO[GHResponse[User]] = O.getAuthUser(accessToken)
+  def getAuth: FreeS[F, GHResponse[User]] = O.getAuthUser()
 
-  def getUsers(since: Int, pagination: Option[Pagination] = None): GHIO[GHResponse[List[User]]] =
-    O.getUsers(since, pagination, accessToken)
+  def getUsers(
+      since: Int,
+      pagination: Option[Pagination] = None): FreeS[F, GHResponse[List[User]]] =
+    O.getUsers(since, pagination)
 
 }
 
-class GHRepos(accessToken: Option[String] = None)(implicit O: RepositoryOps[GitHub4s]) {
+class GHRepos[F[_]](implicit O: RepositoryOps[F]) {
 
-  def get(owner: String, repo: String): GHIO[GHResponse[Repository]] =
-    O.getRepo(owner, repo, accessToken)
+  def get(owner: String, repo: String): FreeS[F, GHResponse[Repository]] =
+    O.getRepo(owner, repo)
 
   def getContents(
       owner: String,
       repo: String,
       path: String,
-      ref: Option[String] = None): GHIO[GHResponse[NonEmptyList[Content]]] =
-    O.getContents(owner, repo, path, ref, accessToken)
+      ref: Option[String] = None): FreeS[F, GHResponse[NonEmptyList[Content]]] =
+    O.getContents(owner, repo, path, ref)
 
   def listCommits(
       owner: String,
@@ -54,15 +56,15 @@ class GHRepos(accessToken: Option[String] = None)(implicit O: RepositoryOps[GitH
       since: Option[String] = None,
       until: Option[String] = None,
       pagination: Option[Pagination] = None
-  ): GHIO[GHResponse[List[Commit]]] =
-    O.listCommits(owner, repo, sha, path, author, since, until, pagination, accessToken)
+  ): FreeS[F, GHResponse[List[Commit]]] =
+    O.listCommits(owner, repo, sha, path, author, since, until, pagination)
 
   def listContributors(
       owner: String,
       repo: String,
       anon: Option[String] = None
-  ): GHIO[GHResponse[List[User]]] =
-    O.listContributors(owner, repo, anon, accessToken)
+  ): FreeS[F, GHResponse[List[User]]] =
+    O.listContributors(owner, repo, anon)
 
   def createRelease(
       owner: String,
@@ -73,7 +75,7 @@ class GHRepos(accessToken: Option[String] = None)(implicit O: RepositoryOps[GitH
       targetCommitish: Option[String] = None,
       draft: Option[Boolean] = None,
       prerelease: Option[Boolean] = None
-  ): GHIO[GHResponse[Release]] =
+  ): FreeS[F, GHResponse[Release]] =
     O.createRelease(
       owner,
       repo,
@@ -83,11 +85,11 @@ class GHRepos(accessToken: Option[String] = None)(implicit O: RepositoryOps[GitH
       targetCommitish,
       draft,
       prerelease,
-      accessToken)
+      )
 
 }
 
-class GHAuth(accessToken: Option[String] = None)(implicit O: AuthOps[GitHub4s]) {
+class GHAuth[F[_]](implicit O: AuthOps[F]) {
 
   def newAuth(
       username: String,
@@ -96,14 +98,14 @@ class GHAuth(accessToken: Option[String] = None)(implicit O: AuthOps[GitHub4s]) 
       note: String,
       client_id: String,
       client_secret: String
-  ): GHIO[GHResponse[Authorization]] =
+  ): FreeS[F, GHResponse[Authorization]] =
     O.newAuth(username, password, scopes, note, client_id, client_secret)
 
   def authorizeUrl(
       client_id: String,
       redirect_uri: String,
       scopes: List[String]
-  ): GHIO[GHResponse[Authorize]] =
+  ): FreeS[F, GHResponse[Authorize]] =
     O.authorizeUrl(client_id, redirect_uri, scopes)
 
   def getAccessToken(
@@ -112,32 +114,32 @@ class GHAuth(accessToken: Option[String] = None)(implicit O: AuthOps[GitHub4s]) 
       code: String,
       redirect_uri: String,
       state: String
-  ): GHIO[GHResponse[OAuthToken]] =
+  ): FreeS[F, GHResponse[OAuthToken]] =
     O.getAccessToken(client_id, client_secret, code, redirect_uri, state)
 }
 
-class GHGists(accessToken: Option[String] = None)(implicit O: GistOps[GitHub4s]) {
+class GHGists[F[_]](implicit O: GistOps[F]) {
   def newGist(
       description: String,
       public: Boolean,
       files: Map[String, GistFile]
-  ): GHIO[GHResponse[Gist]] =
-    O.newGist(description, public, files, accessToken)
+  ): FreeS[F, GHResponse[Gist]] =
+    O.newGist(description, public, files)
 }
 
-class GHIssues(accessToken: Option[String] = None)(implicit O: IssueOps[GitHub4s]) {
+class GHIssues[F[_]](implicit O: IssueOps[F]) {
 
   def listIssues(
       owner: String,
       repo: String
-  ): GHIO[GHResponse[List[Issue]]] =
-    O.listIssues(owner, repo, accessToken)
+  ): FreeS[F, GHResponse[List[Issue]]] =
+    O.listIssues(owner, repo)
 
   def searchIssues(
       query: String,
       searchParams: List[SearchParam]
-  ): GHIO[GHResponse[SearchIssuesResult]] =
-    O.searchIssues(query, searchParams, accessToken)
+  ): FreeS[F, GHResponse[SearchIssuesResult]] =
+    O.searchIssues(query, searchParams)
 
   def createIssue(
       owner: String,
@@ -147,8 +149,8 @@ class GHIssues(accessToken: Option[String] = None)(implicit O: IssueOps[GitHub4s
       milestone: Option[Int] = None,
       labels: List[String] = List.empty,
       assignees: List[String] = List.empty
-  ): GHIO[GHResponse[Issue]] =
-    O.createIssue(owner, repo, title, body, milestone, labels, assignees, accessToken)
+  ): FreeS[F, GHResponse[Issue]] =
+    O.createIssue(owner, repo, title, body, milestone, labels, assignees)
 
   def editIssue(
       owner: String,
@@ -160,26 +162,26 @@ class GHIssues(accessToken: Option[String] = None)(implicit O: IssueOps[GitHub4s
       milestone: Option[Int] = None,
       labels: List[String] = List.empty,
       assignees: List[String] = List.empty
-  ): GHIO[GHResponse[Issue]] =
-    O.editIssue(owner, repo, issue, state, title, body, milestone, labels, assignees, accessToken)
+  ): FreeS[F, GHResponse[Issue]] =
+    O.editIssue(owner, repo, issue, state, title, body, milestone, labels, assignees)
 }
 
-class GHGitData(accessToken: Option[String] = None)(implicit O: GitDataOps[GitHub4s]) {
+class GHGitData[F[_]](implicit O: GitDataOps[F]) {
 
   def getReference(
       owner: String,
       repo: String,
       ref: String
-  ): GHIO[GHResponse[NonEmptyList[Ref]]] =
-    O.getReference(owner, repo, ref, accessToken)
+  ): FreeS[F, GHResponse[NonEmptyList[Ref]]] =
+    O.getReference(owner, repo, ref)
 
   def createReference(
       owner: String,
       repo: String,
       ref: String,
       sha: String
-  ): GHIO[GHResponse[Ref]] =
-    O.createReference(owner, repo, ref, sha, accessToken)
+  ): FreeS[F, GHResponse[Ref]] =
+    O.createReference(owner, repo, ref, sha)
 
   def updateReference(
       owner: String,
@@ -187,15 +189,15 @@ class GHGitData(accessToken: Option[String] = None)(implicit O: GitDataOps[GitHu
       ref: String,
       sha: String,
       force: Option[Boolean] = None
-  ): GHIO[GHResponse[Ref]] =
-    O.updateReference(owner, repo, ref, sha, force, accessToken)
+  ): FreeS[F, GHResponse[Ref]] =
+    O.updateReference(owner, repo, ref, sha, force)
 
   def getCommit(
       owner: String,
       repo: String,
       sha: String
-  ): GHIO[GHResponse[RefCommit]] =
-    O.getCommit(owner, repo, sha, accessToken)
+  ): FreeS[F, GHResponse[RefCommit]] =
+    O.getCommit(owner, repo, sha)
 
   def createCommit(
       owner: String,
@@ -204,24 +206,24 @@ class GHGitData(accessToken: Option[String] = None)(implicit O: GitDataOps[GitHu
       tree: String,
       parents: List[String] = Nil,
       author: Option[RefAuthor] = None
-  ): GHIO[GHResponse[RefCommit]] =
-    O.createCommit(owner, repo, message, tree, parents, author, accessToken)
+  ): FreeS[F, GHResponse[RefCommit]] =
+    O.createCommit(owner, repo, message, tree, parents, author)
 
   def createBlob(
       owner: String,
       repo: String,
       content: String,
       encoding: Option[String]
-  ): GHIO[GHResponse[RefInfo]] =
-    O.createBlob(owner, repo, content, encoding, accessToken)
+  ): FreeS[F, GHResponse[RefInfo]] =
+    O.createBlob(owner, repo, content, encoding)
 
   def createTree(
       owner: String,
       repo: String,
       baseTree: Option[String],
       treeDataList: List[TreeData]
-  ): GHIO[GHResponse[TreeResult]] =
-    O.createTree(owner, repo, baseTree, treeDataList, accessToken)
+  ): FreeS[F, GHResponse[TreeResult]] =
+    O.createTree(owner, repo, baseTree, treeDataList)
 
   def createTag(
       owner: String,
@@ -231,40 +233,40 @@ class GHGitData(accessToken: Option[String] = None)(implicit O: GitDataOps[GitHu
       objectSha: String,
       objectType: String,
       author: Option[RefAuthor] = None
-  ): GHIO[GHResponse[Tag]] =
-    O.createTag(owner, repo, tag, message, objectSha, objectType, author, accessToken)
+  ): FreeS[F, GHResponse[Tag]] =
+    O.createTag(owner, repo, tag, message, objectSha, objectType, author)
 }
 
-class GHPullRequests(accessToken: Option[String] = None)(implicit O: PullRequestOps[GitHub4s]) {
+class GHPullRequests[F[_]](implicit O: PullRequestOps[F]) {
   def list(
       owner: String,
       repo: String,
       filters: List[PRFilter] = Nil
-  ): GHIO[GHResponse[List[PullRequest]]] =
-    O.listPullRequests(owner, repo, filters, accessToken)
+  ): FreeS[F, GHResponse[List[PullRequest]]] =
+    O.listPullRequests(owner, repo, filters)
 
   def listFiles(
       owner: String,
       repo: String,
       number: Int
-  ): GHIO[GHResponse[List[PullRequestFile]]] =
-    O.listPullRequestFiles(owner, repo, number, accessToken)
+  ): FreeS[F, GHResponse[List[PullRequestFile]]] =
+    O.listPullRequestFiles(owner, repo, number)
 }
 
-class GHStatuses(accessToken: Option[String] = None)(implicit O: StatusOps[GitHub4s]) {
+class GHStatuses[F[_]](implicit O: StatusOps[F]) {
   def getCombinedStatus(
       owner: String,
       repo: String,
       ref: String
-  ): GHIO[GHResponse[CombinedStatus]] =
-    O.getCombinedStatus(owner, repo, ref, accessToken)
+  ): FreeS[F, GHResponse[CombinedStatus]] =
+    O.getCombinedStatus(owner, repo, ref)
 
   def listStatuses(
       owner: String,
       repo: String,
       ref: String
-  ): GHIO[GHResponse[List[Status]]] =
-    O.listStatuses(owner, repo, ref, accessToken)
+  ): FreeS[F, GHResponse[List[Status]]] =
+    O.listStatuses(owner, repo, ref)
 
   def createStatus(
       owner: String,
@@ -274,6 +276,6 @@ class GHStatuses(accessToken: Option[String] = None)(implicit O: StatusOps[GitHu
       target_url: Option[String] = None,
       description: Option[String] = None,
       context: Option[String] = None
-  ): GHIO[GHResponse[Status]] =
-    O.createStatus(owner, repo, sha, state, target_url, description, context, accessToken)
+  ): FreeS[F, GHResponse[Status]] =
+    O.createStatus(owner, repo, sha, state, target_url, description, context)
 }
