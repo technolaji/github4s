@@ -30,16 +30,14 @@ import freestyle._
 
   def getRepo(
       owner: String,
-      repo: String,
-      accessToken: Option[String]
+      repo: String
   ): FS[GHResponse[Repository]]
 
   def getContents(
       owner: String,
       repo: String,
       path: String,
-      ref: Option[String],
-      accessToken: Option[String]
+      ref: Option[String]
   ): FS[GHResponse[NonEmptyList[Content]]]
 
   def listCommits(
@@ -50,15 +48,13 @@ import freestyle._
       author: Option[String],
       since: Option[String],
       until: Option[String],
-      pagination: Option[Pagination],
-      accessToken: Option[String]
+      pagination: Option[Pagination]
   ): FS[GHResponse[List[Commit]]]
 
   def listContributors(
       owner: String,
       repo: String,
-      anon: Option[String],
-      accessToken: Option[String]
+      anon: Option[String]
   ): FS[GHResponse[List[User]]]
 
   def createRelease(
@@ -69,8 +65,7 @@ import freestyle._
       body: String,
       targetCommitish: Option[String],
       draft: Option[Boolean],
-      prerelease: Option[Boolean],
-      accessToken: Option[String]
+      prerelease: Option[Boolean]
   ): FS[GHResponse[Release]]
 
 }

@@ -29,7 +29,6 @@ import freestyle._
   def newGist(
       description: String,
       public: Boolean,
-      files: Map[String, GistFile],
-      accessToken: Option[String]
+      files: Map[String, GistFile]
   ): FS[GHResponse[Gist]]
 }

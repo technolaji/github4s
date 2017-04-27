@@ -31,16 +31,14 @@ import freestyle._
   def getReference(
       owner: String,
       repo: String,
-      ref: String,
-      accessToken: Option[String] = None
+      ref: String
   ): FS[GHResponse[NonEmptyList[Ref]]]
 
   def createReference(
       owner: String,
       repo: String,
       ref: String,
-      sha: String,
-      accessToken: Option[String] = None
+      sha: String
   ): FS[GHResponse[Ref]]
 
   def updateReference(
@@ -48,15 +46,13 @@ import freestyle._
       repo: String,
       ref: String,
       sha: String,
-      force: Option[Boolean],
-      accessToken: Option[String] = None
+      force: Option[Boolean]
   ): FS[GHResponse[Ref]]
 
   def getCommit(
       owner: String,
       repo: String,
-      sha: String,
-      accessToken: Option[String] = None
+      sha: String
   ): FS[GHResponse[RefCommit]]
 
   def createCommit(
@@ -65,24 +61,21 @@ import freestyle._
       message: String,
       tree: String,
       parents: List[String],
-      author: Option[RefAuthor],
-      accessToken: Option[String] = None
+      author: Option[RefAuthor]
   ): FS[GHResponse[RefCommit]]
 
   def createBlob(
       owner: String,
       repo: String,
       content: String,
-      encoding: Option[String],
-      accessToken: Option[String] = None
+      encoding: Option[String]
   ): FS[GHResponse[RefInfo]]
 
   def createTree(
       owner: String,
       repo: String,
       baseTree: Option[String],
-      treeDataList: List[TreeData],
-      accessToken: Option[String] = None
+      treeDataList: List[TreeData]
   ): FS[GHResponse[TreeResult]]
 
   def createTag(
@@ -92,7 +85,6 @@ import freestyle._
       message: String,
       objectSha: String,
       objectType: String,
-      author: Option[RefAuthor],
-      accessToken: Option[String] = None
+      author: Option[RefAuthor]
   ): FS[GHResponse[Tag]]
 }

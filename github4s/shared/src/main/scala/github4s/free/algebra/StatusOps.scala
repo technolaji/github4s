@@ -29,14 +29,12 @@ import freestyle._
       owner: String,
       repo: String,
       ref: String,
-      accessToken: Option[String]
   ): FS[GHResponse[CombinedStatus]]
 
   def listStatuses(
       owner: String,
       repo: String,
       ref: String,
-      accessToken: Option[String]
   ): FS[GHResponse[List[Status]]]
 
   def createStatus(
@@ -47,6 +45,5 @@ import freestyle._
       target_url: Option[String],
       description: Option[String],
       context: Option[String],
-      accessToken: Option[String]
   ): FS[GHResponse[Status]]
 }

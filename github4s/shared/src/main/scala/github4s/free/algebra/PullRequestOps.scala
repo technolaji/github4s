@@ -30,14 +30,12 @@ import freestyle._
   def listPullRequests(
       owner: String,
       repo: String,
-      filters: List[PRFilter] = Nil,
-      accessToken: Option[String]
+      filters: List[PRFilter] = Nil
   ): FS[GHResponse[List[PullRequest]]]
 
   def listPullRequestFiles(
       owner: String,
       repo: String,
-      number: Int,
-      accessToken: Option[String]
+      number: Int
   ): FS[GHResponse[List[PullRequestFile]]]
 }
