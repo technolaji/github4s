@@ -26,6 +26,7 @@ import io.circe.syntax._
 import cats.implicits._
 import com.github.marklister.base64.Base64.Encoder
 import github4s.free.algebra.AuthOps
+import github4s.Config
 
 class AuthInterpreter[C, M[_]](
     implicit urls: GithubApiUrls,
@@ -58,11 +59,11 @@ class AuthInterpreter[C, M[_]](
       note: String,
       client_id: String,
       client_secret: String,
-      headers: Map[String, String] = Map()
+      config: Config
   ): M[GHResponse[Authorization]] =
     httpClient.postAuth[Authorization](
       method = "authorizations",
-      headers = Map("Authorization" → s"Basic ${s"$username:$password".getBytes.toBase64}") ++ headers,
+      headers = Map("Authorization" → s"Basic ${s"$username:$password".getBytes.toBase64}") ++ config.headers,
       data = NewAuthRequest(scopes, note, client_id, client_secret).asJson.noSpaces
     )
 
@@ -110,10 +111,10 @@ class AuthInterpreter[C, M[_]](
       code: String,
       redirect_uri: String,
       state: String,
-      headers: Map[String, String] = Map()
+      config: Config
   ): M[GHResponse[OAuthToken]] = httpClient.postOAuth[OAuthToken](
     url = accessTokenUrl,
-    headers = headers,
+    headers = config.headers,
     data = NewOAuthRequest(client_id, client_secret, code, redirect_uri, state).asJson.noSpaces
   )
 

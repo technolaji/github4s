@@ -24,6 +24,8 @@ import io.circe.syntax._
 import io.circe.generic.auto._
 import github4s.free.algebra.RepositoryOps
 
+import github4s.Config
+
 class RepositoryInterpreter[C, M[_]](
     implicit urls: GithubApiUrls,
     httpClientImpl: HttpRequestBuilderExtension[C, M])
@@ -42,12 +44,8 @@ class RepositoryInterpreter[C, M[_]](
    * @param repo        name of the repo
    * @return GHResponse[Repository] repository details
    */
-  def get(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
-      owner: String,
-      repo: String): M[GHResponse[Repository]] =
-    httpClient.get[Repository](accessToken, s"repos/$owner/$repo", headers)
+  def get(config: Config, owner: String, repo: String): M[GHResponse[Repository]] =
+    httpClient.get[Repository](config.accessToken, s"repos/$owner/$repo", config.headers)
 
   /**
    * Get the contents of a file or directory in a repository.
@@ -78,16 +76,15 @@ class RepositoryInterpreter[C, M[_]](
    * @return GHResponse with the content defails
    */
   def getContents(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       path: String,
       ref: Option[String] = None): M[GHResponse[NonEmptyList[Content]]] =
     httpClient.get[NonEmptyList[Content]](
-      accessToken,
+      config.accessToken,
       s"repos/$owner/$repo/contents/$path",
-      headers,
+      config.headers,
       params = ref map (r => Map("ref" -> r)) getOrElse Map.empty)
 
   /**
@@ -106,8 +103,7 @@ class RepositoryInterpreter[C, M[_]](
    * @return GHResponse[List[Commit]\] List of commit's details
    */
   def listCommits(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       sha: Option[String] = None,
@@ -115,12 +111,12 @@ class RepositoryInterpreter[C, M[_]](
       author: Option[String] = None,
       since: Option[String] = None,
       until: Option[String] = None,
-      pagination: Option[Pagination] = Some(httpClient.defaultPagination)
-  ): M[GHResponse[List[Commit]]] =
+      pagination: Option[Pagination] = Some(httpClient.defaultPagination)): M[
+    GHResponse[List[Commit]]] =
     httpClient.get[List[Commit]](
-      accessToken,
+      config.accessToken,
       s"repos/$owner/$repo/commits",
-      headers,
+      config.headers,
       Map(
         "sha"    → sha,
         "path"   → path,
@@ -145,16 +141,14 @@ class RepositoryInterpreter[C, M[_]](
    * @return GHResponse[List[User]\] List of contributors associated with the specified repository.
    */
   def listContributors(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
-      anon: Option[String] = None
-  ): M[GHResponse[List[User]]] =
+      anon: Option[String] = None): M[GHResponse[List[User]]] =
     httpClient.get[List[User]](
-      accessToken,
+      config.accessToken,
       s"repos/$owner/$repo/contributors",
-      headers,
+      config.headers,
       Map(
         "anon" → anon
       ).collect {
@@ -182,8 +176,7 @@ class RepositoryInterpreter[C, M[_]](
    * @return a GHResponse with Release
    */
   def createRelease(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       tagName: String,
@@ -193,9 +186,10 @@ class RepositoryInterpreter[C, M[_]](
       draft: Option[Boolean] = None,
       prerelease: Option[Boolean] = None): M[GHResponse[Release]] =
     httpClient.post[Release](
-      accessToken,
+      config.accessToken,
       s"repos/$owner/$repo/releases",
-      headers,
+      config.headers,
       dropNullPrint(
-        NewReleaseRequest(tagName, name, body, targetCommitish, draft, prerelease).asJson))
+        NewReleaseRequest(tagName, name, body, targetCommitish, draft, prerelease).asJson)
+    )
 }

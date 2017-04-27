@@ -23,6 +23,7 @@ import github4s.util.URLEncoder
 import io.circe.syntax._
 import io.circe.generic.auto._
 import github4s.free.algebra.IssueOps
+import github4s.Config
 
 class IssueInterpreter[C, M[_]](
     implicit urls: GithubApiUrls,
@@ -47,12 +48,8 @@ class IssueInterpreter[C, M[_]](
    * @param repo        name of the repo
    * @return a GHResponse with the issue list.
    */
-  def list(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
-      owner: String,
-      repo: String): M[GHResponse[List[Issue]]] =
-    httpClient.get[List[Issue]](accessToken, s"repos/$owner/$repo/issues", headers)
+  def list(config: Config, owner: String, repo: String): M[GHResponse[List[Issue]]] =
+    httpClient.get[List[Issue]](config.accessToken, s"repos/$owner/$repo/issues", config.headers)
 
   /**
    * Search for issues
@@ -71,13 +68,16 @@ class IssueInterpreter[C, M[_]](
    * @return a GHResponse with the result of the search.
    */
   def search(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       query: String,
       searchParams: List[SearchParam]): M[GHResponse[SearchIssuesResult]] = {
     val queryString = s"${URLEncoder.encode(query)}+${searchParams.map(_.value).mkString("+")}"
     httpClient
-      .get[SearchIssuesResult](accessToken, "search/issues", headers, Map("q" -> queryString))
+      .get[SearchIssuesResult](
+        config.accessToken,
+        "search/issues",
+        config.headers,
+        Map("q" -> queryString))
   }
 
   /**
@@ -94,8 +94,7 @@ class IssueInterpreter[C, M[_]](
    * @param assignees   Logins for Users to assign to this issue.
    */
   def create(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       title: String,
@@ -104,9 +103,9 @@ class IssueInterpreter[C, M[_]](
       labels: List[String],
       assignees: List[String]): M[GHResponse[Issue]] =
     httpClient.post[Issue](
-      accessToken,
+      config.accessToken,
       s"repos/$owner/$repo/issues",
-      headers,
+      config.headers,
       data = NewIssueRequest(title, body, milestone, labels, assignees).asJson.noSpaces)
 
   /**
@@ -126,8 +125,7 @@ class IssueInterpreter[C, M[_]](
    *                    Send an empty list to clear all assignees from the Issue.
    */
   def edit(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       issue: Int,
@@ -138,9 +136,10 @@ class IssueInterpreter[C, M[_]](
       labels: List[String],
       assignees: List[String]): M[GHResponse[Issue]] =
     httpClient.patch[Issue](
-      accessToken,
+      config.accessToken,
       s"repos/$owner/$repo/issues/$issue",
-      headers,
-      data = EditIssueRequest(state, title, body, milestone, labels, assignees).asJson.noSpaces)
+      config.headers,
+      data = EditIssueRequest(state, title, body, milestone, labels, assignees).asJson.noSpaces
+    )
 
 }

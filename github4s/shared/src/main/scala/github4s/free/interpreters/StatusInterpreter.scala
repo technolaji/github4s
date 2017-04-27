@@ -23,6 +23,7 @@ import github4s.free.domain.{CombinedStatus, NewStatusRequest, Status}
 import io.circe.generic.auto._
 import io.circe.syntax._
 import github4s.free.algebra.StatusOps
+import github4s.Config
 
 class StatusInterpreter[C, M[_]](
     implicit urls: GithubApiUrls,
@@ -42,13 +43,15 @@ class StatusInterpreter[C, M[_]](
    * @return a GHResponse with the combined status
    */
   def get(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       ref: String): M[GHResponse[CombinedStatus]] =
     httpClient
-      .get[CombinedStatus](accessToken, s"repos/$owner/$repo/commits/$ref/status", headers)
+      .get[CombinedStatus](
+        config.accessToken,
+        s"repos/$owner/$repo/commits/$ref/status",
+        config.headers)
 
   /**
    * List statuses for a commit
@@ -60,14 +63,12 @@ class StatusInterpreter[C, M[_]](
    * @param ref         commit SHA, branch name or tag name
    * @return a GHResponse with the status list
    */
-  def list(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
-      owner: String,
-      repo: String,
-      ref: String): M[GHResponse[List[Status]]] =
+  def list(config: Config, owner: String, repo: String, ref: String): M[GHResponse[List[Status]]] =
     httpClient
-      .get[List[Status]](accessToken, s"repos/$owner/$repo/commits/$ref/statuses", headers)
+      .get[List[Status]](
+        config.accessToken,
+        s"repos/$owner/$repo/commits/$ref/statuses",
+        config.headers)
 
   /**
    * Create a status
@@ -84,8 +85,7 @@ class StatusInterpreter[C, M[_]](
    * @return a GHResopnse with the created Status
    */
   def create(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       sha: String,
@@ -94,8 +94,8 @@ class StatusInterpreter[C, M[_]](
       description: Option[String],
       context: Option[String]): M[GHResponse[Status]] =
     httpClient.post[Status](
-      accessToken,
+      config.accessToken,
       s"repos/$owner/$repo/statuses/$sha",
-      headers,
+      config.headers,
       dropNullPrint(NewStatusRequest(state, target_url, description, context).asJson))
 }

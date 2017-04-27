@@ -24,6 +24,7 @@ import io.circe.syntax._
 import io.circe.generic.auto._
 import github4s.free.algebra.GitDataOps
 import scala.language.higherKinds
+import github4s.Config
 
 class GitDataInterpreter[C, M[_]](
     implicit urls: GithubApiUrls,
@@ -53,12 +54,15 @@ class GitDataInterpreter[C, M[_]](
    * @return a GHResponse with the Ref list
    */
   def reference(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       ref: String): M[GHResponse[NonEmptyList[Ref]]] =
-    httpClient.get[NonEmptyList[Ref]](accessToken, s"repos/$owner/$repo/git/refs/$ref", headers)
+    httpClient
+      .get[NonEmptyList[Ref]](
+        config.accessToken,
+        s"repos/$owner/$repo/git/refs/$ref",
+        config.headers)
 
   /**
    * Create a Reference
@@ -76,16 +80,15 @@ class GitDataInterpreter[C, M[_]](
    * @return a GHResponse with the Ref
    */
   def createReference(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       ref: String,
       sha: String): M[GHResponse[Ref]] =
     httpClient.post[Ref](
-      accessToken,
+      config.accessToken,
       s"repos/$owner/$repo/git/refs",
-      headers,
+      config.headers,
       dropNullPrint(CreateReferenceRequest(ref, sha).asJson))
 
   /**
@@ -102,17 +105,16 @@ class GitDataInterpreter[C, M[_]](
    * @return a GHResponse with the Ref
    */
   def updateReference(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       ref: String,
       sha: String,
       force: Option[Boolean] = None): M[GHResponse[Ref]] =
     httpClient.patch[Ref](
-      accessToken,
+      config.accessToken,
       s"repos/$owner/$repo/git/refs/$ref",
-      headers,
+      config.headers,
       dropNullPrint(UpdateReferenceRequest(sha, force).asJson))
 
   /**
@@ -125,13 +127,9 @@ class GitDataInterpreter[C, M[_]](
    * @param sha         the sha of the commit
    * @return a GHResponse with the Commit
    */
-  def commit(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
-      owner: String,
-      repo: String,
-      sha: String): M[GHResponse[RefCommit]] =
-    httpClient.get[RefCommit](accessToken, s"repos/$owner/$repo/git/commits/$sha", headers)
+  def commit(config: Config, owner: String, repo: String, sha: String): M[GHResponse[RefCommit]] =
+    httpClient
+      .get[RefCommit](config.accessToken, s"repos/$owner/$repo/git/commits/$sha", config.headers)
 
   /**
    * Create a new Commit
@@ -149,8 +147,7 @@ class GitDataInterpreter[C, M[_]](
    * @return a GHResponse with RefCommit
    */
   def createCommit(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       message: String,
@@ -158,9 +155,9 @@ class GitDataInterpreter[C, M[_]](
       parents: List[String] = Nil,
       author: Option[RefAuthor] = None): M[GHResponse[RefCommit]] =
     httpClient.post[RefCommit](
-      accessToken,
+      config.accessToken,
       s"repos/$owner/$repo/git/commits",
-      headers,
+      config.headers,
       dropNullPrint(NewCommitRequest(message, tree, parents, author).asJson))
 
   /**
@@ -175,16 +172,15 @@ class GitDataInterpreter[C, M[_]](
    * @return a GHResponse with RefObject
    */
   def createBlob(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       content: String,
       encoding: Option[String] = None): M[GHResponse[RefInfo]] =
     httpClient.post[RefInfo](
-      accessToken,
+      config.accessToken,
       s"repos/$owner/$repo/git/blobs",
-      headers,
+      config.headers,
       dropNullPrint(NewBlobRequest(content, encoding).asJson))
 
   /**
@@ -214,16 +210,15 @@ class GitDataInterpreter[C, M[_]](
    * @return a GHResponse with TreeResult
    */
   def createTree(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       baseTree: Option[String],
       treeDataList: List[TreeData]): M[GHResponse[TreeResult]] =
     httpClient.post[TreeResult](
-      accessToken,
+      config.accessToken,
       s"repos/$owner/$repo/git/trees",
-      headers,
+      config.headers,
       dropNullPrint(NewTreeRequest(baseTree, treeDataList).asJson))
 
   /**
@@ -242,8 +237,7 @@ class GitDataInterpreter[C, M[_]](
    * @return a GHResponse with Tag
    */
   def createTag(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       tag: String,
@@ -252,9 +246,9 @@ class GitDataInterpreter[C, M[_]](
       objectType: String,
       tagger: Option[RefAuthor] = None): M[GHResponse[Tag]] =
     httpClient.post[Tag](
-      accessToken,
+      config.accessToken,
       s"repos/$owner/$repo/git/tags",
-      headers,
+      config.headers,
       dropNullPrint(NewTagRequest(tag, message, objectSha, objectType, tagger).asJson))
 
 }

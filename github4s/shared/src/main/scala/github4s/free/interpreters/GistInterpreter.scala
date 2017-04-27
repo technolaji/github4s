@@ -22,6 +22,7 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import github4s.GithubResponses.GHResponse
 import github4s.free.algebra.GistOps
+import github4s.Config
 
 import scala.language.higherKinds
 
@@ -47,12 +48,11 @@ class GistInterpreter[C, M[_]](
       description: String,
       public: Boolean,
       files: Map[String, GistFile],
-      headers: Map[String, String] = Map(),
-      accessToken: Option[String] = None): M[GHResponse[Gist]] =
+      config: Config): M[GHResponse[Gist]] =
     httpClient.post[Gist](
-      accessToken,
+      config.accessToken,
       "gists",
-      headers,
+      config.headers,
       data = NewGistRequest(description, public, files).asJson.noSpaces
     )
 

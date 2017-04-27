@@ -21,6 +21,7 @@ import github4s.free.domain._
 import github4s.{GithubApiUrls, HttpClient, HttpRequestBuilderExtension}
 import io.circe.generic.auto._
 import github4s.free.algebra.PullRequestOps
+import github4s.Config
 
 import scala.language.higherKinds
 
@@ -50,15 +51,14 @@ class PullRequestInterpreter[C, M[_]](
    * @return a GHResponse with the pull request list.
    */
   def list(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       filters: List[PRFilter] = Nil): M[GHResponse[List[PullRequest]]] =
     httpClient.get[List[PullRequest]](
-      accessToken,
+      config.accessToken,
       s"repos/$owner/$repo/pulls",
-      headers,
+      config.headers,
       filters.map(_.tupled).toMap)
 
   /**
@@ -72,11 +72,13 @@ class PullRequestInterpreter[C, M[_]](
    * @return a GHResponse with the list of files affected by the pull request identified by number.
    */
   def listFiles(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       number: Int): M[GHResponse[List[PullRequestFile]]] =
     httpClient
-      .get[List[PullRequestFile]](accessToken, s"repos/$owner/$repo/pulls/$number/files", headers)
+      .get[List[PullRequestFile]](
+        config.accessToken,
+        s"repos/$owner/$repo/pulls/$number/files",
+        config.headers)
 }
