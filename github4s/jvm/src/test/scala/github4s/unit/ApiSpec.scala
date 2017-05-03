@@ -613,6 +613,54 @@ class ApiSpec
     response should be('left)
   }
 
+  "PullRequests >> Create PullRequestData" should "return the pull request when a valid data is provided" in {
+    val response = pullRequests.create(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      validNewPullRequestData,
+      validHead,
+      validBase)
+    response should be('right)
+  }
+
+  it should "return an error when an invalid data is passed" in {
+    val response = pullRequests.create(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      invalidNewPullRequestData,
+      invalidHead,
+      invalidBase)
+    response should be('left)
+  }
+
+  "PullRequests >> Create PullRequestIssue" should "return the pull request when a valid data is provided" in {
+    val response = pullRequests.create(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      validNewPullRequestIssue,
+      validHead,
+      validBase)
+    response should be('right)
+  }
+
+  it should "return an error when an invalid data is passed" in {
+    val response = pullRequests.create(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      invalidNewPullRequestIssue,
+      invalidHead,
+      invalidBase)
+    response should be('left)
+  }
+
   "Statuses >> Get" should "return the expected combined status when a valid ref is provided" in {
     val response =
       statuses.get(accessToken, headerUserAgent, validRepoOwner, validRepoName, validRefSingle)

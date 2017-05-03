@@ -111,16 +111,31 @@ trait TestUtils {
   val validPullRequestFileSha = "f80f79cafbe3f2ba71311b82e1171e73bd37a470"
   val validPullRequestNumber  = 1
 
+  val validHead   = "test-pr-issue"
+  val invalidHead = ""
+
+  val validBase   = "master"
+  val invalidBase = ""
+
+  val validNewPullRequestData   = NewPullRequestData("Amazing new feature", "Please pull this in!")
+  val invalidNewPullRequestData = NewPullRequestData("", "")
+
+  val validNewPullRequestIssue   = NewPullRequestIssue(31)
+  val invalidNewPullRequestIssue = NewPullRequestIssue(5)
+
   val validPath = "project/plugins.sbt"
 
   val validStatusState = "success"
+  val validMode        = "100644"
+  val validBlobType    = "blob"
 
-  val treeDataList: List[TreeData] = List(TreeDataSha(validPath, "100644", "blob", validTreeSha))
+  val treeDataList: List[TreeData] = List(
+    TreeDataSha(validPath, validMode, validBlobType, validTreeSha))
   val treeDataResult = List(
     TreeDataResult(
       path = validPath,
-      mode = "100644",
-      `type` = "blob",
+      mode = validMode,
+      `type` = validBlobType,
       size = Some(100),
       sha = validTreeSha,
       url = githubApiUrl))
@@ -246,4 +261,5 @@ trait TestUtils {
       urls = Map()
     )
   )
+
 }

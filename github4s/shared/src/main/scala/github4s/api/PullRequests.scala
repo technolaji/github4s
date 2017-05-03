@@ -19,8 +19,10 @@ package github4s.api
 import github4s.GithubResponses.GHResponse
 import github4s.free.domain._
 import github4s.free.interpreters.Capture
-import github4s.{Decoders, GithubApiUrls, HttpClient, HttpRequestBuilderExtension}
+import github4s.{Decoders, Encoders, GithubApiUrls, HttpClient, HttpRequestBuilderExtension}
+import github4s.util.URLEncoder
 import io.circe.generic.auto._
+import io.circe.syntax._
 
 import scala.language.higherKinds
 
@@ -31,6 +33,7 @@ class PullRequests[C, M[_]](
     httpClientImpl: HttpRequestBuilderExtension[C, M]) {
 
   import Decoders._
+  import Encoders._
 
   val httpClient = new HttpClient[C, M]
 
@@ -80,8 +83,39 @@ class PullRequests[C, M[_]](
       owner: String,
       repo: String,
       number: Int): M[GHResponse[List[PullRequestFile]]] =
-    httpClient.get[List[PullRequestFile]](
-      accessToken,
-      s"repos/$owner/$repo/pulls/$number/files",
-      headers)
+    httpClient
+      .get[List[PullRequestFile]](accessToken, s"repos/$owner/$repo/pulls/$number/files", headers)
+
+  /**
+   * Create a pull request
+   *
+   * @param accessToken Token to identify the authenticated user
+   * @param headers Optional user headers to include in the request
+   * @param owner Owner of the repo
+   * @param repo Name of the repo
+   * @param newPullRequest The title and body parameters or the issue parameter
+   * @param head The name of the branch where your changes are implemented. For cross-repository pull
+   *             requests in the same network, namespace head with a user like this: username:branch.
+   * @param base The name of the branch you want the changes pulled into. This should be an existing branch
+   *             on the current repository. You cannot submit a pull request to one repository that
+   * @param maintainerCanModify Indicates whether maintainers can modify the pull request, Default:Some(true).
+   */
+  def create(
+      accessToken: Option[String] = None,
+      headers: Map[String, String] = Map(),
+      owner: String,
+      repo: String,
+      newPullRequest: NewPullRequest,
+      head: String,
+      base: String,
+      maintainerCanModify: Option[Boolean] = Some(true)): M[GHResponse[PullRequest]] = {
+    val data: CreatePullRequest = newPullRequest match {
+      case NewPullRequestData(title, body) ⇒
+        CreatePullRequestData(title, head, base, body, maintainerCanModify)
+      case NewPullRequestIssue(issue) ⇒
+        CreatePullRequestIssue(issue, head, base, maintainerCanModify)
+    }
+    httpClient
+      .post[PullRequest](accessToken, s"repos/$owner/$repo/pulls", headers, data.asJson.noSpaces)
+  }
 }
