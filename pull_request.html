@@ -4,8 +4,9 @@
 with github4s, you can:</p>
 
 <ul>
-  <li><a href="#list-pull-requests">list pull requests</a></li>
-  <li><a href="#list-the-files-in-a-pull-request">list the files in a pull request</a></li>
+  <li><a href="#list-pull-requests">List pull requests</a></li>
+  <li><a href="#list-the-files-in-a-pull-request">List the files in a pull request</a></li>
+  <li><a href="#create-a-pull-request">Create a pull request</a></li>
 </ul>
 
 <p>The following examples assume the following imports and token:</p>
@@ -84,6 +85,41 @@ reference.</p>
 request) are missing. As a result, if you’d like to see a feature supported, feel free to
 create a pull request (not through Github4s though).</p>
 
+<h2 id="create-a-pull-request">Create a pull request</h2>
+<p>If you want to create a pull request, we have two ways to create a pull request.</p>
+
+<p>On the one hand, we pass as parameters to create a new pull request:</p>
+
+<ul>
+  <li>the repository coordinates (owner and name of the repository)</li>
+  <li><code class="highlighter-rouge">title</code> (as part of the <code class="highlighter-rouge">NewPullRequestData</code> object): Title for the pull request</li>
+  <li><code class="highlighter-rouge">body</code> (as part of the <code class="highlighter-rouge">NewPullRequestData</code> object): Description for the pull request</li>
+  <li><code class="highlighter-rouge">head</code>: The name of the branch where your changes are implemented</li>
+  <li><code class="highlighter-rouge">base</code>: The name of the branch you want the changes pulled into</li>
+  <li><code class="highlighter-rouge">maintainerCanModify</code>: Optional. Indicates whether maintainers can modify the pull request. <code class="highlighter-rouge">true</code> by default</li>
+</ul>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">createPullRequestData</span> <span class="k">=</span> <span class="nc">Github</span><span class="o">(</span><span class="n">accessToken</span><span class="o">).</span><span class="n">pullRequests</span><span class="o">.</span><span class="n">create</span><span class="o">(</span><span class="s">"47deg"</span><span class="o">,</span> <span class="s">"github4s"</span><span class="o">,</span> <span class="nc">NewPullRequestData</span><span class="o">(</span><span class="s">"title"</span><span class="o">,</span><span class="s">"body"</span><span class="o">),</span><span class="s">"my-branch"</span><span class="o">,</span><span class="s">"base-branch"</span><span class="o">,</span><span class="nc">Some</span><span class="o">(</span><span class="kc">true</span><span class="o">))</span>
+<span class="n">createPullRequestData</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">cats.Id</span>, <span class="kt">HttpResponse</span><span class="o">[</span><span class="kt">String</span><span class="o">]]()</span> <span class="k">match</span> <span class="o">{</span>
+  <span class="k">case</span> <span class="nc">Left</span><span class="o">(</span><span class="n">e</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">println</span><span class="o">(</span><span class="s">"Something went wrong: s{e.getMessage}"</span><span class="o">)</span>
+  <span class="k">case</span> <span class="nc">Right</span><span class="o">(</span><span class="n">r</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">println</span><span class="o">(</span><span class="n">r</span><span class="o">.</span><span class="n">result</span><span class="o">)</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>On the other hand, we can pass a <code class="highlighter-rouge">issue</code> id (through <code class="highlighter-rouge">NewPullRequestIssue</code> object) instead of the title and the body to get this parameter of the issue</p>
+
+<p><strong>NOTE</strong>: This option deletes the issue</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">createPullRequestIssue</span> <span class="k">=</span> <span class="nc">Github</span><span class="o">(</span><span class="n">accessToken</span><span class="o">).</span><span class="n">pullRequests</span><span class="o">.</span><span class="n">create</span><span class="o">(</span><span class="s">"47deg"</span><span class="o">,</span> <span class="s">"github4s"</span><span class="o">,</span> <span class="nc">NewPullRequestIssue</span><span class="o">(</span><span class="s">"105"</span><span class="o">),</span><span class="s">"my-branch"</span><span class="o">,</span><span class="s">"base-branch"</span><span class="o">,</span><span class="nc">Some</span><span class="o">(</span><span class="kc">true</span><span class="o">))</span>
+<span class="n">createPullRequestIssue</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">cats.Id</span>, <span class="kt">HttpResponse</span><span class="o">[</span><span class="kt">String</span><span class="o">]]()</span> <span class="k">match</span> <span class="o">{</span>
+  <span class="k">case</span> <span class="nc">Left</span><span class="o">(</span><span class="n">e</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">println</span><span class="o">(</span><span class="s">"Something went wrong: s{e.getMessage}"</span><span class="o">)</span>
+  <span class="k">case</span> <span class="nc">Right</span><span class="o">(</span><span class="n">r</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">println</span><span class="o">(</span><span class="n">r</span><span class="o">.</span><span class="n">result</span><span class="o">)</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>See <a href="https://developer.github.com/v3/pulls/#create-a-pull-request">the API doc</a> for full reference.</p>
 </section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/github4s/highlight/highlight.pack.js"></script><script>hljs.configure({
 languages:['scala','java','bash']
 });
