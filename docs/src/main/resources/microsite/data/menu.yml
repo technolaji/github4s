@@ -13,3 +13,6 @@ options:
 
   - title: Status API
     url: status.html
+
+  - title: Notification API
+    url: notification.html

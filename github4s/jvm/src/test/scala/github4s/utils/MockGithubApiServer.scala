@@ -329,7 +329,7 @@ trait MockGithubApiServer extends MockServerService with FakeResponses with Test
   mockServer
     .when(
       request
-        .withMethod("POST")
+        .withMethod("PATCH")
         .withPath(s"/repos/$validRepoOwner/$validRepoName/git/refs/$validRefSingle")
         .withHeader("Authorization", tokenHeader))
     .respond(
@@ -340,7 +340,7 @@ trait MockGithubApiServer extends MockServerService with FakeResponses with Test
   mockServer
     .when(
       request
-        .withMethod("POST")
+        .withMethod("PATCH")
         .withPath(s"/repos/$validRepoOwner/$validRepoName/git/refs/$validRefSingle")
         .withHeader(not("Authorization")))
     .respond(
@@ -652,7 +652,7 @@ trait MockGithubApiServer extends MockServerService with FakeResponses with Test
   mockServer
     .when(
       request
-        .withMethod("POST")
+        .withMethod("PATCH")
         .withPath(s"/repos/$validRepoOwner/$validRepoName/issues/$validIssueNumber")
         .withHeader("Authorization", tokenHeader))
     .respond(response.withStatusCode(okStatusCode).withBody(createIssueValidResponse))
@@ -660,7 +660,7 @@ trait MockGithubApiServer extends MockServerService with FakeResponses with Test
   mockServer
     .when(
       request
-        .withMethod("POST")
+        .withMethod("PATCH")
         .withPath(s"/repos/$validRepoOwner/$validRepoName/issues/$validIssueNumber")
         .withHeader(not("Authorization")))
     .respond(response.withStatusCode(unauthorizedStatusCode).withBody(unauthorizedResponse))
@@ -668,7 +668,7 @@ trait MockGithubApiServer extends MockServerService with FakeResponses with Test
   mockServer
     .when(
       request
-        .withMethod("POST")
+        .withMethod("PATCH")
         .withPath(s"/repos/$validRepoOwner/$invalidRepoName/issues/$validIssueNumber")
         .withHeader("Authorization", tokenHeader))
     .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
@@ -691,4 +691,29 @@ trait MockGithubApiServer extends MockServerService with FakeResponses with Test
         .withQueryStringParameters(new Parameter("q", s".*$nonExistentSearchQuery.*"))
         .withHeader("Authorization", tokenHeader))
     .respond(response.withStatusCode(okStatusCode).withBody(searchIssuesEmptyResponse))
+
+//Notification >>Set a thread subscription
+  mockServer
+    .when(
+      request
+        .withMethod("PUT")
+        .withPath(s"/notifications/threads/$validThreadId/subscription")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(okStatusCode).withBody(setThreadSubscription))
+
+  mockServer
+    .when(
+      request
+        .withMethod("PUT")
+        .withPath(s"/notifications/threads/$validThreadId/subscription")
+        .withHeader(not("Authorization")))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("PUT")
+        .withPath(s"/notifications/threads/$invalidThreadId/subscription")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
 }

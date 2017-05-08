@@ -19,7 +19,14 @@ package github4s.utils
 import cats.Id
 import github4s.GithubResponses.{GHResponse, UnexpectedException}
 import github4s.app.GitHub4s
-import github4s.free.algebra.{GitDataOps, IssueOps, PullRequestOps, RepositoryOps, StatusOps}
+import github4s.free.algebra.{
+  GitDataOps,
+  IssueOps,
+  NotificationOps,
+  PullRequestOps,
+  RepositoryOps,
+  StatusOps
+}
 import github4s.free.domain.Pagination
 import github4s.{HttpClient, HttpRequestBuilder, HttpRequestBuilderExtension, IdInstances}
 import io.circe
@@ -85,10 +92,23 @@ trait BaseSpec extends FlatSpec with Matchers with TestData with IdInstances wit
     httpClientMock
   }
 
-  class GitDataOpsTest     extends GitDataOps[GitHub4s]
-  class PullRequestOpsTest extends PullRequestOps[GitHub4s]
-  class RepositoryOpsTest  extends RepositoryOps[GitHub4s]
-  class StatusOpsTest      extends StatusOps[GitHub4s]
-  class IssueOpsTest       extends IssueOps[GitHub4s]
+  def httpClientMockPut[T](
+      url: String,
+      json: String,
+      response: GHResponse[T]): HttpClient[String, Id] = {
+    val httpClientMock = mock[HttpClientTest]
+    (httpClientMock
+      .put[T](_: Option[String], _: String, _: Map[String, String], _: String)(_: Decoder[T]))
+      .expects(sampleToken, url, headerUserAgent, JsonMockParameter(json), *)
+      .returns(response)
+    httpClientMock
+  }
+
+  class GitDataOpsTest      extends GitDataOps[GitHub4s]
+  class PullRequestOpsTest  extends PullRequestOps[GitHub4s]
+  class RepositoryOpsTest   extends RepositoryOps[GitHub4s]
+  class StatusOpsTest       extends StatusOps[GitHub4s]
+  class IssueOpsTest        extends IssueOps[GitHub4s]
+  class NotificationOpsTest extends NotificationOps[GitHub4s]
 
 }
