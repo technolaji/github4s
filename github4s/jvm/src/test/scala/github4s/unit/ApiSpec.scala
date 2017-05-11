@@ -900,6 +900,99 @@ class ApiSpec
     }
   }
 
+  "Issues >> Create a Comment" should "return the comment created when a valid issue number is provided" in {
+    val response =
+      issues.createComment(
+        accessToken,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        validIssueNumber,
+        validCommentBody)
+    response should be('right)
+  }
+  it should "return an error when an valid issue number is passed without authorization" in {
+    val response =
+      issues.createComment(
+        None,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        validIssueNumber,
+        validCommentBody)
+    response should be('left)
+  }
+  it should "return an error when an invalid issue number is passed" in {
+    val response =
+      issues.createComment(
+        accessToken,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        invalidIssueNumber,
+        validCommentBody)
+    response should be('left)
+  }
+
+  "Issues >> Edit a Comment" should "return the edited comment when a valid comment id is provided" in {
+    val response =
+      issues.editComment(
+        accessToken,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        validCommentId,
+        validCommentBody)
+    response should be('right)
+  }
+  it should "return an error when an valid comment id is passed without authorization" in {
+    val response =
+      issues.editComment(
+        None,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        validCommentId,
+        validCommentBody)
+    response should be('left)
+  }
+  it should "return an error when an invalid comment id is passed" in {
+    val response =
+      issues.editComment(
+        accessToken,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        invalidCommentId,
+        validCommentBody)
+    response should be('left)
+  }
+  "Issues >> Delete a Comment" should "return deleted status when a valid comment id is provided" in {
+    val response =
+      issues.deleteComment(
+        accessToken,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        validCommentId)
+    response should be('right)
+  }
+  it should "return an error when an valid comment id is passed without authorization" in {
+    val response =
+      issues.deleteComment(None, headerUserAgent, validRepoOwner, validRepoName, validCommentId)
+    response should be('left)
+  }
+  it should "return an error when an invalid comment id is passed" in {
+    val response =
+      issues.deleteComment(
+        accessToken,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        invalidCommentId)
+    response should be('left)
+  }
+
   "Notifications >> Set a Thread Subscription" should "return the subscription when a valid thread id is provided" in {
     val response =
       notifications.setThreadSub(accessToken, headerUserAgent, validThreadId, true, false)
@@ -915,4 +1008,5 @@ class ApiSpec
       notifications.setThreadSub(accessToken, headerUserAgent, invalidThreadId, true, false)
     response should be('left)
   }
+
 }

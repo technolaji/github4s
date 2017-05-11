@@ -162,6 +162,29 @@ class GHIssues(accessToken: Option[String] = None)(implicit O: IssueOps[GitHub4s
       assignees: List[String] = List.empty
   ): GHIO[GHResponse[Issue]] =
     O.editIssue(owner, repo, issue, state, title, body, milestone, labels, assignees, accessToken)
+
+  def createComment(
+      owner: String,
+      repo: String,
+      number: Int,
+      body: String
+  ): GHIO[GHResponse[Comment]] =
+    O.createComment(owner, repo, number, body, accessToken)
+  def editComment(
+      owner: String,
+      repo: String,
+      id: Int,
+      body: String
+  ): GHIO[GHResponse[Comment]] =
+    O.editComment(owner, repo, id, body, accessToken)
+
+  def deleteComment(
+      owner: String,
+      repo: String,
+      id: Int
+  ): GHIO[GHResponse[Unit]] =
+    O.deleteComment(owner, repo, id, accessToken)
+
 }
 
 class GHNotifications(accessToken: Option[String] = None)(implicit O: NotificationOps[GitHub4s]) {

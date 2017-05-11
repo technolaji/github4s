@@ -49,6 +49,9 @@ trait BaseSpec extends FlatSpec with Matchers with TestData with IdInstances wit
       override def run[A](rb: HttpRequestBuilder[String, Id])(
           implicit D: circe.Decoder[A]): Id[GHResponse[A]] =
         Left(UnexpectedException("Stub!"))
+
+      override def runEmpty(rb: HttpRequestBuilder[String, Id]): Id[GHResponse[Unit]] =
+        Left(UnexpectedException("Stub!"))
     }
 
   def httpClientMockGet[T](
@@ -100,6 +103,15 @@ trait BaseSpec extends FlatSpec with Matchers with TestData with IdInstances wit
     (httpClientMock
       .put[T](_: Option[String], _: String, _: Map[String, String], _: String)(_: Decoder[T]))
       .expects(sampleToken, url, headerUserAgent, JsonMockParameter(json), *)
+      .returns(response)
+    httpClientMock
+  }
+
+  def httpClientMockDelete(url: String, response: GHResponse[Unit]): HttpClient[String, Id] = {
+    val httpClientMock = mock[HttpClientTest]
+    (httpClientMock
+      .delete(_: Option[String], _: String, _: Map[String, String]))
+      .expects(sampleToken, url, headerUserAgent)
       .returns(response)
     httpClientMock
   }

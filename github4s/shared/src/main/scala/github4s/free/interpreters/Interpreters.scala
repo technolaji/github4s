@@ -198,6 +198,12 @@ class Interpreters[M[_], C](
               milestone,
               labels,
               assignees)
+          case CreateComment(owner, repo, number, body, accessToken) ⇒
+            issues.createComment(accessToken, headers, owner, repo, number, body)
+          case EditComment(owner, repo, id, body, accessToken) ⇒
+            issues.editComment(accessToken, headers, owner, repo, id, body)
+          case DeleteComment(owner, repo, id, accessToken) ⇒
+            issues.deleteComment(accessToken, headers, owner, repo, id)
         }
       }
     }
@@ -327,4 +333,5 @@ class Interpreters[M[_], C](
         }
       }
     }
+
 }
