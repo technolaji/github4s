@@ -93,6 +93,16 @@ case class Content(
     html_url: String,
     download_url: Option[String])
 
+case class Commit(
+    sha: String,
+    message: String,
+    date: String,
+    url: String,
+    login: Option[String],
+    avatar_url: Option[String],
+    author_url: Option[String]
+)
+
 case class NewReleaseRequest(
     tag_name: String,
     name: String,
@@ -101,6 +111,45 @@ case class NewReleaseRequest(
     draft: Option[Boolean],
     prerelease: Option[Boolean])
 
+case class Status(
+    id: Int,
+    url: String,
+    state: String,
+    target_url: Option[String],
+    description: Option[String],
+    context: Option[String],
+    creator: Option[User],
+    created_at: String,
+    updated_at: String
+)
+
+case class NewStatusRequest(
+    state: String,
+    target_url: Option[String],
+    description: Option[String],
+    context: Option[String]
+)
+
+case class StatusRepository(
+    id: Int,
+    name: String,
+    full_name: String,
+    owner: User,
+    `private`: Boolean,
+    description: Option[String],
+    fork: Boolean,
+    urls: Map[String, String]
+)
+
+case class CombinedStatus(
+    url: String,
+    state: String,
+    commit_url: String,
+    sha: String,
+    total_count: Int,
+    statuses: List[Status],
+    repository: StatusRepository
+)
 object RepoUrlKeys {
 
   val forks_url         = "forks_url"

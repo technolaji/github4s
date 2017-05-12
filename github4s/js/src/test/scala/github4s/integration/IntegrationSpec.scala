@@ -32,9 +32,8 @@ class IntegrationSpec
     with GHIssuesSpec[SimpleHttpResponse]
     with GHPullRequestsSpec[SimpleHttpResponse]
     with GHReposSpec[SimpleHttpResponse]
-    with GHStatusesSpec[SimpleHttpResponse]
     with GHUsersSpec[SimpleHttpResponse]
-    with GHNotificationsSpec[SimpleHttpResponse]
+    with GHActivitiesSpec[SimpleHttpResponse]
     with ImplicitsJS
     with TestUtilsJS {
 

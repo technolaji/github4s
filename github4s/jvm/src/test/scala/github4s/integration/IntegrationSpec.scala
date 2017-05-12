@@ -32,9 +32,8 @@ class IntegrationSpec
     with GHIssuesSpec[HttpResponse[String]]
     with GHPullRequestsSpec[HttpResponse[String]]
     with GHReposSpec[HttpResponse[String]]
-    with GHStatusesSpec[HttpResponse[String]]
     with GHUsersSpec[HttpResponse[String]]
-    with GHNotificationsSpec[HttpResponse[String]]
+    with GHActivitiesSpec[HttpResponse[String]]
     with ImplicitsJVM
     with TestUtilsJVM {
 
