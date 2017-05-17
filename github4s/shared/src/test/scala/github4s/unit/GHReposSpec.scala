@@ -27,6 +27,20 @@ import github4s.utils.BaseSpec
 
 class GHReposSpec extends BaseSpec {
 
+  "GHRepos.get" should "call to RepositoryOps with the right parameters" in {
+
+    val response: Free[GitHub4s, GHResponse[Repository]] =
+      Free.pure(Right(GHResult(repo, okStatusCode, Map.empty)))
+
+    val repoOps = mock[RepositoryOpsTest]
+    (repoOps.getRepo _)
+      .expects(validRepoOwner, validRepoName, sampleToken)
+      .returns(response)
+
+    val ghReposData = new GHRepos(sampleToken)(repoOps)
+    ghReposData.get(validRepoOwner, validRepoName)
+  }
+
   "GHRepos.contents" should "call to RepositoryOps with the right parameters" in {
 
     val response: Free[GitHub4s, GHResponse[NonEmptyList[Content]]] =
@@ -39,6 +53,34 @@ class GHReposSpec extends BaseSpec {
 
     val ghReposData = new GHRepos(sampleToken)(repoOps)
     ghReposData.getContents(validRepoOwner, validRepoName, validFilePath, Some("master"))
+  }
+
+  "GHRepos.listCommits" should "call to RepositoryOps with the right parameters" in {
+
+    val response: Free[GitHub4s, GHResponse[List[Commit]]] =
+      Free.pure(Right(GHResult(List(commit), okStatusCode, Map.empty)))
+
+    val repoOps = mock[RepositoryOpsTest]
+    (repoOps.listCommits _)
+      .expects(validRepoOwner, validRepoName, None, None, None, None, None, None, sampleToken)
+      .returns(response)
+
+    val ghReposData = new GHRepos(sampleToken)(repoOps)
+    ghReposData.listCommits(validRepoOwner, validRepoName)
+  }
+
+  "GHRepos.listContributors" should "call to RepositoryOps with the right parameters" in {
+
+    val response: Free[GitHub4s, GHResponse[List[User]]] =
+      Free.pure(Right(GHResult(List(user), okStatusCode, Map.empty)))
+
+    val repoOps = mock[RepositoryOpsTest]
+    (repoOps.listContributors _)
+      .expects(validRepoOwner, validRepoName, None, sampleToken)
+      .returns(response)
+
+    val ghReposData = new GHRepos(sampleToken)(repoOps)
+    ghReposData.listContributors(validRepoOwner, validRepoName)
   }
 
   "GHRepos.createRelease" should "call to RepositoryOps with the right parameters" in {
