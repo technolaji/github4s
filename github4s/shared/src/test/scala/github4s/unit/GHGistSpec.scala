@@ -18,25 +18,32 @@ package github4s.unit
 
 import cats.free.Free
 import github4s.GithubResponses.{GHResponse, GHResult}
-import github4s.{GHActivities, HttpClient}
+import github4s.{GHGists, HttpClient}
 import github4s.app.GitHub4s
 import github4s.free.domain._
 import github4s.utils.BaseSpec
 
-class GHActivitiesSpec extends BaseSpec {
+class GHGistSpec extends BaseSpec {
 
-  "Activities.setThreadSub" should "call to ActivityOps with the right parameters" in {
+  "Gist.newGist" should "call to GistOps with the right parameters" in {
 
-    val response: Free[GitHub4s, GHResponse[Subscription]] =
-      Free.pure(Right(GHResult(subscription, okStatusCode, Map.empty)))
+    val response: Free[GitHub4s, GHResponse[Gist]] =
+      Free.pure(Right(GHResult(gist, okStatusCode, Map.empty)))
 
-    val activityOps = mock[ActivityOpsTest]
-    (activityOps.setThreadSub _)
-      .expects(validThreadId, true, false, sampleToken)
+    val gistOps = mock[GistOpsTest]
+    (gistOps.newGist _)
+      .expects(
+        validGistDescription,
+        validGistPublic,
+        Map(validGistFilename → GistFile(validGistFileContent)),
+        sampleToken)
       .returns(response)
 
-    val ghActivities = new GHActivities(sampleToken)(activityOps)
-    ghActivities.setThreadSub(validThreadId, true, false)
+    val ghGists = new GHGists(sampleToken)(gistOps)
+    ghGists.newGist(
+      validGistDescription,
+      validGistPublic,
+      Map(validGistFilename → GistFile(validGistFileContent)))
   }
 
 }
