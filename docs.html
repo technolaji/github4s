@@ -1,126 +1,139 @@
-<html><head><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><title>github4s</title><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="Github API wrapper written in Scala" /><meta name="author" content="47 Degrees" /><meta name="og:image" content="/github4s/img/poster.png" /><meta name="og:title" content="github4s" /><meta name="og:site_name" content="github4s" /><meta name="og:url" content="https://47deg.github.io/github4s/" /><meta name="og:type" content="website" /><meta name="og:description" content="Github API wrapper written in Scala" /><meta name="twitter:image" content="/github4s/img/poster.png" /><meta name="twitter:card" content="summary_large_image" /><meta name="twitter:site" content="" /><meta name="kazari-dependencies" content="" /><meta name="kazari-resolvers" content="" /><link rel="icon" type="image/png" href="/github4s/img/favicon.png" /><link rel="icon" type="image/png" sizes="16x16" href="/github4s/img/favicon16x16.png" /><link rel="icon" type="image/png" sizes="24x24" href="/github4s/img/favicon24x24.png" /><link rel="icon" type="image/png" sizes="32x32" href="/github4s/img/favicon32x32.png" /><link rel="icon" type="image/png" sizes="48x48" href="/github4s/img/favicon48x48.png" /><link rel="icon" type="image/png" sizes="57x57" href="/github4s/img/favicon57x57.png" /><link rel="icon" type="image/png" sizes="60x60" href="/github4s/img/favicon60x60.png" /><link rel="icon" type="image/png" sizes="64x64" href="/github4s/img/favicon64x64.png" /><link rel="icon" type="image/png" sizes="70x70" href="/github4s/img/favicon70x70.png" /><link rel="icon" type="image/png" sizes="72x72" href="/github4s/img/favicon72x72.png" /><link rel="icon" type="image/png" sizes="76x76" href="/github4s/img/favicon76x76.png" /><link rel="icon" type="image/png" sizes="96x96" href="/github4s/img/favicon96x96.png" /><link rel="icon" type="image/png" sizes="114x114" href="/github4s/img/favicon114x114.png" /><link rel="icon" type="image/png" sizes="120x120" href="/github4s/img/favicon120x120.png" /><link rel="icon" type="image/png" sizes="128x128" href="/github4s/img/favicon128x128.png" /><link rel="icon" type="image/png" sizes="144x144" href="/github4s/img/favicon144x144.png" /><link rel="icon" type="image/png" sizes="150x150" href="/github4s/img/favicon150x150.png" /><link rel="icon" type="image/png" sizes="152x152" href="/github4s/img/favicon152x152.png" /><link rel="icon" type="image/png" sizes="196x196" href="/github4s/img/favicon196x196.png" /><link rel="icon" type="image/png" sizes="310x310" href="/github4s/img/favicon310x310.png" /><link rel="icon" type="image/png" sizes="310x150" href="/github4s/img/favicon310x150.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/github4s/highlight/styles/default.css" /><link rel="stylesheet" href="/github4s/css/style.css" /><link rel="stylesheet" href="/github4s/css/palette.css" /><link rel="stylesheet" href="/github4s/css/codemirror.css" /><link rel="stylesheet" href="/github4s/css/kazari-style.css" /><link rel="stylesheet" href="/github4s/css/solarized-dark.css" /><link rel="stylesheet" href="/github4s/css/override.css" /></head><body class="docs"><div id="wrapper"><div id="sidebar-wrapper"><ul id="sidebar" class="sidebar-nav"><li class="sidebar-brand"><a href="/github4s/" class="brand"><div class="brand-wrapper"><span>github4s</span></div></a></li> <li><a href="/github4s/docs.html" class=" active ">Getting Started</a></li> <li><a href="/github4s/gist.html" class="">Gist API</a></li> <li><a href="/github4s/issue.html" class="">Issue API</a></li> <li><a href="/github4s/pull_request.html" class="">Pull Request API</a></li> <li><a href="/github4s/status.html" class="">Status API</a></li> <li><a href="/github4s/notification.html" class="">Notification API</a></li></ul></div><div id="page-content-wrapper"><div class="nav"><div class="container-fluid"><div class="row"><div class="col-lg-12"><div class="action-menu pull-left clearfix"><a href="#menu-toggle" id="menu-toggle"><i class="fa fa-bars" aria-hidden="true"></i></a></div><ul class="pull-right"><li id="gh-eyes-item" class="hidden-xs"><a href="https://github.com/47deg/github4s"><i class="fa fa-eye"></i><span>WATCH<span id="eyes" class="label label-default">--</span></span></a></li><li id="gh-stars-item" class="hidden-xs"><a href="https://github.com/47deg/github4s"><i class="fa fa-star-o"></i><span>STARS<span id="stars" class="label label-default">--</span></span></a></li><li><a href="#" onclick="shareSiteTwitter('github4s Github API wrapper written in Scala');"><i class="fa fa-twitter"></i></a></li><li><a href="#" onclick="shareSiteFacebook('github4s Github API wrapper written in Scala');"><i class="fa fa-facebook"></i></a></li><li><a href="#" onclick="shareSiteGoogle();"><i class="fa fa-google-plus"></i></a></li></ul></div></div></div></div><div id="content" data-github-owner="47deg" data-github-repo="github4s"><div class="content-wrapper"><section><h1 id="getting-started">Getting started</h1>
+<html><head><title>Github4s</title><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Github4s contributors" /><meta name="description" content="Github API wrapper written in Scala" /><meta name="og:image" content="/github4s/img/poster.png" /><meta name="og:title" content="Github4s" /><meta name="og:site_name" content="Github4s" /><meta name="og:url" content="https://47deg.github.io/github4s/" /><meta name="og:type" content="website" /><meta name="og:description" content="Github API wrapper written in Scala" /><link rel="icon" type="image/png" href="/github4s/img/favicon.png" /><meta name="twitter:title" content="Github4s" /><meta name="twitter:image" content="https://47deg.github.io/github4s/img/poster.png" /><meta name="twitter:description" content="Github API wrapper written in Scala" /><meta name="twitter:card" content="summary_large_image" /><link rel="icon" type="image/png" sizes="16x16" href="/github4s/img/favicon16x16.png" /><link rel="icon" type="image/png" sizes="24x24" href="/github4s/img/favicon24x24.png" /><link rel="icon" type="image/png" sizes="32x32" href="/github4s/img/favicon32x32.png" /><link rel="icon" type="image/png" sizes="48x48" href="/github4s/img/favicon48x48.png" /><link rel="icon" type="image/png" sizes="57x57" href="/github4s/img/favicon57x57.png" /><link rel="icon" type="image/png" sizes="60x60" href="/github4s/img/favicon60x60.png" /><link rel="icon" type="image/png" sizes="64x64" href="/github4s/img/favicon64x64.png" /><link rel="icon" type="image/png" sizes="70x70" href="/github4s/img/favicon70x70.png" /><link rel="icon" type="image/png" sizes="72x72" href="/github4s/img/favicon72x72.png" /><link rel="icon" type="image/png" sizes="76x76" href="/github4s/img/favicon76x76.png" /><link rel="icon" type="image/png" sizes="96x96" href="/github4s/img/favicon96x96.png" /><link rel="icon" type="image/png" sizes="114x114" href="/github4s/img/favicon114x114.png" /><link rel="icon" type="image/png" sizes="120x120" href="/github4s/img/favicon120x120.png" /><link rel="icon" type="image/png" sizes="128x128" href="/github4s/img/favicon128x128.png" /><link rel="icon" type="image/png" sizes="144x144" href="/github4s/img/favicon144x144.png" /><link rel="icon" type="image/png" sizes="150x150" href="/github4s/img/favicon150x150.png" /><link rel="icon" type="image/png" sizes="152x152" href="/github4s/img/favicon152x152.png" /><link rel="icon" type="image/png" sizes="196x196" href="/github4s/img/favicon196x196.png" /><link rel="icon" type="image/png" sizes="310x310" href="/github4s/img/favicon310x310.png" /><link rel="icon" type="image/png" sizes="310x150" href="/github4s/img/favicon310x150.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/github4s/highlight/styles/default.css" /><link rel="stylesheet" href="/github4s/css/style.css" /><link rel="stylesheet" href="/github4s/css/palette.css" /><link rel="stylesheet" href="/github4s/css/codemirror.css" /><link rel="stylesheet" href="/github4s/css/kazari-style.css" /><link rel="stylesheet" href="/github4s/css/monokai.css" /><link rel="stylesheet" href="/github4s/css/override.css" /></head><body class="docs"><div id="wrapper"><div id="sidebar-wrapper"><ul id="sidebar" class="sidebar-nav"><li class="sidebar-brand"><a href="/github4s/" class="brand"><div class="brand-wrapper"><span>Github4s</span></div></a></li> <li><a href="/github4s/docs.html" class=" active ">Getting Started</a></li> <li><a href="/github4s/gist.html" class="">Gist API</a></li> <li><a href="/github4s/issue.html" class="">Issue API</a></li> <li><a href="/github4s/pull_request.html" class="">Pull Request API</a></li> <li><a href="/github4s/user.html" class="">User API</a></li> <li><a href="/github4s/repository.html" class="">Repository API</a></li> <li><a href="/github4s/activity.html" class="">Activity API</a></li></ul></div><div id="page-content-wrapper"><div class="nav"><div class="container-fluid"><div class="row"><div class="col-lg-12"><div class="action-menu pull-left clearfix"><a href="#menu-toggle" id="menu-toggle"><i class="fa fa-bars" aria-hidden="true"></i></a></div><ul class="pull-right"><li id="gh-eyes-item" class="hidden-xs"><a href="https://github.com/47deg/github4s"><i class="fa fa-eye"></i><span>WATCH<span id="eyes" class="label label-default">--</span></span></a></li><li id="gh-stars-item" class="hidden-xs"><a href="https://github.com/47deg/github4s"><i class="fa fa-star-o"></i><span>STARS<span id="stars" class="label label-default">--</span></span></a></li><li><a href="#" onclick="shareSiteTwitter('Github4s Github API wrapper written in Scala');"><i class="fa fa-twitter"></i></a></li><li><a href="#" onclick="shareSiteFacebook('Github4s Github API wrapper written in Scala');"><i class="fa fa-facebook"></i></a></li><li><a href="#" onclick="shareSiteGoogle();"><i class="fa fa-google-plus"></i></a></li></ul></div></div></div></div><div id="content" data-github-owner="47deg" data-github-repo="github4s"><div class="content-wrapper"><section><h1 id="getting-started">Getting started</h1>
 
-<p>WIP: Import</p>
+<h2 id="api-token">API token</h2>
+
+<p>In order to access the Github API, you will need to have <a href="https://github.com/settings/tokens">an access token</a> with the
+appropriate scopes (i.e. if you want to create gists, your token will need to have the gist scope).</p>
+
+<h2 id="github4s">Github4s</h2>
+
+<p>First things first, we’ll need to import <code class="highlighter-rouge">github4s.Github</code> which is the entry point to the Github
+API in Github4s.</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">github4s.Github</span>
 </code></pre>
 </div>
 
-<p>In order for github4s to work in both JVM and scala-js environments, you’ll need to place different implicits in your scope, depending on your needs:</p>
+<p>In order for Github4s to work in both JVM and scala-js environments, you’ll need to place different
+implicits in your scope, depending on your needs:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">github4s.jvm.Implicits._</span>
-</code></pre>
-</div>
-
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="c1">// import github4s.js.Implicits._
+<span class="c1">// import github4s.js.Implicits._
 </span></code></pre>
 </div>
 
-<p>WIP: Every Github4s api returns a <code class="highlighter-rouge">Free[GHResponse[A], A]</code> where <code class="highlighter-rouge">GHResponse[A]</code> is a type alias for <code class="highlighter-rouge">Either[GHException, GHResult[A]]</code>. GHResult contains the result <code class="highlighter-rouge">[A]</code> given by GitHub, but also the status code of the response and headers:</p>
+<p>Every Github4s API call returns a <code class="highlighter-rouge">GHIO[GHResponse[A]]</code> which is an alias for
+<code class="highlighter-rouge">Free[Github4s, GHResponse[A]]</code>.</p>
+
+<p><code class="highlighter-rouge">GHResponse[A]</code> is, in turn, a type alias for <code class="highlighter-rouge">Either[GHException, GHResult[A]]</code>.</p>
+
+<p><code class="highlighter-rouge">GHResult</code> contains the result <code class="highlighter-rouge">A</code> given by Github as well as the status code and headers of the
+response:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">case</span> <span class="k">class</span> <span class="nc">GHResult</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">result</span><span class="k">:</span> <span class="kt">A</span><span class="o">,</span> <span class="n">statusCode</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">headers</span><span class="k">:</span> <span class="kt">Map</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">IndexedSeq</span><span class="o">[</span><span class="kt">String</span><span class="o">]])</span>
 </code></pre>
 </div>
 
-<p>To get an user</p>
+<p>As an introductory example, we can get a user with the following:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">user1</span> <span class="k">=</span> <span class="nc">Github</span><span class="o">(</span><span class="n">accessToken</span><span class="o">).</span><span class="n">users</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">"rafaparadela"</span><span class="o">)</span>
 </code></pre>
 </div>
 
-<p>user1 in this case <code class="highlighter-rouge">Free[GHException Xor GHResult[User], User]</code> and we can run (<code class="highlighter-rouge">foldMap</code>) with <code class="highlighter-rouge">exec[M[_], C]</code> where <code class="highlighter-rouge">M[_]</code> represent any type container that implements <code class="highlighter-rouge">MonadError[M, Throwable]</code>, for instance <code class="highlighter-rouge">cats.Eval</code>; and C represents a valid implementation of an HttpClient. The previously mentioned implicit classes carry already set up instances for working with <code class="highlighter-rouge">scalaj</code> (for JVM-compatible apps) and <code class="highlighter-rouge">roshttp</code> (for scala-js-compatible apps). Take into account that in the latter case, you can only use <code class="highlighter-rouge">Future</code> in the place of <code class="highlighter-rouge">M[_]</code>:</p>
+<p><code class="highlighter-rouge">user1</code> in this case is a <code class="highlighter-rouge">GHIO[GHResponse[User]]</code> which we can run (<code class="highlighter-rouge">foldMap</code>) with
+<code class="highlighter-rouge">exec[M[_], C]</code> where <code class="highlighter-rouge">M[_]</code> that represents any type container that implements
+<code class="highlighter-rouge">MonadError[M, Throwable]</code> (for instance <code class="highlighter-rouge">cats.Eval</code>) and <code class="highlighter-rouge">C</code> represents a valid implementation of
+an <a href="https://github.com/47deg/github4s/blob/master/github4s/shared/src/main/scala/github4s/HttpClient.scala">HttpClient</a>.</p>
+
+<p>The previously mentioned implicit classes carry out of the box
+instances for working with <a href="https://github.com/scalaj/scalaj-http">scalaj</a> (for JVM-compatible apps) and <a href="https://github.com/hmil/RosHTTP">roshttp</a> (for
+scala-js-compatible apps). Take into account that in the latter case, you can only use <code class="highlighter-rouge">Future</code> in
+place of <code class="highlighter-rouge">M[_]</code>.</p>
+
+<p>A few examples follow with different <code class="highlighter-rouge">MonadError[M, Throwable]</code>.</p>
+
+<h3 id="using-catseval">Using <code class="highlighter-rouge">cats.Eval</code></h3>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.Eval</span>
 <span class="k">import</span> <span class="nn">github4s.Github._</span>
-<span class="k">import</span> <span class="nn">scalaj.http._</span>
+<span class="k">import</span> <span class="nn">scalaj.http.HttpResponse</span>
 
 <span class="k">object</span> <span class="nc">ProgramEval</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">u1</span> <span class="k">=</span> <span class="n">user1</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">Eval</span>, <span class="kt">HttpResponse</span><span class="o">[</span><span class="kt">String</span><span class="o">]]().</span><span class="n">value</span>
+  <span class="k">val</span> <span class="n">u1</span> <span class="k">=</span> <span class="n">user1</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">Eval</span>, <span class="kt">HttpResponse</span><span class="o">[</span><span class="kt">String</span><span class="o">]]().</span><span class="n">value</span>
 <span class="o">}</span>
-
 </code></pre>
 </div>
 
-<p>WIP: As mentioned above <code class="highlighter-rouge">u1</code> should have an <code class="highlighter-rouge">GHResult[User]</code> in the right.</p>
+<p>As mentioned above, <code class="highlighter-rouge">u1</code> should have an <code class="highlighter-rouge">GHResult[User]</code> in the right.</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">ProgramEval</span><span class="o">.</span><span class="n">u1</span> <span class="k">match</span> <span class="o">{</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.implicits._</span>
+<span class="k">import</span> <span class="nn">github4s.GithubResponses.GHResult</span>
+
+<span class="nc">ProgramEval</span><span class="o">.</span><span class="n">u1</span> <span class="k">match</span> <span class="o">{</span>
   <span class="k">case</span> <span class="nc">Right</span><span class="o">(</span><span class="nc">GHResult</span><span class="o">(</span><span class="n">result</span><span class="o">,</span> <span class="n">status</span><span class="o">,</span> <span class="n">headers</span><span class="o">))</span> <span class="k">=&gt;</span> <span class="n">result</span><span class="o">.</span><span class="n">login</span>
   <span class="k">case</span> <span class="nc">Left</span><span class="o">(</span><span class="n">e</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">e</span><span class="o">.</span><span class="n">getMessage</span>
 <span class="o">}</span>
-<span class="c1">// res3: String = rafaparadela
-</span></code></pre>
+</code></pre>
 </div>
 
-<p>WIP:  With <code class="highlighter-rouge">Id</code></p>
+<h3 id="using-catsid">Using <code class="highlighter-rouge">cats.Id</code></h3>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.Id</span>
-<span class="k">import</span> <span class="nn">scalaj.http._</span>
 
 <span class="k">object</span> <span class="nc">ProgramId</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">u2</span> <span class="k">=</span> <span class="nc">Github</span><span class="o">(</span><span class="n">accessToken</span><span class="o">).</span><span class="n">users</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">"raulraja"</span><span class="o">).</span><span class="n">exec</span><span class="o">[</span><span class="kt">Id</span>, <span class="kt">HttpResponse</span><span class="o">[</span><span class="kt">String</span><span class="o">]]()</span>
+  <span class="k">val</span> <span class="n">u2</span> <span class="k">=</span> <span class="nc">Github</span><span class="o">(</span><span class="n">accessToken</span><span class="o">).</span><span class="n">users</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">"raulraja"</span><span class="o">).</span><span class="n">exec</span><span class="o">[</span><span class="kt">Id</span>, <span class="kt">HttpResponse</span><span class="o">[</span><span class="kt">String</span><span class="o">]]()</span>
 <span class="o">}</span>
 </code></pre>
 </div>
 
-<p>WIP: With <code class="highlighter-rouge">Future</code></p>
+<h3 id="using-future">Using <code class="highlighter-rouge">Future</code></h3>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.Id</span>
-<span class="k">import</span> <span class="nn">scala.concurrent.Future</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">scala.concurrent.Future</span>
 <span class="k">import</span> <span class="nn">scala.concurrent.ExecutionContext.Implicits.global</span>
 <span class="k">import</span> <span class="nn">scala.concurrent.duration._</span>
 <span class="k">import</span> <span class="nn">scala.concurrent.Await</span>
-<span class="k">import</span> <span class="nn">scalaj.http._</span>
 
 <span class="k">object</span> <span class="nc">ProgramFuture</span> <span class="o">{</span>
-    <span class="c1">// execFuture[C] is a convenience access to exec[Future, C]
-</span>    <span class="k">val</span> <span class="n">u3</span> <span class="k">=</span> <span class="nc">Github</span><span class="o">(</span><span class="n">accessToken</span><span class="o">).</span><span class="n">users</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">"dialelo"</span><span class="o">).</span><span class="n">execFuture</span><span class="o">[</span><span class="kt">HttpResponse</span><span class="o">[</span><span class="kt">String</span><span class="o">]]()</span>
-    <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">u3</span><span class="o">,</span> <span class="mf">2.</span><span class="n">seconds</span><span class="o">)</span>
+  <span class="c1">// execFuture[C] is a shortcut for exec[Future, C]
+</span>  <span class="k">val</span> <span class="n">u3</span> <span class="k">=</span> <span class="nc">Github</span><span class="o">(</span><span class="n">accessToken</span><span class="o">).</span><span class="n">users</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">"dialelo"</span><span class="o">).</span><span class="n">execFuture</span><span class="o">[</span><span class="kt">HttpResponse</span><span class="o">[</span><span class="kt">String</span><span class="o">]]()</span>
+  <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="n">u3</span><span class="o">,</span> <span class="mf">2.</span><span class="n">seconds</span><span class="o">)</span>
 <span class="o">}</span>
 </code></pre>
 </div>
 
-<p>WIP: With <code class="highlighter-rouge">scalaz.Task</code></p>
+<h3 id="using-scalaztask">Using <code class="highlighter-rouge">scalaz.Task</code></h3>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">scalaz.concurrent.Task</span>
 <span class="k">import</span> <span class="nn">github4s.scalaz.implicits._</span>
-<span class="k">import</span> <span class="nn">scalaj.http._</span>
-<span class="k">import</span> <span class="nn">github4s.jvm.Implicits._</span>
+<span class="k">import</span> <span class="nn">scalaj.http.HttpResponse</span>
 
 <span class="k">object</span> <span class="nc">ProgramTask</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">u4</span> <span class="k">=</span> <span class="nc">Github</span><span class="o">(</span><span class="n">accessToken</span><span class="o">).</span><span class="n">users</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">"franciscodr"</span><span class="o">).</span><span class="n">exec</span><span class="o">[</span><span class="kt">Task</span>, <span class="kt">HttpResponse</span><span class="o">[</span><span class="kt">String</span><span class="o">]]()</span>
-    <span class="n">u4</span><span class="o">.</span><span class="n">unsafePerformSyncAttempt</span>
+  <span class="k">val</span> <span class="n">u4</span> <span class="k">=</span> <span class="nc">Github</span><span class="o">(</span><span class="n">accessToken</span><span class="o">).</span><span class="n">users</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">"franciscodr"</span><span class="o">).</span><span class="n">exec</span><span class="o">[</span><span class="kt">Task</span>, <span class="kt">HttpResponse</span><span class="o">[</span><span class="kt">String</span><span class="o">]]()</span>
+  <span class="n">u4</span><span class="o">.</span><span class="n">unsafePerformSyncAttempt</span>
 <span class="o">}</span>
 </code></pre>
 </div>
+
+<p>Note that you’ll need a dependency to the <code class="highlighter-rouge">github4s-scalaz</code> pacakge to leverage <code class="highlighter-rouge">scalaz.Task</code>.</p>
+
+<h2 id="specifying-custom-headers">Specifying custom headers</h2>
+
+<p>The different <code class="highlighter-rouge">exec</code> methods let users include custom headers for any Github API request:</p>
 
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">ProgramEval</span> <span class="o">{</span>
-    <span class="c1">// exec methods let users to include optional headers for any GitHub API request:
-</span>    <span class="k">val</span> <span class="n">userHeaders</span> <span class="k">=</span> <span class="nc">Map</span><span class="o">(</span><span class="s">"user-agent"</span> <span class="o">-&gt;</span> <span class="s">"github4s"</span><span class="o">)</span>
-    <span class="k">val</span> <span class="n">user1</span> <span class="k">=</span> <span class="nc">Github</span><span class="o">(</span><span class="n">accessToken</span><span class="o">).</span><span class="n">users</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">"rafaparadela"</span><span class="o">).</span><span class="n">exec</span><span class="o">[</span><span class="kt">Eval</span>, <span class="kt">HttpResponse</span><span class="o">[</span><span class="kt">String</span><span class="o">]](</span><span class="n">userHeaders</span><span class="o">).</span><span class="n">value</span>
+  <span class="k">val</span> <span class="n">userHeaders</span> <span class="k">=</span> <span class="nc">Map</span><span class="o">(</span><span class="s">"user-agent"</span> <span class="o">-&gt;</span> <span class="s">"github4s"</span><span class="o">)</span>
+  <span class="k">val</span> <span class="n">user1</span> <span class="k">=</span> <span class="nc">Github</span><span class="o">(</span><span class="n">accessToken</span><span class="o">).</span><span class="n">users</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">"rafaparadela"</span><span class="o">).</span><span class="n">exec</span><span class="o">[</span><span class="kt">Eval</span>, <span class="kt">HttpResponse</span><span class="o">[</span><span class="kt">String</span><span class="o">]](</span><span class="n">userHeaders</span><span class="o">).</span><span class="n">value</span>
 <span class="o">}</span>
-<span class="c1">// defined object ProgramEval
-</span>
-<span class="nc">ProgramEval</span><span class="o">.</span><span class="n">user1</span> <span class="n">should</span> <span class="n">matchPattern</span> <span class="o">{</span> <span class="k">case</span> <span class="nc">Right</span><span class="o">(</span><span class="nc">GHResult</span><span class="o">(</span><span class="k">_</span><span class="o">,</span> <span class="mi">200</span><span class="o">,</span> <span class="k">_</span><span class="o">))</span> <span class="k">=&gt;</span> <span class="o">}</span>
-<span class="c1">// res7: org.scalatest.Assertion = Succeeded
-</span>
-<span class="nc">ProgramEval</span><span class="o">.</span><span class="n">user1</span><span class="o">.</span><span class="n">toOption</span> <span class="n">map</span> <span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">login</span> <span class="n">shouldBe</span> <span class="s">"rafaparadela"</span><span class="o">)</span>
-<span class="c1">// res8: Option[org.scalatest.Assertion] = Some(Succeeded)
-</span></code></pre>
-</div>
-
-<h1 id="test-credentials">Test credentials</h1>
-
-<p>Note that for github4s to have access to the GitHub API during the test phases, you need to provide a valid access token with the right credentials (i.e.: users + gists scopes), through the sbt configuration variable “token”:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>sbt -Dtoken=ACCESS_TOKEN_STRING
 </code></pre>
 </div>
+
 </section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/github4s/highlight/highlight.pack.js"></script><script>hljs.configure({
 languages:['scala','java','bash']
 });
 hljs.initHighlighting();
-             </script><script src="/github4s/js/main.js"></script><script src="/github4s/js/kazari.js"></script><script>
+             </script><script>((window.gitter = {}).chat = {}).options = {
+room: '47deg/github4s'};</script><script src="https://sidecar.gitter.im/dist/sidecar.v1.js"></script><script src="/github4s/js/main.js"></script><script src="/github4s/js/kazari.js"></script><script>
 $(document).ready(function() {
-	kazari.KazariPlugin().decorateCode('https://scala-evaluator-212.herokuapp.com/eval', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.S2F6YXJp.Jl2eqMfw8IakJF93PjxTbrf-8YUJgX5OoOfy5JHE8Yw', '', 'solarized-dark')
+	kazari.KazariPlugin().decorateCode('https://scala-evaluator-212.herokuapp.com/eval', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.S2F6YXJp.Jl2eqMfw8IakJF93PjxTbrf-8YUJgX5OoOfy5JHE8Yw', '', 'monokai')
 })
     </script></body></html>
