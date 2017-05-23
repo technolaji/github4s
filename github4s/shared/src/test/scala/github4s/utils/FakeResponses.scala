@@ -1789,6 +1789,122 @@ trait FakeResponses {
       |  }
       |]""".stripMargin
 
+  val listReviewsValidResponse =
+    """
+      |[
+      |  {
+      |    "id": 39170343,
+      |    "user": {
+      |      "login": "BenFradet",
+      |      "id": 1737211,
+      |      "avatar_url": "https://avatars1.githubusercontent.com/u/1737211?v=3",
+      |      "gravatar_id": "",
+      |      "url": "https://api.github.com/users/BenFradet",
+      |      "html_url": "https://github.com/BenFradet",
+      |      "followers_url": "https://api.github.com/users/BenFradet/followers",
+      |      "following_url": "https://api.github.com/users/BenFradet/following{/other_user}",
+      |      "gists_url": "https://api.github.com/users/BenFradet/gists{/gist_id}",
+      |      "starred_url": "https://api.github.com/users/BenFradet/starred{/owner}{/repo}",
+      |      "subscriptions_url": "https://api.github.com/users/BenFradet/subscriptions",
+      |      "organizations_url": "https://api.github.com/users/BenFradet/orgs",
+      |      "repos_url": "https://api.github.com/users/BenFradet/repos",
+      |      "events_url": "https://api.github.com/users/BenFradet/events{/privacy}",
+      |      "received_events_url": "https://api.github.com/users/BenFradet/received_events",
+      |      "type": "User",
+      |      "site_admin": false
+      |    },
+      |    "body": "Looks like a good start :+1: ",
+      |    "state": "COMMENTED",
+      |    "html_url": "https://github.com/47deg/github4s/pull/139#pullrequestreview-39170343",
+      |    "pull_request_url": "https://api.github.com/repos/47deg/github4s/pulls/139",
+      |    "_links": {
+      |      "html": {
+      |        "href": "https://github.com/47deg/github4s/pull/139#pullrequestreview-39170343"
+      |      },
+      |      "pull_request": {
+      |        "href": "https://api.github.com/repos/47deg/github4s/pulls/139"
+      |      }
+      |    },
+      |    "submitted_at": "2017-05-19T11:23:47Z",
+      |    "commit_id": "71e9b8932541c0a50fa58531d8678a14e3ccf94a"
+      |  },
+      |  {
+      |    "id": 39355613,
+      |    "user": {
+      |      "login": "juanpedromoreno",
+      |      "id": 4879373,
+      |      "avatar_url": "https://avatars1.githubusercontent.com/u/4879373?v=3",
+      |      "gravatar_id": "",
+      |      "url": "https://api.github.com/users/juanpedromoreno",
+      |      "html_url": "https://github.com/juanpedromoreno",
+      |      "followers_url": "https://api.github.com/users/juanpedromoreno/followers",
+      |      "following_url": "https://api.github.com/users/juanpedromoreno/following{/other_user}",
+      |      "gists_url": "https://api.github.com/users/juanpedromoreno/gists{/gist_id}",
+      |      "starred_url": "https://api.github.com/users/juanpedromoreno/starred{/owner}{/repo}",
+      |      "subscriptions_url": "https://api.github.com/users/juanpedromoreno/subscriptions",
+      |      "organizations_url": "https://api.github.com/users/juanpedromoreno/orgs",
+      |      "repos_url": "https://api.github.com/users/juanpedromoreno/repos",
+      |      "events_url": "https://api.github.com/users/juanpedromoreno/events{/privacy}",
+      |      "received_events_url": "https://api.github.com/users/juanpedromoreno/received_events",
+      |      "type": "User",
+      |      "site_admin": false
+      |    },
+      |    "body": "",
+      |    "state": "COMMENTED",
+      |    "html_url": "https://github.com/47deg/github4s/pull/139#pullrequestreview-39355613",
+      |    "pull_request_url": "https://api.github.com/repos/47deg/github4s/pulls/139",
+      |    "_links": {
+      |      "html": {
+      |        "href": "https://github.com/47deg/github4s/pull/139#pullrequestreview-39355613"
+      |      },
+      |      "pull_request": {
+      |        "href": "https://api.github.com/repos/47deg/github4s/pulls/139"
+      |      }
+      |    },
+      |    "submitted_at": "2017-05-21T12:48:05Z",
+      |    "commit_id": "71e9b8932541c0a50fa58531d8678a14e3ccf94a"
+      |  }
+      |]""".stripMargin
+
+  val getReviewValidResponse =
+    """
+      |{
+      |  "id": 39318789,
+      |  "user": {
+      |    "login": "mscharley",
+      |    "id": 336509,
+      |    "avatar_url": "https://avatars3.githubusercontent.com/u/336509?v=3",
+      |    "gravatar_id": "",
+      |    "url": "https://api.github.com/users/mscharley",
+      |    "html_url": "https://github.com/mscharley",
+      |    "followers_url": "https://api.github.com/users/mscharley/followers",
+      |    "following_url": "https://api.github.com/users/mscharley/following{/other_user}",
+      |    "gists_url": "https://api.github.com/users/mscharley/gists{/gist_id}",
+      |    "starred_url": "https://api.github.com/users/mscharley/starred{/owner}{/repo}",
+      |    "subscriptions_url": "https://api.github.com/users/mscharley/subscriptions",
+      |    "organizations_url": "https://api.github.com/users/mscharley/orgs",
+      |    "repos_url": "https://api.github.com/users/mscharley/repos",
+      |    "events_url": "https://api.github.com/users/mscharley/events{/privacy}",
+      |    "received_events_url": "https://api.github.com/users/mscharley/received_events",
+      |    "type": "User",
+      |    "site_admin": false
+      |  },
+      |  "body": "Adding a review to help support integration testing for #139 ",
+      |  "state": "COMMENTED",
+      |  "html_url": "https://github.com/47deg/github4s/pull/1#pullrequestreview-39318789",
+      |  "pull_request_url": "https://api.github.com/repos/47deg/github4s/pulls/1",
+      |  "_links": {
+      |    "html": {
+      |      "href": "https://github.com/47deg/github4s/pull/1#pullrequestreview-39318789"
+      |    },
+      |    "pull_request": {
+      |      "href": "https://api.github.com/repos/47deg/github4s/pulls/1"
+      |    }
+      |  },
+      |  "submitted_at": "2017-05-19T23:31:49Z",
+      |  "commit_id": "765089ac90b2cb935a45d9ce214d3340e503663c"
+      |}""".stripMargin
+
   val createIssueValidResponse =
     """
       |{

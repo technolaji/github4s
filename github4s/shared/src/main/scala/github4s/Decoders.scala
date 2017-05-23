@@ -160,6 +160,14 @@ object Decoders {
     }
   }
 
+  implicit val decodePrrStatus: Decoder[PullRequestReviewState] =
+    Decoder.decodeString.map {
+      case "APPROVE" => PRRStateApprove
+      case "REQUEST_CHANGES" => PRRStateRequestChanges
+      case "COMMENTED" => PRRStateCommented
+      case "PENDING" => PRRStatePending
+    }
+
   implicit val decodeGist: Decoder[Gist] = Decoder.instance { c ⇒
     for {
       url         ← c.downField("url").as[String]

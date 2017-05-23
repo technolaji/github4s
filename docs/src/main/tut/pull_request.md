@@ -11,6 +11,8 @@ with Github4s, you can:
 - [List pull requests](#list-pull-requests)
 - [List the files in a pull request](#list-the-files-in-a-pull-request)
 - [Create a pull request](#create-a-pull-request)
+- [List reviews](#list-pull-request-reviews)
+- [Get a review](#get-an-individual-review)
 
 The following examples assume the following imports and token:
 
@@ -127,6 +129,60 @@ createPullRequestIssue.exec[cats.Id, HttpResponse[String]]() match {
 ```
 
 See [the API doc](https://developer.github.com/v3/pulls/#create-a-pull-request) for full reference.
+
+# Review API
+
+## List pull request reviews
+
+You can list the reviews for a pull request using `listReviews`; it takes as arguments:
+
+- the repository coordinates (`owner` and `name` of the repository).
+- the pull request id.
+
+As an example, if we wanted to see all the reviews for pull request 139 of `47deg/github4s`:
+
+```tut:silent
+val listReviews = Github(accessToken).pullRequests.listReviews(
+  "47deg",
+  "github4s",
+  139)
+
+listReviews.exec[cats.Id, HttpResponse[String]]() match {
+  case Left(e) => println(s"Something went wrong: ${e.getMessage}")
+  case Right(r) => println(r.result)
+}
+```
+
+The `result` on the right is the matching [List[PullRequestReview]][pr-scala].
+
+See [the API doc](https://developer.github.com/v3/pulls/reviews/#list-reviews-on-a-pull-request) for full reference.
+
+## Get an individual review
+
+You can get an individual review for a pull request using `getReview`; it takes as arguments:
+
+- the repository coordinates (`owner` and `name` of the repository).
+- the pull request id.
+- the review id.
+
+As an example, if we wanted to see review 39355613 for pull request 139 of `47deg/github4s`:
+
+```tut:silent
+val review = Github(accessToken).pullRequests.getReview(
+  "47deg",
+  "github4s",
+  139,
+  39355613)
+
+review.exec[cats.Id, HttpResponse[String]]() match {
+  case Left(e) => println(s"Something went wrong: ${e.getMessage}")
+  case Right(r) => println(r.result)
+}
+```
+
+The `result` on the right is the matching [PullRequestReview][pr-scala].
+
+See [the API doc](https://developer.github.com/v3/pulls/reviews/#get-a-single-review) for full reference.
 
 As you can see, a few features of the pull request endpoint are missing. As a result, if you'd like
 to see a feature supported, feel free to create an issue and/or a pull request!

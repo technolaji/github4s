@@ -106,4 +106,48 @@ class GHPullRequestsSpec extends BaseSpec {
       validBase,
       Some(true))
   }
+
+  "GHPullRequests.listReviews" should "call to PullRequestOps with the right parameters" in {
+
+    val response: Free[GitHub4s, GHResponse[List[PullRequestReview]]] =
+      Free.pure(Right(GHResult(List(pullRequestReview), okStatusCode, Map.empty)))
+
+    val pullRequestOps = mock[PullRequestOpsTest]
+    (pullRequestOps.listPullRequestReviews _)
+      .expects(
+        validRepoOwner,
+        validRepoName,
+        validPullRequestNumber,
+        sampleToken)
+      .returns(response)
+
+    val ghPullRequests = new GHPullRequests(sampleToken)(pullRequestOps)
+    ghPullRequests.listReviews(
+      validRepoOwner,
+      validRepoName,
+      validPullRequestNumber)
+  }
+
+  "GHPullRequests.getReview" should "call to PullRequestOps with the right parameters" in {
+
+    val response: Free[GitHub4s, GHResponse[PullRequestReview]] =
+      Free.pure(Right(GHResult(pullRequestReview, okStatusCode, Map.empty)))
+
+    val pullRequestOps = mock[PullRequestOpsTest]
+    (pullRequestOps.getPullRequestReview _)
+      .expects(
+        validRepoOwner,
+        validRepoName,
+        validPullRequestNumber,
+        validPullRequestReviewNumber,
+        sampleToken)
+      .returns(response)
+
+    val ghPullRequests = new GHPullRequests(sampleToken)(pullRequestOps)
+    ghPullRequests.getReview(
+      validRepoOwner,
+      validRepoName,
+      validPullRequestNumber,
+      validPullRequestReviewNumber)
+  }
 }

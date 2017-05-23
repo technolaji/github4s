@@ -103,8 +103,9 @@ trait TestData extends DummyGithubUrls {
   val validTagTitle = "v0.1.1"
   val validTagSha   = "c3d0be41ecbe669545ee3e94d31ed9a4bc91ee3c"
 
-  val validPullRequestFileSha = "f80f79cafbe3f2ba71311b82e1171e73bd37a470"
-  val validPullRequestNumber  = 1
+  val validPullRequestFileSha      = "f80f79cafbe3f2ba71311b82e1171e73bd37a470"
+  val validPullRequestNumber       = 1
+  val validPullRequestReviewNumber = 39318789
 
   val validHead   = "test-pr-issue"
   val invalidHead = ""
@@ -357,4 +358,14 @@ trait TestData extends DummyGithubUrls {
   val validGistUrl = "https://api.github.com/gists/aa5a315d61ae9438b18d"
   val validGistId  = "aa5a315d61ae9438b18d"
   val gist         = Gist(validGistUrl, validGistId, validGistDescription, validGistPublic)
+
+  val pullRequestReview = PullRequestReview(
+    id = validPullRequestReviewNumber,
+    user = Some(user),
+    body = validCommentBody,
+    commit_id = validCommitSha,
+    state = PRRStateCommented,
+    html_url = "",
+    pull_request_url = ""
+  )
 }

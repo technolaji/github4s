@@ -118,4 +118,42 @@ class PullRequests[C, M[_]](
     httpClient
       .post[PullRequest](accessToken, s"repos/$owner/$repo/pulls", headers, data.asJson.noSpaces)
   }
+
+  /**
+   * List pull request reviews.
+   *
+   * @param accessToken Token to identify the authenticated user
+   * @param headers Optional user header to include in the request
+   * @param owner Owner of the repo
+   * @param repo Name of the repo
+   * @param pullRequest ID number of the PR to get reviews for.
+   */
+  def listReviews(
+      accessToken: Option[String] = None,
+      headers: Map[String, String] = Map(),
+      owner: String,
+      repo: String,
+      pullRequest: Int): M[GHResponse[List[PullRequestReview]]] = {
+    httpClient.get[List[PullRequestReview]](accessToken, s"repos/$owner/$repo/pulls/$pullRequest/reviews", headers)
+  }
+
+  /**
+   * Get a specific pull request review.
+   *
+   * @param accessToken Token to identify the authenticated user
+   * @param headers Optional user header to include in the request
+   * @param owner Owner of the repo
+   * @param repo Name of the repo
+   * @param pullRequest ID number of the PR to get reviews for
+   * @param review ID number of the review to retrieve.
+   */
+  def getReview(
+      accessToken: Option[String] = None,
+      headers: Map[String, String] = Map(),
+      owner: String,
+      repo: String,
+      pullRequest: Int,
+      review: Int): M[GHResponse[PullRequestReview]] = {
+    httpClient.get[PullRequestReview](accessToken, s"repos/$owner/$repo/pulls/$pullRequest/reviews/$review", headers)
+  }
 }

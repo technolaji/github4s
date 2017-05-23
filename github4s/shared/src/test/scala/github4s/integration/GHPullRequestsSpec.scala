@@ -80,4 +80,46 @@ trait GHPullRequestsSpec[T] extends BaseIntegrationSpec[T] {
     testFutureIsLeft(response)
   }
 
+  "PullRequests >> ListReviews" should "return a right response when a valid pr is provided" in {
+    val response =
+      Github(accessToken).pullRequests
+        .listReviews(validRepoOwner, validRepoName, validPullRequestNumber)
+        .execFuture[T](headerUserAgent)
+
+    testFutureIsRight[List[PullRequestReview]](response, { r =>
+      r.result.nonEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    })
+  }
+
+  it should "return error when an invalid repo name is passed" in {
+    val response =
+      Github(accessToken).pullRequests
+        .listReviews(validRepoOwner, invalidRepoName, validPullRequestNumber)
+        .execFuture[T](headerUserAgent)
+
+    testFutureIsLeft(response)
+  }
+
+  "PullRequests >> GetReview" should "return a right response when a valid pr review is provided" in {
+    val response =
+      Github(accessToken).pullRequests
+        .getReview(validRepoOwner, validRepoName, validPullRequestNumber, validPullRequestReviewNumber)
+        .execFuture[T](headerUserAgent)
+
+    testFutureIsRight[PullRequestReview](response, { r =>
+      r.result.id shouldBe validPullRequestReviewNumber
+      r.statusCode shouldBe okStatusCode
+    })
+  }
+
+  it should "return error when an invalid repo name is passed" in {
+    val response =
+      Github(accessToken).pullRequests
+        .getReview(validRepoOwner, invalidRepoName, validPullRequestNumber, validPullRequestReviewNumber)
+        .execFuture[T](headerUserAgent)
+
+    testFutureIsLeft(response)
+  }
+
 }

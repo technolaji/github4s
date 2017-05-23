@@ -131,4 +131,50 @@ class PullRequestsSpec extends BaseSpec {
       validBase,
       Some(true))
   }
+
+  "GHPullRequests.listPullRequestReviews" should "call to httpClient.post with the right parameters" in {
+
+    val response: GHResponse[List[PullRequestReview]] =
+      Right(GHResult(List(pullRequestReview), okStatusCode, Map.empty))
+
+    val httpClientMock = httpClientMockGet[List[PullRequestReview]](
+      url = s"repos/$validRepoOwner/$validRepoName/pulls/$validPullRequestNumber/reviews",
+      response = response
+    )
+
+    val pullRequests = new PullRequests[String, Id] {
+      override val httpClient: HttpClient[String, Id] = httpClientMock
+    }
+
+    pullRequests.listReviews(
+      sampleToken,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      validPullRequestNumber)
+  }
+
+  "GHPullRequests.getPullRequestReview" should "call to httpClient.post with the right parameters" in {
+
+    val response: GHResponse[PullRequestReview] =
+      Right(GHResult(pullRequestReview, okStatusCode, Map.empty))
+
+    val httpClientMock = httpClientMockGet[PullRequestReview](
+      url = s"repos/$validRepoOwner/$validRepoName/pulls/$validPullRequestNumber/reviews/$validPullRequestReviewNumber",
+      response = response
+    )
+
+    val pullRequests = new PullRequests[String, Id] {
+      override val httpClient: HttpClient[String, Id] = httpClientMock
+    }
+
+    pullRequests.getReview(
+      sampleToken,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      validPullRequestNumber,
+      validPullRequestReviewNumber)
+  }
+
 }

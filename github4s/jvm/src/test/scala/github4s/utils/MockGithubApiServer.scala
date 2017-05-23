@@ -598,6 +598,42 @@ trait MockGithubApiServer extends MockServerService with FakeResponses with Test
          """.stripMargin)))
     .respond(response.withStatusCode(createdStatusCode).withBody(validCreatePullRequest))
 
+  //PullRequests >> listReviews
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/pulls/$validPullRequestNumber/reviews")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(okStatusCode).withBody(listReviewsValidResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(s"/repos/$validRepoOwner/$invalidRepoName/pulls/$validPullRequestNumber/reviews")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
+
+  //PullRequests >> getReview
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(
+          s"/repos/$validRepoOwner/$validRepoName/pulls/$validPullRequestNumber/reviews/$validPullRequestReviewNumber")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(okStatusCode).withBody(getReviewValidResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(
+          s"/repos/$validRepoOwner/$invalidRepoName/pulls/$validPullRequestNumber/reviews/$validPullRequestReviewNumber")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
+
   //Issues >> list
   mockServer
     .when(
@@ -611,16 +647,8 @@ trait MockGithubApiServer extends MockServerService with FakeResponses with Test
     .when(
       request
         .withMethod("GET")
-        .withPath(s"/repos/$validRepoOwner/$validRepoName/issues")
-        .withHeader(not("Authorization")))
-    .respond(response.withStatusCode(unauthorizedStatusCode).withBody(unauthorizedResponse))
-
-  mockServer
-    .when(
-      request
-        .withMethod("GET")
         .withPath(s"/repos/$validRepoOwner/$invalidRepoName/issues")
-        .withHeader(not("Authorization")))
+        .withHeader("Authorization", tokenHeader))
     .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
 
   //Issues >> create

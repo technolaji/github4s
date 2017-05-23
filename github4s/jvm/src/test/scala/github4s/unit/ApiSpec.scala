@@ -762,6 +762,48 @@ class ApiSpec
     response should be('left)
   }
 
+  "PullRequests >> List PullRequestReviews" should "return a list of reviews when valid data is provided" in {
+    val response = pullRequests.listReviews(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      validPullRequestNumber)
+    response should be('right)
+  }
+
+  it should "return an error when invalid data is passed" in {
+    val response = pullRequests.listReviews(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      invalidRepoName,
+      validPullRequestNumber)
+    response should be('left)
+  }
+
+  "PullRequests >> Get PullRequestReview" should "return a single review when valid data is provided" in {
+    val response = pullRequests.getReview(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      validPullRequestNumber,
+      validPullRequestReviewNumber)
+    response should be('right)
+  }
+
+  it should "return an error when invalid data is passed" in {
+    val response = pullRequests.getReview(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      invalidRepoName,
+      validPullRequestNumber,
+      validPullRequestReviewNumber)
+    response should be('left)
+  }
+
   "Issues >> List" should "return the expected issues when a valid owner/repo is provided" in {
     val response =
       issues.list(accessToken, headerUserAgent, validRepoOwner, validRepoName)

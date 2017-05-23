@@ -49,6 +49,21 @@ final case class CreatePullRequest(
     accessToken: Option[String] = None
 ) extends PullRequestOp[GHResponse[PullRequest]]
 
+final case class ListPullRequestReviews(
+    owner: String,
+    repo: String,
+    pullRequest: Int,
+    accessToken: Option[String] = None
+) extends PullRequestOp[GHResponse[List[PullRequestReview]]]
+
+final case class GetPullRequestReview(
+    owner: String,
+    repo: String,
+    pullRequest: Int,
+    review: Int,
+    accessToken: Option[String] = None
+) extends PullRequestOp[GHResponse[PullRequestReview]]
+
 /**
  * Exposes Pull Request operations as a Free monadic algebra that may be combined with other
  * Algebras via Coproduct
@@ -83,6 +98,20 @@ class PullRequestOps[F[_]](implicit I: Inject[PullRequestOp, F]) {
     Free.inject[PullRequestOp, F](
       CreatePullRequest(owner, repo, newPullRequest, head, base, maintainerCanModify, accessToken))
 
+  def listPullRequestReviews(
+      owner: String,
+      repo: String,
+      pullRequest: Int,
+      accessToken: Option[String] = None): Free[F, GHResponse[List[PullRequestReview]]] =
+    Free.inject[PullRequestOp, F](ListPullRequestReviews(owner, repo, pullRequest, accessToken))
+
+  def getPullRequestReview(
+      owner: String,
+      repo: String,
+      pullRequest: Int,
+      review: Int,
+      accessToken: Option[String] = None): Free[F, GHResponse[PullRequestReview]] =
+    Free.inject[PullRequestOp, F](GetPullRequestReview(owner, repo, pullRequest, review, accessToken))
 }
 
 /**
