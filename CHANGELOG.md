@@ -1,5 +1,28 @@
 # Changelog
 
+## 05/23/2017 - Version 0.15.0
+
+Release changes:
+
+* Remove integration tests creating statuses ([#128](https://github.com/47deg/github4s/pull/128))
+* Streamlined the getting started ([#126](https://github.com/47deg/github4s/pull/126))
+* Support Comment API ([#127](https://github.com/47deg/github4s/pull/127))
+* Refactor Algebras ([#130](https://github.com/47deg/github4s/pull/130))
+* Missing Test and Docs ([#132](https://github.com/47deg/github4s/pull/132))
+* Missing unit test ([#137](https://github.com/47deg/github4s/pull/137))
+* Contributing guide ([#138](https://github.com/47deg/github4s/pull/138))
+* Replace updateReference's force parameter type from Option[Boolean] to Boolean ([#141](https://github.com/47deg/github4s/pull/141))
+* Upgrades tut bumping sbt-org-policies version to 0.5.0 ([#140](https://github.com/47deg/github4s/pull/140))
+* Fixes ghost users associated with pull requests, issues and comments ([#144](https://github.com/47deg/github4s/pull/144))
+* Microsite Enhancements ([#143](https://github.com/47deg/github4s/pull/143))
+* Super minor lang edits ([#146](https://github.com/47deg/github4s/pull/146))
+* Fix string interpolation in docs ([#147](https://github.com/47deg/github4s/pull/147))
+* Rename listStatus to listStatuses ([#145](https://github.com/47deg/github4s/pull/145))
+* Rename Authentication to Authorization in the doc ([#148](https://github.com/47deg/github4s/pull/148))
+* Add support for the read half of the PR Review API ([#139](https://github.com/47deg/github4s/pull/139))
+* Releases 0.15.0 ([#150](https://github.com/47deg/github4s/pull/150))
+
+
 ## 05/08/2017 - Version 0.14.7
 
 Release changes:
