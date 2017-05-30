@@ -1,4 +1,6 @@
+import com.typesafe.sbt.sbtghpages.GhpagesPlugin.autoImport._
 import com.typesafe.sbt.site.jekyll.JekyllPlugin.autoImport._
+import com.typesafe.sbt.site.SitePlugin.autoImport._
 import microsites._
 import microsites.MicrositesPlugin.autoImport._
 import sbt.Keys._
@@ -9,6 +11,7 @@ import sbtorgpolicies.OrgPoliciesPlugin
 import sbtorgpolicies.OrgPoliciesPlugin.autoImport._
 import sbtorgpolicies.templates.badges._
 import sbtorgpolicies.runnable.syntax._
+import sbtunidoc.ScalaUnidocPlugin.autoImport._
 import scoverage.ScoverageKeys
 import scoverage.ScoverageKeys._
 import tut.TutPlugin.autoImport._
@@ -25,7 +28,7 @@ object ProjectPlugin extends AutoPlugin {
       micrositeName := "Github4s",
       micrositeDescription := "Github API wrapper written in Scala",
       micrositeBaseUrl := "github4s",
-      micrositeDocumentationUrl := "/github4s/docs.html",
+      micrositeDocumentationUrl := "/github4s/api",
       micrositeGithubOwner := "47deg",
       micrositeGithubRepo := "github4s",
       micrositeAuthor := "Github4s contributors",
@@ -38,7 +41,12 @@ object ProjectPlugin extends AutoPlugin {
         )
       ),
       includeFilter in Jekyll := "*.html" | "*.css" | "*.png" | "*.jpg" | "*.gif" | "*.js" | "*.swf" | "*.md",
-      scalacOptions in Tut ~= (_ filterNot Set("-Ywarn-unused-import", "-Xlint").contains)
+      scalacOptions in Tut ~= (_ filterNot Set("-Ywarn-unused-import", "-Xlint").contains),
+      autoAPIMappings := true,
+      siteSubdirName in ScalaUnidoc := "api",
+      addMappingsToSiteDir(mappings in ScalaUnidoc, siteSubdirName in ScalaUnidoc),
+      ghpagesNoJekyll := false,
+      fork in (ScalaUnidoc) := true
     )
 
     lazy val testSettings = Seq(
@@ -68,8 +76,6 @@ object ProjectPlugin extends AutoPlugin {
     )
 
     lazy val jsDeps: Def.Setting[Seq[ModuleID]] = libraryDependencies += %%%("roshttp")
-
-    lazy val docsDependencies: Def.Setting[Seq[ModuleID]] = libraryDependencies += %%("scalatest")
 
     lazy val scalazDependencies: Def.Setting[Seq[ModuleID]] = libraryDependencies += %%(
       "scalaz-concurrent")
