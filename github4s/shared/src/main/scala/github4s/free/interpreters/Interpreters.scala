@@ -234,6 +234,12 @@ class Interpreters[M[_], C](
         fa match {
           case SetThreadSub(id, subscribed, ignored, accessToken) ⇒
             activities.setThreadSub(accessToken, headers, id, subscribed, ignored)
+          case ListStargazers(owner, repo, timeline, pagination, accessToken) ⇒
+            activities.listStargazers(accessToken, headers, owner, repo, timeline, pagination)
+          case ListStarredRepositories(
+              username, timeline, sort, direction, pagination, accessToken) ⇒
+            activities.listStarredRepositories(
+              accessToken, headers, username, timeline, sort, direction, pagination)
         }
       }
     }

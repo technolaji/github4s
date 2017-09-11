@@ -49,4 +49,36 @@ class ActivitiesSpec extends BaseSpec {
     activities.setThreadSub(sampleToken, headerUserAgent, validThreadId, true, false)
   }
 
+  "Activity.listStargazers" should "call to httpClient.get with the right parameters" in {
+
+    val response: GHResponse[List[Stargazer]] =
+      Right(GHResult(List(stargazer), okStatusCode, Map.empty))
+
+    val httpClientMock = httpClientMockGet[List[Stargazer]](
+      url = s"repos/$validRepoOwner/$validRepoName/stargazers",
+      response = response
+    )
+
+    val activities = new Activities[String, Id] {
+      override val httpClient: HttpClient[String, Id] = httpClientMock
+    }
+    activities.listStargazers(sampleToken, headerUserAgent, validRepoOwner, validRepoName, false)
+  }
+
+  "Activity.listStarredRepositories" should "call to httpClient.get with the right parameters" in {
+
+    val response: GHResponse[List[StarredRepository]] =
+      Right(GHResult(List(starredRepository), okStatusCode, Map.empty))
+
+    val httpClientMock = httpClientMockGet[List[StarredRepository]](
+      url = s"users/$validUsername/starred",
+      response = response
+    )
+
+    val activities = new Activities[String, Id] {
+      override val httpClient: HttpClient[String, Id] = httpClientMock
+    }
+    activities.listStarredRepositories(sampleToken, headerUserAgent, validUsername, false)
+  }
+
 }
