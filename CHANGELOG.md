@@ -1,5 +1,21 @@
 # Changelog
 
+## 09/25/2017 - Version 0.16.0
+
+Release changes:
+
+* Remove integration.GHGistsSpec ([#151](https://github.com/47deg/github4s/pull/151))
+* Make gh4s doc structure reflect gh doc structure ([#152](https://github.com/47deg/github4s/pull/152))
+* cats-effect module ([#155](https://github.com/47deg/github4s/pull/155))
+* List statuses now gives back a 404 for a non-existing ref instead of an empty list ([#160](https://github.com/47deg/github4s/pull/160))
+* Support for starring-related operations ([#161](https://github.com/47deg/github4s/pull/161))
+* Support for the list organization repositories endpoint ([#162](https://github.com/47deg/github4s/pull/162))
+* Organization API ([#163](https://github.com/47deg/github4s/pull/163))
+* Bump sbt-org-policies to 0.7.4 ([#164](https://github.com/47deg/github4s/pull/164))
+* Release 0.16.0 ([#165](https://github.com/47deg/github4s/pull/165))
+* Bump travis 2.12 version to 2.12.3 ([#166](https://github.com/47deg/github4s/pull/166))
+
+
 ## 05/23/2017 - Version 0.15.0
 
 Release changes:
