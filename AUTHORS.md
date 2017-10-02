@@ -21,3 +21,4 @@ These are the people that have contributed to the Github4s project:
 * Peter Neyens <[peterneyens](https://github.com/peterneyens)>
 * Rafa Paradela <[rafaparadela](https://github.com/rafaparadela)>
 * Raúl Raja Martínez <[raulraja](https://github.com/raulraja)>
+* Suhas Gaddam <[suhasgaddam](https://github.com/suhasgaddam)>
