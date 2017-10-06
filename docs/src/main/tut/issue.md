@@ -6,12 +6,17 @@ title: Issue API
 # Issue API
 
 Github4s supports the [Issue API](https://developer.github.com/v3/issues/). As a result,
-with github4s, you can:
+with Github4s, you can interact with:
 
-- [create an issue](#create-an-issue)
-- [edit an issue](#edit-an-issue)
-- [list issues](#list-issues)
-- [search issues](#search-issues)
+- [Issues](#issues)
+  - [Create an issue](#create-an-issue)
+  - [Edit an issue](#edit-an-issue)
+  - [List issues](#list-issues)
+  - [Search issues](#search-issues)
+- [Comments](#comments)
+  - [Create a comment](#create-a-comment)
+  - [Edit a comment](#edit-a-comment)
+  - [Delete a comment](#delete-a-comment)
 
 The following examples assume the following imports and token:
 
@@ -27,20 +32,16 @@ import scalaj.http.HttpResponse
 val accessToken = sys.env.get("GITHUB4S_ACCESS_TOKEN")
 ```
 
-They also make use of `cats.Id` but any type container implementing `MonadError[M, Throwable]` will
-do.
+## Issues
 
-Support for `cats.Id`, `cats.Eval` and `Future` (the only supported option for scala-js) are
-provided out of the box when importing `github4s.{js,jvm}.Implicits._`.
+### Create an issue
 
-## Create an issue
+You can create an issue using `createIssue`; it takes as arguments:
 
-You can create an issue using `createIssue`, it takes as arguments:
-
-- the repository coordinates (owner and name of the repository)
-- the content of the issue (title and body)
-- other optional parameters: milestone id, labels and assignees which are only taken into account
-if you have push access to the repository
+- the repository coordinates (`owner` and `name` of the repository).
+- the content of the issue (`title` and `body`).
+- other optional parameters: `milestone id`, `labels` and `assignees` which are only taken into account
+if you have push access to the repository.
 
 To create an issue:
 
@@ -49,7 +50,7 @@ val createIssue =
   Github(accessToken).issues.createIssue("47deg", "github4s", "Github4s", "is awesome")
 
 createIssue.exec[cats.Id, HttpResponse[String]]() match {
-  case Left(e) => println("Something went wrong: s{e.getMessage}")
+  case Left(e) => println(s"Something went wrong: ${e.getMessage}")
   case Right(r) => println(r.result)
 }
 ```
@@ -58,16 +59,17 @@ The `result` on the right is the created [Issue][issue-scala].
 
 See [the API doc](https://developer.github.com/v3/issues/#create-an-issue) for full reference.
 
-## Edit an issue
 
-You can edit an existing issue using `editIssue`, it takes as arguments:
+### Edit an issue
 
-- the repository coordinates (owner and name of the repository)
-- the issue id
-- the updated state of the issue (open or closed)
-- the edited content of the issue (title and body)
-- other optional parameters: milestone id, labels and assignees which are only taken into account
-if you have push access to the repository
+You can edit an existing issue using `editIssue`; it takes as arguments:
+
+- the repository coordinates (`owner` and `name` of the repository).
+- the issue `number`.
+- the updated `state` of the issue (open or closed).
+- the edited `content` of the issue (title and body).
+- other optional parameters: `milestone id`, `labels` and `assignees` which are only taken into account
+if you have push access to the repository.
 
 To edit an issue:
 
@@ -76,7 +78,7 @@ val editIssue =
   Github(accessToken).issues.editIssue("47deg", "github4s", 1, "open", "Github4s", "is still awesome")
 
 editIssue.exec[cats.Id, HttpResponse[String]]() match {
-  case Left(e) => println("Something went wrong: s{e.getMessage}")
+  case Left(e) => println(s"Something went wrong: ${e.getMessage}")
   case Right(r) => println(r.result)
 }
 ```
@@ -85,11 +87,12 @@ the `result` on the right is the edited [Issue][issue-scala].
 
 See [the API doc](https://developer.github.com/v3/issues/#edit-an-issue) for full reference.
 
-## List issues 
 
-You can also list issues for a repository through `listIssues`, it take as arguments:
+### List issues 
 
-- the repository coordinates (owner and name of the repository)
+You can also list issues for a repository through `listIssues`; it take as arguments:
+
+- the repository coordinates (`owner` and `name` of the repository).
 
 To list the issues for a repository:
 
@@ -97,7 +100,7 @@ To list the issues for a repository:
 val listIssues = Github(accessToken).issues.listIssues("47deg", "github4s")
 
 listIssues.exec[cats.Id, HttpResponse[String]]() match {
-  case Left(e) => println("Something went wrong: s{e.getMessage}")
+  case Left(e) => println(s"Something went wrong: ${e.getMessage}")
   case Right(r) => println(r.result)
 }
 ```
@@ -108,13 +111,14 @@ contain pull requests as Github considers pull requests as issues.
 See [the API doc](https://developer.github.com/v3/issues/#list-issues-for-a-repository)
 for full reference.
 
-## Search issues
 
-Lastly, you can also search issues all across Github thanks to `searchIssues`, it takes as
+### Search issues
+
+Lastly, you can also search issues all across Github thanks to `searchIssues`; it takes as
 arguments:
 
-- a query string (the URL encoding is taken care of by Github4s)
-- a list of [SearchParam](https://github.com/47deg/github4s/blob/master/github4s/shared/src/main/scala/github4s/free/domain/SearchParam.scala)
+- a `query` string (the URL encoding is taken care of by Github4s).
+- a list of [SearchParam](https://github.com/47deg/github4s/blob/master/github4s/shared/src/main/scala/github4s/free/domain/SearchParam.scala).
 
 Let's say we want to search for the Scala bugs (<https://github.com/scala/bug>) which contain
 the "existential" keyword in their title:
@@ -129,7 +133,7 @@ val searchParams = List(
 val searchIssues = Github(accessToken).issues.searchIssues("existential", searchParams)
 
 searchIssues.exec[cats.Id, HttpResponse[String]]() match {
-  case Left(e) => println("Something went wrong: s{e.getMessage}")
+  case Left(e) => println(s"Something went wrong: ${e.getMessage}")
   case Right(r) => println(r.result)
 }
 ```
@@ -137,5 +141,78 @@ searchIssues.exec[cats.Id, HttpResponse[String]]() match {
 The `result` on the right is a [SearchIssuesResult][issue-scala].
 
 See [the API doc](https://developer.github.com/v3/search/#search-issues) for full reference.
+
+## Comments
+
+### Create a comment
+
+You can create a comment for an issue with the following parameters:
+
+ - the repository coordinates (`owner` and `name` of the repository).
+ - `number`: The issue number.
+ - `body`: The comment description.
+
+ To create a comment:
+
+```scala
+val createcomment = Github(accessToken).issues.create("47deg", "github4s", 123, "this is the comment")
+createcomment.exec[cats.Id, HttpResponse[String]]() match {
+  case Left(e) => println(s"Something went wrong: ${e.getMessage}")
+  case Right(r) => println(r.result)
+}
+```
+
+The `result` on the right is a [Comment][issue-scala].
+
+See [the API doc](https://developer.github.com/v3/issues/comments/#create-a-comment) for full reference.
+
+
+### Edit a comment
+
+You can edit a comment from an issue with the following parameters:
+
+ - the repository coordinates (`owner` and `name` of the repository).
+ - `id`: The comment id.
+ - `body`: The new comment description.
+
+ To edit a comment:
+
+```scala
+val editComment = Github(accessToken).issues.edit("47deg", "github4s", 20, "this is the new comment")
+editComment.exec[cats.Id, HttpResponse[String]]() match {
+  case Left(e) => println(s"Something went wrong: ${e.getMessage}")
+  case Right(r) => println(r.result)
+}
+```
+
+The `result` on the right is a [Comment][issue-scala].
+
+See [the API doc](https://developer.github.com/v3/issues/comments/#edit-a-comment) for full reference.
+
+
+### Delete a comment
+
+You can delete a comment from an issue with the following parameters:
+
+ - the repository coordinates (`owner` and `name` of the repository).
+ - `id`: The comment id.
+
+ To delete a comment:
+
+```scala
+val deleteComment = Github(accessToken).issues.delete("47deg", "github4s", 20)
+deleteComment.exec[cats.Id, HttpResponse[String]]() match {
+  case Left(e) => println(s"Something went wrong: ${e.getMessage}")
+  case Right(r) => println(r.result)
+}
+```
+
+The `result` on the right is `Unit`.
+
+See [the API doc](https://developer.github.com/v3/issues/comments/#delete-a-comment) for full reference.
+
+As you can see, a few features of the issue endpoint are missing.
+
+As a result, if you'd like to see a feature supported, feel free to create an issue and/or a pull request!
 
 [issue-scala]: https://github.com/47deg/github4s/blob/master/github4s/shared/src/main/scala/github4s/free/domain/Issue.scala

@@ -2,8 +2,23 @@ options:
   - title: Getting Started
     url: docs.html
 
+  - title: Gist API
+    url: gist.html
+
   - title: Issue API
     url: issue.html
 
-  - title: Status API
-    url: status.html
+  - title: Pull Request API
+    url: pull_request.html
+
+  - title: User API
+    url: user.html
+
+  - title: Repository API
+    url: repository.html
+
+  - title: Activity API
+    url: activity.html
+
+  - title: Organization API
+    url: organization.html

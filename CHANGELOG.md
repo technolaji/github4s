@@ -1,5 +1,64 @@
 # Changelog
 
+## 09/25/2017 - Version 0.16.0
+
+Release changes:
+
+* Remove integration.GHGistsSpec ([#151](https://github.com/47deg/github4s/pull/151))
+* Make gh4s doc structure reflect gh doc structure ([#152](https://github.com/47deg/github4s/pull/152))
+* cats-effect module ([#155](https://github.com/47deg/github4s/pull/155))
+* List statuses now gives back a 404 for a non-existing ref instead of an empty list ([#160](https://github.com/47deg/github4s/pull/160))
+* Support for starring-related operations ([#161](https://github.com/47deg/github4s/pull/161))
+* Support for the list organization repositories endpoint ([#162](https://github.com/47deg/github4s/pull/162))
+* Organization API ([#163](https://github.com/47deg/github4s/pull/163))
+* Bump sbt-org-policies to 0.7.4 ([#164](https://github.com/47deg/github4s/pull/164))
+* Release 0.16.0 ([#165](https://github.com/47deg/github4s/pull/165))
+* Bump travis 2.12 version to 2.12.3 ([#166](https://github.com/47deg/github4s/pull/166))
+
+
+## 05/23/2017 - Version 0.15.0
+
+Release changes:
+
+* Remove integration tests creating statuses ([#128](https://github.com/47deg/github4s/pull/128))
+* Streamlined the getting started ([#126](https://github.com/47deg/github4s/pull/126))
+* Support Comment API ([#127](https://github.com/47deg/github4s/pull/127))
+* Refactor Algebras ([#130](https://github.com/47deg/github4s/pull/130))
+* Missing Test and Docs ([#132](https://github.com/47deg/github4s/pull/132))
+* Missing unit test ([#137](https://github.com/47deg/github4s/pull/137))
+* Contributing guide ([#138](https://github.com/47deg/github4s/pull/138))
+* Replace updateReference's force parameter type from Option[Boolean] to Boolean ([#141](https://github.com/47deg/github4s/pull/141))
+* Upgrades tut bumping sbt-org-policies version to 0.5.0 ([#140](https://github.com/47deg/github4s/pull/140))
+* Fixes ghost users associated with pull requests, issues and comments ([#144](https://github.com/47deg/github4s/pull/144))
+* Microsite Enhancements ([#143](https://github.com/47deg/github4s/pull/143))
+* Super minor lang edits ([#146](https://github.com/47deg/github4s/pull/146))
+* Fix string interpolation in docs ([#147](https://github.com/47deg/github4s/pull/147))
+* Rename listStatus to listStatuses ([#145](https://github.com/47deg/github4s/pull/145))
+* Rename Authentication to Authorization in the doc ([#148](https://github.com/47deg/github4s/pull/148))
+* Add support for the read half of the PR Review API ([#139](https://github.com/47deg/github4s/pull/139))
+* Releases 0.15.0 ([#150](https://github.com/47deg/github4s/pull/150))
+
+
+## 05/08/2017 - Version 0.14.7
+
+Release changes:
+
+* Replace foldLeft with traverse in Decoders ([#101](https://github.com/47deg/github4s/pull/101))
+* Documentation for the PR API ([#102](https://github.com/47deg/github4s/pull/102))
+* Publish Microsite automatically when merging in master branch ([#103](https://github.com/47deg/github4s/pull/103))
+* Removes annoying compiler warnings reported by -Xlint flag ([#104](https://github.com/47deg/github4s/pull/104))
+* Made request success check consistent between scala and scala js ([#112](https://github.com/47deg/github4s/pull/112))
+* Create pull request api ([#109](https://github.com/47deg/github4s/pull/109))
+* Replace issue id by issue number in the doc ([#114](https://github.com/47deg/github4s/pull/114))
+* Unify JVM and JS tests ([#115](https://github.com/47deg/github4s/pull/115))
+* Issues API unit tests ([#116](https://github.com/47deg/github4s/pull/116))
+* Documentation for the gist API ([#121](https://github.com/47deg/github4s/pull/121))
+* Make sure sbt is executable in travis ([#122](https://github.com/47deg/github4s/pull/122))
+* Support notifications api ([#123](https://github.com/47deg/github4s/pull/123))
+* Releases 0.14.7 ([#124](https://github.com/47deg/github4s/pull/124))
+* Upgrades sbt org policies plugin ([#125](https://github.com/47deg/github4s/pull/125))
+
+
 ## 04/25/2017 - Version 0.14.6
 
 Release changes:

@@ -20,8 +20,9 @@ import org.mockserver.model.HttpRequest._
 import org.mockserver.model.HttpResponse._
 import org.mockserver.model.JsonBody._
 import org.mockserver.model.NottableString._
+import org.mockserver.model.Parameter
 
-trait MockGithubApiServer extends MockServerService with FakeResponses with TestUtils {
+trait MockGithubApiServer extends MockServerService with FakeResponses with TestUtilsJVM {
 
   //Users >> get
   mockServer
@@ -126,6 +127,30 @@ trait MockGithubApiServer extends MockServerService with FakeResponses with Test
         .withPath(s"/repos/$validRepoOwner/$invalidRepoName"))
     .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
 
+  //Repos >> list org repos
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(s"/orgs/$validRepoOwner/repos")
+        .withQueryStringParameter("page", validPage.toString))
+    .respond(response.withStatusCode(okStatusCode).withBody(listOrgReposValidResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(s"/orgs/$validRepoOwner/repos")
+        .withQueryStringParameter("page", invalidPage.toString))
+    .respond(response.withStatusCode(okStatusCode).withBody(emptyListResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(s"/orgs/$validRepoOwner/repos"))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
+
   //Repos >> get contents
   mockServer
     .when(
@@ -187,7 +212,6 @@ trait MockGithubApiServer extends MockServerService with FakeResponses with Test
     .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
 
   //Repos >> list contributors
-
   mockServer
     .when(
       request
@@ -246,6 +270,81 @@ trait MockGithubApiServer extends MockServerService with FakeResponses with Test
       response
         .withStatusCode(unauthorizedStatusCode)
         .withBody(unauthorizedResponse))
+
+  //Repos >> getStatus
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/commits/$validRefSingle/status")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(okStatusCode).withBody(getCombinedStatusValidResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/commits/$validRefSingle/status")
+        .withHeader(not("Authorization")))
+    .respond(response.withStatusCode(unauthorizedStatusCode).withBody(unauthorizedResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/commits/$invalidRef/status")
+        .withHeader(not("Authorization")))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
+
+  //Repos >> listStatus
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/commits/$validRefSingle/statuses")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(okStatusCode).withBody(listStatusValidResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/commits/$validRefSingle/statuses")
+        .withHeader(not("Authorization")))
+    .respond(response.withStatusCode(unauthorizedStatusCode).withBody(unauthorizedResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/commits/$invalidRef/statuses")
+        .withHeader(not("Authorization")))
+    .respond(response.withStatusCode(okStatusCode).withBody(emptyListResponse))
+
+  //Repos >> createStatus
+  mockServer
+    .when(
+      request
+        .withMethod("POST")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/statuses/$validCommitSha")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(createdStatusCode).withBody(createStatusValidResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("POST")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/statuses/$validCommitSha")
+        .withHeader(not("Authorization")))
+    .respond(response.withStatusCode(unauthorizedStatusCode).withBody(unauthorizedResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("POST")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/statuses/$invalidCommitSha")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
 
   //Gists >> post new gist
 
@@ -328,7 +427,7 @@ trait MockGithubApiServer extends MockServerService with FakeResponses with Test
   mockServer
     .when(
       request
-        .withMethod("POST")
+        .withMethod("PATCH")
         .withPath(s"/repos/$validRepoOwner/$validRepoName/git/refs/$validRefSingle")
         .withHeader("Authorization", tokenHeader))
     .respond(
@@ -339,7 +438,7 @@ trait MockGithubApiServer extends MockServerService with FakeResponses with Test
   mockServer
     .when(
       request
-        .withMethod("POST")
+        .withMethod("PATCH")
         .withPath(s"/repos/$validRepoOwner/$validRepoName/git/refs/$validRefSingle")
         .withHeader(not("Authorization")))
     .respond(
@@ -463,78 +562,356 @@ trait MockGithubApiServer extends MockServerService with FakeResponses with Test
         .withPath(s"/repos/$validRepoOwner/$invalidRepoName/pulls/$validPullRequestNumber/files"))
     .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
 
-  //Statuses >> get
+  //PullRequests >> create
+  mockServer
+    .when(
+      request
+        .withMethod("POST")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/pulls")
+        .withBody(json(s"""
+            |{
+            |  "title": "${validNewPullRequestData.title}",
+            |  "head": "$validHead",
+            |  "base": "$validBase",
+            |  "body": "${validNewPullRequestData.body}"
+            |}
+          """.stripMargin)))
+    .respond(response.withStatusCode(createdStatusCode).withBody(validCreatePullRequest))
+
+  mockServer
+    .when(
+      request
+        .withMethod("POST")
+        .withPath(s"/repos/$validRepoOwner/$invalidRepoName/pulls")
+        .withBody(json(s"""
+             |{
+             |  "title": "${validNewPullRequestData.title}",
+             |  "body": "${validNewPullRequestData.body}",
+             |  "head": "$validHead",
+             |  "base": "$validBase"
+             |}
+           """.stripMargin)))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("POST")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/pulls")
+        .withBody(json(s"""
+            |{
+            |  "issue": ${validNewPullRequestIssue.issue},
+            |  "head": "$validHead",
+            |  "base": "$validBase"
+            |}
+          """.stripMargin)))
+    .respond(response.withStatusCode(createdStatusCode).withBody(validCreatePullRequest))
+
+  mockServer
+    .when(
+      request
+        .withMethod("POST")
+        .withPath(s"/repos/$validRepoOwner/$invalidRepoName/pulls")
+        .withBody(json(s"""
+           |{
+           |  "issue": ${invalidNewPullRequestIssue.issue},
+           |  "head": "$invalidHead",
+           |  "base": "$invalidBase"
+           |}
+         """.stripMargin)))
+    .respond(response.withStatusCode(createdStatusCode).withBody(validCreatePullRequest))
+
+  //PullRequests >> listReviews
   mockServer
     .when(
       request
         .withMethod("GET")
-        .withPath(s"/repos/$validRepoOwner/$validRepoName/commits/$validRefSingle/status")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/pulls/$validPullRequestNumber/reviews")
         .withHeader("Authorization", tokenHeader))
-    .respond(response.withStatusCode(okStatusCode).withBody(getCombinedStatusValidResponse))
+    .respond(response.withStatusCode(okStatusCode).withBody(listReviewsValidResponse))
 
   mockServer
     .when(
       request
         .withMethod("GET")
-        .withPath(s"/repos/$validRepoOwner/$validRepoName/commits/$validRefSingle/status")
+        .withPath(s"/repos/$validRepoOwner/$invalidRepoName/pulls/$validPullRequestNumber/reviews")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
+
+  //PullRequests >> getReview
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(
+          s"/repos/$validRepoOwner/$validRepoName/pulls/$validPullRequestNumber/reviews/$validPullRequestReviewNumber")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(okStatusCode).withBody(getReviewValidResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(
+          s"/repos/$validRepoOwner/$invalidRepoName/pulls/$validPullRequestNumber/reviews/$validPullRequestReviewNumber")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
+
+  //Issues >> list
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/issues")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(okStatusCode).withBody(listIssuesValidResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(s"/repos/$validRepoOwner/$invalidRepoName/issues")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
+
+  //Issues >> create
+  mockServer
+    .when(
+      request
+        .withMethod("POST")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/issues")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(createdStatusCode).withBody(createIssueValidResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("POST")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/issues")
         .withHeader(not("Authorization")))
     .respond(response.withStatusCode(unauthorizedStatusCode).withBody(unauthorizedResponse))
 
   mockServer
     .when(
       request
+        .withMethod("POST")
+        .withPath(s"/repos/$validRepoOwner/$invalidRepoName/issues")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
+
+  //Issues >> edit
+  mockServer
+    .when(
+      request
+        .withMethod("PATCH")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/issues/$validIssueNumber")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(okStatusCode).withBody(createIssueValidResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("PATCH")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/issues/$validIssueNumber")
+        .withHeader(not("Authorization")))
+    .respond(response.withStatusCode(unauthorizedStatusCode).withBody(unauthorizedResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("PATCH")
+        .withPath(s"/repos/$validRepoOwner/$invalidRepoName/issues/$validIssueNumber")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
+
+  //Issues >> search
+  mockServer
+    .when(
+      request
         .withMethod("GET")
-        .withPath(s"/repos/$validRepoOwner/$validRepoName/commits/$invalidRef/status")
+        .withPath(s"/search/issues")
+        .withQueryStringParameters(new Parameter("q", s".*$validSearchQuery.*"))
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(okStatusCode).withBody(searchIssuesValidResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(s"/search/issues")
+        .withQueryStringParameters(new Parameter("q", s".*$nonExistentSearchQuery.*"))
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(okStatusCode).withBody(searchIssuesEmptyResponse))
+
+  //Issues >> Create a comment
+  mockServer
+    .when(
+      request
+        .withMethod("POST")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/issues/$validIssueNumber/comments")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(createdStatusCode).withBody(commentResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("POST")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/issues/$validIssueNumber/comments")
         .withHeader(not("Authorization")))
     .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
 
-  //Statuses >> list
   mockServer
     .when(
       request
-        .withMethod("GET")
-        .withPath(s"/repos/$validRepoOwner/$validRepoName/commits/$validRefSingle/statuses")
+        .withMethod("POST")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/issues/$invalidIssueNumber/comments")
         .withHeader("Authorization", tokenHeader))
-    .respond(response.withStatusCode(okStatusCode).withBody(listStatusesValidResponse))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
+
+  //Issues >> Edit a comment
+  mockServer
+    .when(
+      request
+        .withMethod("PATCH")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/issues/comments/$validCommentId")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(okStatusCode).withBody(commentResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("PATCH")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/issues/comments/$validCommentId")
+        .withHeader(not("Authorization")))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("PATCH")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/issues/comments/$invalidCommentId")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
+
+  //Issues >> Delete a comment
+  mockServer
+    .when(
+      request
+        .withMethod("DELETE")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/issues/comments/$validCommentId")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(deletedStatusCode))
+
+  mockServer
+    .when(
+      request
+        .withMethod("DELETE")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/issues/comments/$validCommentId")
+        .withHeader(not("Authorization")))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("DELETE")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/issues/comments/$invalidCommentId")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
+
+  //Activities >> Set a thread subscription
+  mockServer
+    .when(
+      request
+        .withMethod("PUT")
+        .withPath(s"/notifications/threads/$validThreadId/subscription")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(okStatusCode).withBody(setThreadSubscription))
+
+  mockServer
+    .when(
+      request
+        .withMethod("PUT")
+        .withPath(s"/notifications/threads/$validThreadId/subscription")
+        .withHeader(not("Authorization")))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("PUT")
+        .withPath(s"/notifications/threads/$invalidThreadId/subscription")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
+
+  //Activities >> List stargazers
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/stargazers")
+        .withQueryStringParameter("page", validPage.toString))
+    .respond(response.withStatusCode(okStatusCode).withBody(getUsersValidResponse))
 
   mockServer
     .when(
       request
         .withMethod("GET")
-        .withPath(s"/repos/$validRepoOwner/$validRepoName/commits/$validRefSingle/statuses")
-        .withHeader(not("Authorization")))
-    .respond(response.withStatusCode(unauthorizedStatusCode).withBody(unauthorizedResponse))
-
-  mockServer
-    .when(
-      request
-        .withMethod("GET")
-        .withPath(s"/repos/$validRepoOwner/$validRepoName/commits/$invalidRef/statuses")
-        .withHeader(not("Authorization")))
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/stargazers")
+        .withQueryStringParameter("page", invalidPage.toString))
     .respond(response.withStatusCode(okStatusCode).withBody(emptyListResponse))
 
-  //Statuses >> create
   mockServer
     .when(
       request
-        .withMethod("POST")
-        .withPath(s"/repos/$validRepoOwner/$validRepoName/statuses/$validCommitSha")
-        .withHeader("Authorization", tokenHeader))
-    .respond(response.withStatusCode(createdStatusCode).withBody(createStatusValidResponse))
+        .withMethod("GET")
+        .withPath(s"/repos/$validRepoOwner/$invalidRepoName/stargazers"))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
+
+  //Activities >> List starred repositories
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(s"/users/$validUsername/starred")
+        .withQueryStringParameter("page", validPage.toString))
+    .respond(response.withStatusCode(okStatusCode).withBody(getStarredReposValidResponse))
 
   mockServer
     .when(
       request
-        .withMethod("POST")
-        .withPath(s"/repos/$validRepoOwner/$validRepoName/statuses/$validCommitSha")
-        .withHeader(not("Authorization")))
-    .respond(response.withStatusCode(unauthorizedStatusCode).withBody(unauthorizedResponse))
+        .withMethod("GET")
+        .withPath(s"/users/$validUsername/starred")
+        .withQueryStringParameter("page", invalidPage.toString))
+    .respond(response.withStatusCode(okStatusCode).withBody(emptyListResponse))
 
   mockServer
     .when(
       request
-        .withMethod("POST")
-        .withPath(s"/repos/$validRepoOwner/$validRepoName/statuses/$invalidCommitSha")
-        .withHeader("Authorization", tokenHeader))
+        .withMethod("GET")
+        .withPath(s"/users/$invalidUsername/starred"))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
+
+  //Organizations >> List members
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(s"/orgs/$validRepoOwner/members")
+        .withQueryStringParameter("page", validPage.toString))
+    .respond(response.withStatusCode(okStatusCode).withBody(getUsersValidResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(s"/orgs/$validRepoOwner/members")
+        .withQueryStringParameter("page", invalidPage.toString))
+    .respond(response.withStatusCode(okStatusCode).withBody(emptyListResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(s"/orgs/$invalidUsername/members"))
     .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
 }

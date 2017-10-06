@@ -40,6 +40,13 @@ class GHRepos[F[_]](implicit O: RepositoryOps[F]) {
   def get(owner: String, repo: String): FreeS[F, GHResponse[Repository]] =
     O.getRepo(owner, repo)
 
+  def listOrgRepos(
+      org: String,
+      `type`: Option[String] = None,
+      pagination: Option[Pagination] = None
+  ): GHIO[GHResponse[List[Repository]]] =
+    O.listOrgRepos(org, `type`, pagination, accessToken)
+
   def getContents(
       owner: String,
       repo: String,
@@ -87,6 +94,30 @@ class GHRepos[F[_]](implicit O: RepositoryOps[F]) {
       prerelease,
       )
 
+  def getCombinedStatus(
+      owner: String,
+      repo: String,
+      ref: String
+  ): GHIO[GHResponse[CombinedStatus]] =
+    O.getCombinedStatus(owner, repo, ref, accessToken)
+
+  def listStatuses(
+      owner: String,
+      repo: String,
+      ref: String
+  ): GHIO[GHResponse[List[Status]]] =
+    O.listStatuses(owner, repo, ref, accessToken)
+
+  def createStatus(
+      owner: String,
+      repo: String,
+      sha: String,
+      state: String,
+      target_url: Option[String] = None,
+      description: Option[String] = None,
+      context: Option[String] = None
+  ): GHIO[GHResponse[Status]] =
+    O.createStatus(owner, repo, sha, state, target_url, description, context, accessToken)
 }
 
 class GHAuth[F[_]](implicit O: AuthOps[F]) {
@@ -164,6 +195,55 @@ class GHIssues[F[_]](implicit O: IssueOps[F]) {
       assignees: List[String] = List.empty
   ): FreeS[F, GHResponse[Issue]] =
     O.editIssue(owner, repo, issue, state, title, body, milestone, labels, assignees)
+
+  def createComment(
+      owner: String,
+      repo: String,
+      number: Int,
+      body: String
+  ): GHIO[GHResponse[Comment]] =
+    O.createComment(owner, repo, number, body, accessToken)
+  def editComment(
+      owner: String,
+      repo: String,
+      id: Int,
+      body: String
+  ): GHIO[GHResponse[Comment]] =
+    O.editComment(owner, repo, id, body, accessToken)
+
+  def deleteComment(
+      owner: String,
+      repo: String,
+      id: Int
+  ): GHIO[GHResponse[Unit]] =
+    O.deleteComment(owner, repo, id, accessToken)
+
+}
+
+class GHActivities(accessToken: Option[String] = None)(implicit O: ActivityOps[GitHub4s]) {
+
+  def setThreadSub(
+      id: Int,
+      subscribed: Boolean,
+      ignored: Boolean): GHIO[GHResponse[Subscription]] =
+    O.setThreadSub(id, subscribed, ignored, accessToken)
+
+  def listStargazers(
+      owner: String,
+      repo: String,
+      timeline: Boolean,
+      pagination: Option[Pagination] = None
+  ): GHIO[GHResponse[List[Stargazer]]] =
+    O.listStargazers(owner, repo, timeline, pagination, accessToken)
+
+  def listStarredRepositories(
+      username: String,
+      timeline: Boolean,
+      sort: Option[String] = None,
+      direction: Option[String] = None,
+      pagination: Option[Pagination] = None
+  ): GHIO[GHResponse[List[StarredRepository]]] =
+    O.listStarredRepositories(username, timeline, sort, direction, pagination, accessToken)
 }
 
 class GHGitData[F[_]](implicit O: GitDataOps[F]) {
@@ -188,7 +268,7 @@ class GHGitData[F[_]](implicit O: GitDataOps[F]) {
       repo: String,
       ref: String,
       sha: String,
-      force: Option[Boolean] = None
+      force: Boolean = false
   ): FreeS[F, GHResponse[Ref]] =
     O.updateReference(owner, repo, ref, sha, force)
 
@@ -261,14 +341,14 @@ class GHStatuses[F[_]](implicit O: StatusOps[F]) {
   ): FreeS[F, GHResponse[CombinedStatus]] =
     O.getCombinedStatus(owner, repo, ref)
 
-  def listStatuses(
+  def listReviews(
       owner: String,
       repo: String,
       ref: String
   ): FreeS[F, GHResponse[List[Status]]] =
     O.listStatuses(owner, repo, ref)
 
-  def createStatus(
+  def getReview(
       owner: String,
       repo: String,
       sha: String,
@@ -278,4 +358,15 @@ class GHStatuses[F[_]](implicit O: StatusOps[F]) {
       context: Option[String] = None
   ): FreeS[F, GHResponse[Status]] =
     O.createStatus(owner, repo, sha, state, target_url, description, context)
+}
+
+class GHOrganizations(accessToken: Option[String] = None)(implicit O: OrganizationOps[GitHub4s]) {
+
+  def listMembers(
+      org: String,
+      filter: Option[String] = None,
+      role: Option[String] = None,
+      pagination: Option[Pagination] = None
+  ): GHIO[GHResponse[List[User]]] =
+    O.listMembers(org, filter, role, pagination, accessToken)
 }

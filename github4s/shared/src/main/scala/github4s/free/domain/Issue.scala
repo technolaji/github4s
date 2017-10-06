@@ -28,7 +28,7 @@ case class Issue(
     html_url: String,
     number: Int,
     state: String,
-    user: User,
+    user: Option[User],
     assignee: Option[User],
     labels: List[Label] = List.empty,
     locked: Option[Boolean],
@@ -67,3 +67,14 @@ case class EditIssueRequest(
     milestone: Option[Int],
     labels: List[String],
     assignees: List[String])
+
+case class Comment(
+    id: Int,
+    url: String,
+    html_url: String,
+    body: String,
+    user: Option[User],
+    created_at: String,
+    updated_at: String)
+
+case class CommentData(body: String)

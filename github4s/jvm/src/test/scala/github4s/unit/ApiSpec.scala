@@ -18,7 +18,7 @@ package github4s.unit
 
 import github4s.api._
 import github4s.free.domain.{GistFile, Pagination}
-import github4s.utils.{DummyGithubUrls, MockGithubApiServer, TestUtils}
+import github4s.utils.{DummyGithubUrls, MockGithubApiServer, TestUtilsJVM}
 import org.scalatest._
 import cats.implicits._
 
@@ -29,18 +29,20 @@ import github4s.jvm.ImplicitsJVM
 class ApiSpec
     extends FlatSpec
     with Matchers
-    with TestUtils
+    with TestUtilsJVM
     with MockGithubApiServer
     with DummyGithubUrls
     with ImplicitsJVM {
 
-  val auth         = new Auth[HttpResponse[String], Id]
-  val repos        = new Repos[HttpResponse[String], Id]
-  val users        = new Users[HttpResponse[String], Id]
-  val gists        = new Gists[HttpResponse[String], Id]
-  val gitData      = new GitData[HttpResponse[String], Id]
-  val pullRequests = new PullRequests[HttpResponse[String], Id]
-  val statuses     = new Statuses[HttpResponse[String], Id]
+  val auth          = new Auth[HttpResponse[String], Id]
+  val repos         = new Repos[HttpResponse[String], Id]
+  val users         = new Users[HttpResponse[String], Id]
+  val gists         = new Gists[HttpResponse[String], Id]
+  val gitData       = new GitData[HttpResponse[String], Id]
+  val pullRequests  = new PullRequests[HttpResponse[String], Id]
+  val issues        = new Issues[HttpResponse[String], Id]
+  val activities    = new Activities[HttpResponse[String], Id]
+  val organizations = new Organizations[HttpResponse[String], Id]
 
   "Auth >> NewAuth" should "return a valid token when valid credential is provided" in {
     val response = auth.newAuth(
@@ -58,7 +60,6 @@ class ApiSpec
       r.statusCode shouldBe okStatusCode
     }
   }
-
   it should "return error on Left when invalid credential is provided" in {
     val response =
       auth.newAuth(
@@ -92,16 +93,13 @@ class ApiSpec
       r.result.access_token.nonEmpty shouldBe true
       r.statusCode shouldBe okStatusCode
     }
-
   }
-
   it should "return error on Left when invalid code is provided" in {
     val response = auth.getAccessToken("", "", invalidCode, "", "", headers = headerUserAgent)
     response should be('left)
   }
 
   "Repos >> Get" should "return the expected name when valid repo is provided" in {
-
     val response =
       repos.get(accessToken, headerUserAgent, validRepoOwner, validRepoName)
     response should be('right)
@@ -110,17 +108,48 @@ class ApiSpec
       r.result.name shouldBe validRepoName
       r.statusCode shouldBe okStatusCode
     }
-
   }
-
   it should "return error when an invalid repo name is passed" in {
     val response =
       repos.get(accessToken, headerUserAgent, validRepoOwner, invalidRepoName)
     response should be('left)
   }
 
-  "Repos >> GetContents" should "return the expected contents when valid repo and a valid file path is provided" in {
+  "Repos >> ListOrgRepos" should "return the expected repos when a valid org is provided" in {
+    val response = repos.listOrgRepos(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      None,
+      Option(Pagination(validPage, validPerPage)))
+    response should be('right)
 
+    response.toOption map { r ⇒
+      r.result.nonEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    }
+  }
+  it should "return an empty list of repos for invalid page parameter" in {
+    val response = repos.listOrgRepos(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      None,
+      Option(Pagination(invalidPage, validPerPage)))
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.result.isEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    }
+  }
+  it should "return error when an invalid org is passed" in {
+    val response =
+      repos.listOrgRepos(accessToken, headerUserAgent, invalidRepoName)
+    response should be('left)
+  }
+
+  "Repos >> GetContents" should "return the expected contents when valid repo and a valid file path is provided" in {
     val response =
       repos.getContents(accessToken, headerUserAgent, validRepoOwner, validRepoName, validFilePath)
     response should be('right)
@@ -130,11 +159,8 @@ class ApiSpec
       r.result.tail.isEmpty shouldBe true
       r.statusCode shouldBe okStatusCode
     }
-
   }
-
   it should "return the expected contents when valid repo and a valid dir path is provided" in {
-
     val response =
       repos.getContents(accessToken, headerUserAgent, validRepoOwner, validRepoName, validDirPath)
     response should be('right)
@@ -144,11 +170,8 @@ class ApiSpec
       r.result.tail.nonEmpty shouldBe true
       r.statusCode shouldBe okStatusCode
     }
-
   }
-
   it should "return the expected contents when valid repo and a valid symlink path is provided" in {
-
     val response =
       repos.getContents(
         accessToken,
@@ -163,11 +186,8 @@ class ApiSpec
       r.result.tail.isEmpty shouldBe true
       r.statusCode shouldBe okStatusCode
     }
-
   }
-
   it should "return the expected contents when valid repo and a valid submodule path is provided" in {
-
     val response =
       repos.getContents(
         accessToken,
@@ -182,9 +202,7 @@ class ApiSpec
       r.result.tail.isEmpty shouldBe true
       r.statusCode shouldBe okStatusCode
     }
-
   }
-
   it should "return error when an invalid repo name is passed" in {
     val response =
       repos.get(accessToken, headerUserAgent, validRepoOwner, invalidRepoName)
@@ -206,7 +224,6 @@ class ApiSpec
       r.statusCode shouldBe okStatusCode
     }
   }
-
   it should "return an empty list of commits for invalid page parameter" in {
     val response = repos.listCommits(
       accessToken = accessToken,
@@ -224,7 +241,6 @@ class ApiSpec
     }
 
   }
-
   it should "return error for invalid repo name" in {
     val response = repos.listCommits(accessToken, headerUserAgent, validRepoOwner, invalidRepoName)
     response should be('left)
@@ -244,9 +260,7 @@ class ApiSpec
       r.result shouldNot be(empty)
       r.statusCode shouldBe okStatusCode
     }
-
   }
-
   it should "return the expected list of contributors for valid data, including a valid anon parameter" in {
     val response = repos.listContributors(
       accessToken = accessToken,
@@ -261,9 +275,7 @@ class ApiSpec
       r.result shouldNot be(empty)
       r.statusCode shouldBe okStatusCode
     }
-
   }
-
   it should "return an empty list of contributors for invalid anon parameter" in {
     val response = repos.listContributors(
       accessToken = accessToken,
@@ -280,7 +292,6 @@ class ApiSpec
       r.statusCode shouldBe okStatusCode
     }
   }
-
   it should "return error for invalid repo name" in {
     val response =
       repos.listContributors(accessToken, headerUserAgent, validRepoOwner, invalidRepoName)
@@ -303,7 +314,6 @@ class ApiSpec
       r.statusCode shouldBe createdStatusCode
     }
   }
-
   it should "return error Left for non authenticated request" in {
     val response =
       repos.createRelease(
@@ -317,8 +327,101 @@ class ApiSpec
     response should be('left)
   }
 
-  "Users >> Get" should "return the expected login for a valid username" in {
+  "Repos >> GetStatus" should "return the expected combined status when a valid ref is provided" in {
+    val response =
+      repos.getStatus(accessToken, headerUserAgent, validRepoOwner, validRepoName, validRefSingle)
+    response should be('right)
 
+    response.toOption map { r ⇒
+      r.statusCode shouldBe okStatusCode
+    }
+  }
+  it should "return an error if no tokens are provided" in {
+    val response =
+      repos.getStatus(None, headerUserAgent, validRepoOwner, validRepoName, validRefSingle)
+    response should be('left)
+  }
+  it should "return an error if an invalid ref is passed" in {
+    val response =
+      repos.getStatus(accessToken, headerUserAgent, validRepoOwner, validRepoName, invalidRef)
+    response should be('left)
+  }
+
+  "Repos >> ListStatus" should "return the expected statuses when a valid ref is provided" in {
+    val response = repos.listStatuses(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      validRefSingle)
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.result.nonEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    }
+  }
+  it should "return an error if no tokens are provided" in {
+    val response =
+      repos.listStatuses(None, headerUserAgent, validRepoOwner, validRepoName, validRefSingle)
+    response should be('left)
+  }
+  it should "return an empty list when an invalid ref is passed" in {
+    val response =
+      repos.listStatuses(accessToken, headerUserAgent, validRepoOwner, validRepoName, invalidRef)
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.result.isEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    }
+  }
+
+  "Repos >> CreateStatus" should "return the created status if a valid sha is provided" in {
+    val response = repos.createStatus(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      validCommitSha,
+      validStatusState,
+      None,
+      None,
+      None)
+    response should be('right)
+
+    response.toOption map { r =>
+      r.statusCode shouldBe createdStatusCode
+    }
+  }
+  it should "return an error if no tokens are provided" in {
+    val response = repos.createStatus(
+      None,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      validCommitSha,
+      validStatusState,
+      None,
+      None,
+      None)
+    response should be('left)
+  }
+  it should "return an error when an invalid sha is passed" in {
+    val response = repos.createStatus(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      invalidCommitSha,
+      validStatusState,
+      None,
+      None,
+      None)
+    response should be('left)
+  }
+
+  "Users >> Get" should "return the expected login for a valid username" in {
     val response = users.get(accessToken, headerUserAgent, validUsername)
 
     response should be('right)
@@ -326,14 +429,11 @@ class ApiSpec
       r.result.login shouldBe validUsername
       r.statusCode shouldBe okStatusCode
     }
-
   }
-
   it should "return error on Left for invalid username" in {
     val response = users.get(accessToken, headerUserAgent, invalidUsername)
     response should be('left)
   }
-
   "Users >> GetAuth" should "return the expected login for a valid accessToken" in {
     val response = users.getAuth(accessToken, headerUserAgent)
     response should be('right)
@@ -342,9 +442,7 @@ class ApiSpec
       r.result.login shouldBe validUsername
       r.statusCode shouldBe okStatusCode
     }
-
   }
-
   it should "return error on Left when no accessToken is provided" in {
     val response = users.getAuth(None, headerUserAgent)
     response should be('left)
@@ -358,9 +456,7 @@ class ApiSpec
       r.result.nonEmpty shouldBe true
       r.statusCode shouldBe okStatusCode
     }
-
   }
-
   it should "return an empty list when a invalid since value is provided" in {
     val response =
       users.getUsers(accessToken, headerUserAgent, invalidSinceInt)
@@ -370,7 +466,6 @@ class ApiSpec
       r.result.isEmpty shouldBe true
       r.statusCode shouldBe okStatusCode
     }
-
   }
 
   "Gists >> PostGist" should "return the provided gist for a valid request" in {
@@ -386,7 +481,6 @@ class ApiSpec
     response.toOption map { r ⇒
       r.statusCode shouldBe createdStatusCode
     }
-
   }
 
   "GitData >> GetReference" should "return the single reference" in {
@@ -403,7 +497,6 @@ class ApiSpec
       r.statusCode shouldBe okStatusCode
     }
   }
-
   it should "return multiple references" in {
     val response =
       gitData.reference(
@@ -418,7 +511,6 @@ class ApiSpec
       r.statusCode shouldBe okStatusCode
     }
   }
-
   it should "return error Left for non existent reference" in {
     val response =
       gitData.reference(accessToken, headerUserAgent, validRepoOwner, validRepoName, invalidRef)
@@ -440,7 +532,6 @@ class ApiSpec
       r.statusCode shouldBe createdStatusCode
     }
   }
-
   it should "return error Left for non authenticated request" in {
     val response =
       gitData.updateReference(
@@ -448,7 +539,7 @@ class ApiSpec
         headerUserAgent,
         validRepoOwner,
         validRepoName,
-        s"refs/$validRefSingle",
+        validRefSingle,
         validCommitSha)
     response should be('left)
   }
@@ -468,7 +559,6 @@ class ApiSpec
       r.statusCode shouldBe okStatusCode
     }
   }
-
   it should "return error Left for non authenticated request" in {
     val response =
       gitData.updateReference(
@@ -490,7 +580,6 @@ class ApiSpec
       r.statusCode shouldBe okStatusCode
     }
   }
-
   it should "return error Left for non existent commit" in {
     val response =
       gitData.commit(accessToken, headerUserAgent, validRepoOwner, validRepoName, invalidCommitSha)
@@ -513,7 +602,6 @@ class ApiSpec
       r.statusCode shouldBe createdStatusCode
     }
   }
-
   it should "return error Left for non authenticated request" in {
     val response =
       gitData.createCommit(
@@ -536,7 +624,6 @@ class ApiSpec
       r.statusCode shouldBe createdStatusCode
     }
   }
-
   it should "return error Left for non authenticated request" in {
     val response =
       gitData.createBlob(None, headerUserAgent, validRepoOwner, validRepoName, validNote)
@@ -558,7 +645,6 @@ class ApiSpec
       r.statusCode shouldBe createdStatusCode
     }
   }
-
   it should "return error Left for non authenticated request" in {
     val response =
       gitData.createTree(
@@ -581,7 +667,6 @@ class ApiSpec
       r.statusCode shouldBe okStatusCode
     }
   }
-
   it should "return error when an invalid repo name is passed" in {
     val response =
       pullRequests.list(accessToken, headerUserAgent, validRepoOwner, invalidRepoName)
@@ -602,7 +687,6 @@ class ApiSpec
       r.statusCode shouldBe okStatusCode
     }
   }
-
   it should "return an error when an invalid repo name is passed" in {
     val response = pullRequests.listFiles(
       accessToken,
@@ -613,31 +697,95 @@ class ApiSpec
     response should be('left)
   }
 
-  "Statuses >> Get" should "return the expected combined status when a valid ref is provided" in {
-    val response =
-      statuses.get(accessToken, headerUserAgent, validRepoOwner, validRepoName, validRefSingle)
+  "PullRequests >> Create PullRequestData" should "return the pull request when a valid data is provided" in {
+    val response = pullRequests.create(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      validNewPullRequestData,
+      validHead,
+      validBase)
     response should be('right)
-
-    response.toOption map { r ⇒
-      r.statusCode shouldBe okStatusCode
-    }
   }
-
-  it should "return an error if no tokens are provided" in {
-    val response =
-      statuses.get(None, headerUserAgent, validRepoOwner, validRepoName, validRefSingle)
+  it should "return an error when an invalid data is passed" in {
+    val response = pullRequests.create(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      invalidNewPullRequestData,
+      invalidHead,
+      invalidBase)
     response should be('left)
   }
 
-  it should "return an error if an invalid ref is passed" in {
-    val response =
-      statuses.get(accessToken, headerUserAgent, validRepoOwner, validRepoName, invalidRef)
+  "PullRequests >> Create PullRequestIssue" should "return the pull request when a valid data is provided" in {
+    val response = pullRequests.create(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      validNewPullRequestIssue,
+      validHead,
+      validBase)
+    response should be('right)
+  }
+  it should "return an error when an invalid data is passed" in {
+    val response = pullRequests.create(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      invalidNewPullRequestIssue,
+      invalidHead,
+      invalidBase)
     response should be('left)
   }
 
-  "Statuses >> List" should "return the expected statuses when a valid ref is provided" in {
+  "PullRequests >> List PullRequestReviews" should "return a list of reviews when valid data is provided" in {
+    val response = pullRequests.listReviews(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      validPullRequestNumber)
+    response should be('right)
+  }
+  it should "return an error when invalid data is passed" in {
+    val response = pullRequests.listReviews(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      invalidRepoName,
+      validPullRequestNumber)
+    response should be('left)
+  }
+
+  "PullRequests >> Get PullRequestReview" should "return a single review when valid data is provided" in {
+    val response = pullRequests.getReview(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      validPullRequestNumber,
+      validPullRequestReviewNumber)
+    response should be('right)
+  }
+  it should "return an error when invalid data is passed" in {
+    val response = pullRequests.getReview(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      invalidRepoName,
+      validPullRequestNumber,
+      validPullRequestReviewNumber)
+    response should be('left)
+  }
+
+  "Issues >> List" should "return the expected issues when a valid owner/repo is provided" in {
     val response =
-      statuses.list(accessToken, headerUserAgent, validRepoOwner, validRepoName, validRefSingle)
+      issues.list(accessToken, headerUserAgent, validRepoOwner, validRepoName)
     response should be('right)
 
     response.toOption map { r ⇒
@@ -645,16 +793,266 @@ class ApiSpec
       r.statusCode shouldBe okStatusCode
     }
   }
-
+  it should "return an error if invalid data is provided" in {
+    val response =
+      issues.list(accessToken, headerUserAgent, validRepoOwner, invalidRepoName)
+    response should be('left)
+  }
   it should "return an error if no tokens are provided" in {
     val response =
-      statuses.list(None, headerUserAgent, validRepoOwner, validRepoName, validRefSingle)
+      issues.list(None, headerUserAgent, validRepoOwner, validRepoName)
     response should be('left)
   }
 
-  it should "return an empty list when an invalid ref is passed" in {
+  "Issues >> Create" should "return the created issue if valid data is provided" in {
+    val response = issues.create(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      validIssueTitle,
+      validIssueBody,
+      None,
+      List.empty,
+      List.empty)
+    response should be('right)
+
+    response.toOption map { r =>
+      r.statusCode shouldBe createdStatusCode
+    }
+  }
+  it should "return an error if invalid data is provided" in {
+    val response = issues.create(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      invalidRepoName,
+      validIssueTitle,
+      validIssueBody,
+      None,
+      List.empty,
+      List.empty)
+    response should be('left)
+  }
+  it should "return an error if no tokens are provided" in {
+    val response = issues.create(
+      None,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      validIssueTitle,
+      validIssueBody,
+      None,
+      List.empty,
+      List.empty)
+    response should be('left)
+  }
+
+  "Issues >> Edit" should "return the edited issue if valid data is provided" in {
+    val response = issues.edit(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      validIssueNumber,
+      validIssueState,
+      validIssueTitle,
+      validIssueBody,
+      None,
+      List.empty,
+      List.empty)
+    response should be('right)
+
+    response.toOption map { r =>
+      r.statusCode shouldBe okStatusCode
+    }
+  }
+  it should "return an error if invalid data is provided" in {
+    val response = issues.edit(
+      accessToken,
+      headerUserAgent,
+      validRepoOwner,
+      invalidRepoName,
+      validIssueNumber,
+      validIssueState,
+      validIssueTitle,
+      validIssueBody,
+      None,
+      List.empty,
+      List.empty)
+    response should be('left)
+  }
+  it should "return an error if no tokens are provided" in {
+    val response = issues.edit(
+      None,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      validIssueNumber,
+      validIssueState,
+      validIssueTitle,
+      validIssueBody,
+      None,
+      List.empty,
+      List.empty)
+    response should be('left)
+  }
+
+  "Issues >> Search" should "return the search result if valid data is provided" in {
+    val response = issues.search(accessToken, headerUserAgent, validSearchQuery, List.empty)
+    response should be('right)
+
+    response.toOption map { r =>
+      r.statusCode shouldBe okStatusCode
+    }
+  }
+  it should "return an empty result if a search query matching nothing is provided" in {
     val response =
-      statuses.list(accessToken, headerUserAgent, validRepoOwner, validRepoName, invalidRef)
+      issues.search(accessToken, headerUserAgent, nonExistentSearchQuery, List.empty)
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.result.items.isEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    }
+  }
+
+  "Issues >> Create a Comment" should "return the comment created when a valid issue number is provided" in {
+    val response =
+      issues.createComment(
+        accessToken,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        validIssueNumber,
+        validCommentBody)
+    response should be('right)
+  }
+  it should "return an error when an valid issue number is passed without authorization" in {
+    val response =
+      issues.createComment(
+        None,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        validIssueNumber,
+        validCommentBody)
+    response should be('left)
+  }
+  it should "return an error when an invalid issue number is passed" in {
+    val response =
+      issues.createComment(
+        accessToken,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        invalidIssueNumber,
+        validCommentBody)
+    response should be('left)
+  }
+
+  "Issues >> Edit a Comment" should "return the edited comment when a valid comment id is provided" in {
+    val response =
+      issues.editComment(
+        accessToken,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        validCommentId,
+        validCommentBody)
+    response should be('right)
+  }
+  it should "return an error when an valid comment id is passed without authorization" in {
+    val response =
+      issues.editComment(
+        None,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        validCommentId,
+        validCommentBody)
+    response should be('left)
+  }
+  it should "return an error when an invalid comment id is passed" in {
+    val response =
+      issues.editComment(
+        accessToken,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        invalidCommentId,
+        validCommentBody)
+    response should be('left)
+  }
+
+  "Issues >> Delete a Comment" should "return deleted status when a valid comment id is provided" in {
+    val response =
+      issues.deleteComment(
+        accessToken,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        validCommentId)
+    response should be('right)
+  }
+  it should "return an error when an valid comment id is passed without authorization" in {
+    val response =
+      issues.deleteComment(None, headerUserAgent, validRepoOwner, validRepoName, validCommentId)
+    response should be('left)
+  }
+  it should "return an error when an invalid comment id is passed" in {
+    val response =
+      issues.deleteComment(
+        accessToken,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        invalidCommentId)
+    response should be('left)
+  }
+
+  "Activities >> Set a Thread Subscription" should "return the subscription when a valid thread id is provided" in {
+    val response =
+      activities.setThreadSub(accessToken, headerUserAgent, validThreadId, true, false)
+    response should be('right)
+  }
+  it should "return an error when an valid thread id is passed without authorization" in {
+    val response =
+      activities.setThreadSub(None, headerUserAgent, validThreadId, true, false)
+    response should be('left)
+  }
+  it should "return an error when an invalid thread id is passed" in {
+    val response =
+      activities.setThreadSub(accessToken, headerUserAgent, invalidThreadId, true, false)
+    response should be('left)
+  }
+
+  "Activities >> ListStargazers" should "return the expected list of stargazers for valid data" in {
+    val response = activities.listStargazers(
+      accessToken = accessToken,
+      headers = headerUserAgent,
+      owner = validRepoOwner,
+      repo = validRepoName,
+      timeline = false,
+      pagination = Option(Pagination(validPage, validPerPage))
+    )
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.result.nonEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    }
+  }
+  it should "return an empty list of stargazers for invalid page parameter" in {
+    val response = activities.listStargazers(
+      accessToken = accessToken,
+      headers = headerUserAgent,
+      owner = validRepoOwner,
+      repo = validRepoName,
+      timeline = false,
+      pagination = Option(Pagination(invalidPage, validPerPage))
+    )
+
     response should be('right)
 
     response.toOption map { r ⇒
@@ -662,50 +1060,85 @@ class ApiSpec
       r.statusCode shouldBe okStatusCode
     }
   }
-
-  "Statuses >> Create" should "return the create status if a valid sha is provided" in {
-    val response = statuses.create(
+  it should "return error for invalid repo name" in {
+    val response = activities.listStargazers(
       accessToken,
       headerUserAgent,
       validRepoOwner,
-      validRepoName,
-      validCommitSha,
-      validStatusState,
-      None,
-      None,
-      None)
+      invalidRepoName,
+      false)
+    response should be('left)
+  }
+
+  "Activities >> ListStarredRepositories" should "return the expected list of repos" in {
+    val response = activities.listStarredRepositories(
+      accessToken = accessToken,
+      headers = headerUserAgent,
+      username = validUsername,
+      timeline = false,
+      pagination = Option(Pagination(validPage, validPerPage))
+    )
     response should be('right)
 
-    response.toOption map { r =>
-      r.statusCode shouldBe createdStatusCode
+    response.toOption map { r ⇒
+      r.result.nonEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
     }
   }
+  it should "return an empty list of repos for invalid page parameter" in {
+    val response = activities.listStarredRepositories(
+      accessToken = accessToken,
+      headers = headerUserAgent,
+      username = validUsername,
+      timeline = false,
+      pagination = Option(Pagination(invalidPage, validPerPage))
+    )
 
-  it should "return an error if no tokens are provided" in {
-    val response = statuses.create(
-      None,
-      headerUserAgent,
-      validRepoOwner,
-      validRepoName,
-      validCommitSha,
-      validStatusState,
-      None,
-      None,
-      None)
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.result.isEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    }
+  }
+  it should "return error for invalid username" in {
+    val response =
+      activities.listStarredRepositories(accessToken, headerUserAgent, invalidUsername, false)
     response should be('left)
   }
 
-  it should "return an error when an invalid sha is passed" in {
-    val response = statuses.create(
-      accessToken,
-      headerUserAgent,
-      validRepoOwner,
-      validRepoName,
-      invalidCommitSha,
-      validStatusState,
-      None,
-      None,
-      None)
+  "Organizations >> ListMembers" should "return the expected list of users" in {
+    val response = organizations.listMembers(
+      accessToken = accessToken,
+      headers = headerUserAgent,
+      org = validRepoOwner,
+      pagination = Option(Pagination(validPage, validPerPage))
+    )
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.result.nonEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    }
+  }
+  it should "return an empty list of users for an invalid page parameter" in {
+    val response = organizations.listMembers(
+      accessToken = accessToken,
+      headers = headerUserAgent,
+      org = validRepoOwner,
+      pagination = Option(Pagination(invalidPage, validPerPage))
+    )
+
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.result.isEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    }
+  }
+  it should "return error for an invalid organization" in {
+    val response = organizations.listMembers(accessToken, headerUserAgent, invalidUsername)
     response should be('left)
   }
+
 }

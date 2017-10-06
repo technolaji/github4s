@@ -24,8 +24,14 @@ import io.circe.generic.auto._
 object Encoders {
 
   implicit val encodeTreeData: Encoder[TreeData] = Encoder.instance {
-    case d: TreeDataSha => d.asJson
+    case d: TreeDataSha  => d.asJson
     case d: TreeDataBlob => d.asJson
   }
 
+  implicit val encodeNewPullRequest: Encoder[CreatePullRequest] = Encoder.instance {
+    case d: CreatePullRequestData  => d.asJson
+    case d: CreatePullRequestIssue => d.asJson
+  }
+
+  implicit val encodePrrStatus: Encoder[PullRequestReviewState] = Encoder.encodeString.contramap(_.value)
 }

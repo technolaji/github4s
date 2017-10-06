@@ -110,7 +110,7 @@ class GitDataInterpreter[C, M[_]](
       repo: String,
       ref: String,
       sha: String,
-      force: Option[Boolean] = None): M[GHResponse[Ref]] =
+      force: Boolean = false): M[GHResponse[Ref]] =
     httpClient.patch[Ref](
       config.accessToken,
       s"repos/$owner/$repo/git/refs/$ref",

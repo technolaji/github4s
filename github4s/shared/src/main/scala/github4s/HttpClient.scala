@@ -52,8 +52,12 @@ object HttpClient {
     def statusCode: Int
   }
 
-  case object HttpCode400 extends HttpStatus {
-    def statusCode = 400
+  case object HttpCode200 extends HttpStatus {
+    def statusCode = 200
+  }
+
+  case object HttpCode299 extends HttpStatus {
+    def statusCode = 299
   }
 }
 
@@ -137,12 +141,14 @@ class HttpClient[C, M[_]](
 
   def put[A](
       accessToken: Option[String] = None,
+      url: String,
       headers: Map[String, String] = Map(),
-      method: String)(implicit D: Decoder[A]): M[GHResponse[A]] =
+      data: String)(implicit D: Decoder[A]): M[GHResponse[A]] =
     httpRbImpl.run[A](
-      httpRequestBuilder(buildURL(method)).putMethod
+      httpRequestBuilder(buildURL(url)).putMethod
         .withAuth(accessToken)
-        .withHeaders(Map("Content-Length" → "0") ++ headers))
+        .withHeaders(headers)
+        .withData(data))
 
   def post[A](
       accessToken: Option[String] = None,
@@ -174,11 +180,11 @@ class HttpClient[C, M[_]](
         .withHeaders(Map("Accept" → "application/json") ++ headers)
         .withData(data))
 
-  def delete[A](
+  def delete(
       accessToken: Option[String] = None,
       method: String,
-      headers: Map[String, String] = Map.empty)(implicit D: Decoder[A]): M[GHResponse[A]] =
-    httpRbImpl.run[A](
+      headers: Map[String, String] = Map.empty): M[GHResponse[Unit]] =
+    httpRbImpl.runEmpty(
       httpRequestBuilder(buildURL(method)).deleteMethod.withHeaders(headers).withAuth(accessToken))
 
   private def buildURL(method: String) = urls.baseUrl + method

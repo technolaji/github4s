@@ -16,26 +16,111 @@
 
 package github4s.free.algebra
 
+import cats.InjectK
+import cats.free.Free
 import github4s.GithubResponses._
 import github4s.free.domain._
 
-import freestyle._
+/**
+ * PullRequests ops ADT
+ */
+sealed trait PullRequestOp[A]
+
+final case class ListPullRequests(
+    owner: String,
+    repo: String,
+    filters: List[PRFilter] = Nil,
+    accessToken: Option[String] = None
+) extends PullRequestOp[GHResponse[List[PullRequest]]]
+
+final case class ListPullRequestFiles(
+    owner: String,
+    repo: String,
+    number: Int,
+    accessToken: Option[String] = None
+) extends PullRequestOp[GHResponse[List[PullRequestFile]]]
+
+final case class CreatePullRequest(
+    owner: String,
+    repo: String,
+    newPullRequest: NewPullRequest,
+    head: String,
+    base: String,
+    maintainerCanModify: Option[Boolean] = Some(true),
+    accessToken: Option[String] = None
+) extends PullRequestOp[GHResponse[PullRequest]]
+
+final case class ListPullRequestReviews(
+    owner: String,
+    repo: String,
+    pullRequest: Int,
+    accessToken: Option[String] = None
+) extends PullRequestOp[GHResponse[List[PullRequestReview]]]
+
+final case class GetPullRequestReview(
+    owner: String,
+    repo: String,
+    pullRequest: Int,
+    review: Int,
+    accessToken: Option[String] = None
+) extends PullRequestOp[GHResponse[PullRequestReview]]
 
 /**
  * Exposes Pull Request operations as a Free monadic algebra that may be combined with other
  * Algebras via Coproduct
  */
-@free trait PullRequestOps {
+class PullRequestOps[F[_]](implicit I: InjectK[PullRequestOp, F]) {
 
   def listPullRequests(
       owner: String,
       repo: String,
-      filters: List[PRFilter] = Nil
-  ): FS[GHResponse[List[PullRequest]]]
+      filters: List[PRFilter] = Nil,
+      accessToken: Option[String] = None
+  ): Free[F, GHResponse[List[PullRequest]]] =
+    Free.inject[PullRequestOp, F](ListPullRequests(owner, repo, filters, accessToken))
 
   def listPullRequestFiles(
       owner: String,
       repo: String,
-      number: Int
-  ): FS[GHResponse[List[PullRequestFile]]]
+      number: Int,
+      accessToken: Option[String] = None
+  ): Free[F, GHResponse[List[PullRequestFile]]] =
+    Free.inject[PullRequestOp, F](ListPullRequestFiles(owner, repo, number, accessToken))
+
+  def createPullRequest(
+      owner: String,
+      repo: String,
+      newPullRequest: NewPullRequest,
+      head: String,
+      base: String,
+      maintainerCanModify: Option[Boolean] = Some(true),
+      accessToken: Option[String] = None
+  ): Free[F, GHResponse[PullRequest]] =
+    Free.inject[PullRequestOp, F](
+      CreatePullRequest(owner, repo, newPullRequest, head, base, maintainerCanModify, accessToken))
+
+  def listPullRequestReviews(
+      owner: String,
+      repo: String,
+      pullRequest: Int,
+      accessToken: Option[String] = None): Free[F, GHResponse[List[PullRequestReview]]] =
+    Free.inject[PullRequestOp, F](ListPullRequestReviews(owner, repo, pullRequest, accessToken))
+
+  def getPullRequestReview(
+      owner: String,
+      repo: String,
+      pullRequest: Int,
+      review: Int,
+      accessToken: Option[String] = None): Free[F, GHResponse[PullRequestReview]] =
+    Free.inject[PullRequestOp, F](GetPullRequestReview(owner, repo, pullRequest, review, accessToken))
+}
+
+/**
+ * Default implicit based DI factory from which instances of the PullRequestOps may be obtained
+ */
+object PullRequestOps {
+
+  implicit def instance[F[_]](implicit I: InjectK[PullRequestOp, F]): PullRequestOps[F] =
+    new PullRequestOps[F]
+
 }

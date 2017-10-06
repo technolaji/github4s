@@ -14,21 +14,26 @@
  * limitations under the License.
  */
 
-package github4s.free.interpreters
+package github4s.api
 
 import github4s.GithubResponses.GHResponse
 import github4s.free.domain._
-import github4s.{GithubApiUrls, HttpClient, HttpRequestBuilderExtension}
+import github4s.free.interpreters.Capture
+import github4s.{Decoders, Encoders, GithubApiUrls, HttpClient, HttpRequestBuilderExtension}
+import github4s.util.URLEncoder
 import io.circe.generic.auto._
-import github4s.free.algebra.PullRequestOps
-import github4s.Config
+import io.circe.syntax._
 
 import scala.language.higherKinds
 
-class PullRequestInterpreter[C, M[_]](
+/** Factory to encapsulate calls related to PullRequests operations  */
+class PullRequests[C, M[_]](
     implicit urls: GithubApiUrls,
-    httpClientImpl: HttpRequestBuilderExtension[C, M])
-    extends PullRequestOps.Handler[M] {
+    C: Capture[M],
+    httpClientImpl: HttpRequestBuilderExtension[C, M]) {
+
+  import Decoders._
+  import Encoders._
 
   val httpClient = new HttpClient[C, M]
 
@@ -36,49 +41,119 @@ class PullRequestInterpreter[C, M[_]](
    * List pull requests for a repository
    *
    * @param accessToken to identify the authenticated user
-   * @param headers     optional user headers to include in the request
-   * @param owner       of the repo
-   * @param repo        name of the repo
-   * @param filters     define the filter list. Options are:
+   * @param headers optional user headers to include in the request
+   * @param owner of the repo
+   * @param repo name of the repo
+   * @param filters define the filter list. Options are:
    *   - state: Either `open`, `closed`, or `all` to filter by state. Default: `open`
    *   - head: Filter pulls by head user and branch name in the format of `user:ref-name`.
-   *                    Example: `github:new-script-format`.
+   *     Example: `github:new-script-format`.
    *   - base: Filter pulls by base branch name. Example: `gh-pages`.
    *   - sort: What to sort results by. Can be either `created`, `updated`, `popularity` (comment count)
-   *                    or `long-running` (age, filtering by pulls updated in the last month). Default: `created`
+   *     or `long-running` (age, filtering by pulls updated in the last month). Default: `created`
    *   - direction: The direction of the sort. Can be either `asc` or `desc`.
-   *                    Default: `desc` when sort is created or sort is not specified, otherwise `asc`.
+   *     Default: `desc` when sort is created or sort is not specified, otherwise `asc`.
    * @return a GHResponse with the pull request list.
    */
   def list(
-      config: Config,
+      accessToken: Option[String] = None,
+      headers: Map[String, String] = Map(),
       owner: String,
       repo: String,
       filters: List[PRFilter] = Nil): M[GHResponse[List[PullRequest]]] =
     httpClient.get[List[PullRequest]](
-      config.accessToken,
+      accessToken,
       s"repos/$owner/$repo/pulls",
-      config.headers,
+      headers,
       filters.map(_.tupled).toMap)
 
   /**
    * List files for a specific pull request
    *
    * @param accessToken to identify the authenticated user
-   * @param headers     optional user headers to include in the request
-   * @param owner       of the repo
-   * @param repo        name of the repo
-   * @param number      of the pull request for which we want to list the files
+   * @param headers optional user headers to include in the request
+   * @param owner of the repo
+   * @param repo name of the repo
+   * @param number of the pull request for which we want to list the files
    * @return a GHResponse with the list of files affected by the pull request identified by number.
    */
   def listFiles(
-      config: Config,
+      accessToken: Option[String] = None,
+      headers: Map[String, String] = Map(),
       owner: String,
       repo: String,
       number: Int): M[GHResponse[List[PullRequestFile]]] =
     httpClient
-      .get[List[PullRequestFile]](
-        config.accessToken,
-        s"repos/$owner/$repo/pulls/$number/files",
-        config.headers)
+      .get[List[PullRequestFile]](accessToken, s"repos/$owner/$repo/pulls/$number/files", headers)
+
+  /**
+   * Create a pull request
+   *
+   * @param accessToken Token to identify the authenticated user
+   * @param headers Optional user headers to include in the request
+   * @param owner Owner of the repo
+   * @param repo Name of the repo
+   * @param newPullRequest The title and body parameters or the issue parameter
+   * @param head The name of the branch where your changes are implemented. For cross-repository pull
+   *             requests in the same network, namespace head with a user like this: username:branch.
+   * @param base The name of the branch you want the changes pulled into. This should be an existing branch
+   *             on the current repository. You cannot submit a pull request to one repository that
+   * @param maintainerCanModify Indicates whether maintainers can modify the pull request, Default:Some(true).
+   */
+  def create(
+      accessToken: Option[String] = None,
+      headers: Map[String, String] = Map(),
+      owner: String,
+      repo: String,
+      newPullRequest: NewPullRequest,
+      head: String,
+      base: String,
+      maintainerCanModify: Option[Boolean] = Some(true)): M[GHResponse[PullRequest]] = {
+    val data: CreatePullRequest = newPullRequest match {
+      case NewPullRequestData(title, body) ⇒
+        CreatePullRequestData(title, head, base, body, maintainerCanModify)
+      case NewPullRequestIssue(issue) ⇒
+        CreatePullRequestIssue(issue, head, base, maintainerCanModify)
+    }
+    httpClient
+      .post[PullRequest](accessToken, s"repos/$owner/$repo/pulls", headers, data.asJson.noSpaces)
+  }
+
+  /**
+   * List pull request reviews.
+   *
+   * @param accessToken Token to identify the authenticated user
+   * @param headers Optional user header to include in the request
+   * @param owner Owner of the repo
+   * @param repo Name of the repo
+   * @param pullRequest ID number of the PR to get reviews for.
+   */
+  def listReviews(
+      accessToken: Option[String] = None,
+      headers: Map[String, String] = Map(),
+      owner: String,
+      repo: String,
+      pullRequest: Int): M[GHResponse[List[PullRequestReview]]] = {
+    httpClient.get[List[PullRequestReview]](accessToken, s"repos/$owner/$repo/pulls/$pullRequest/reviews", headers)
+  }
+
+  /**
+   * Get a specific pull request review.
+   *
+   * @param accessToken Token to identify the authenticated user
+   * @param headers Optional user header to include in the request
+   * @param owner Owner of the repo
+   * @param repo Name of the repo
+   * @param pullRequest ID number of the PR to get reviews for
+   * @param review ID number of the review to retrieve.
+   */
+  def getReview(
+      accessToken: Option[String] = None,
+      headers: Map[String, String] = Map(),
+      owner: String,
+      repo: String,
+      pullRequest: Int,
+      review: Int): M[GHResponse[PullRequestReview]] = {
+    httpClient.get[PullRequestReview](accessToken, s"repos/$owner/$repo/pulls/$pullRequest/reviews/$review", headers)
+  }
 }

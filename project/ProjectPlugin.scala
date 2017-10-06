@@ -1,4 +1,5 @@
 import com.typesafe.sbt.site.jekyll.JekyllPlugin.autoImport._
+import microsites._
 import microsites.MicrositesPlugin.autoImport._
 import sbt.Keys._
 import sbt._
@@ -10,8 +11,7 @@ import sbtorgpolicies.templates.badges._
 import sbtorgpolicies.runnable.syntax._
 import scoverage.ScoverageKeys
 import scoverage.ScoverageKeys._
-import tut.Plugin._
-import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
+import tut.TutPlugin.autoImport._
 
 object ProjectPlugin extends AutoPlugin {
 
@@ -22,13 +22,23 @@ object ProjectPlugin extends AutoPlugin {
   object autoImport {
 
     lazy val micrositeSettings = Seq(
-      micrositeName := "github4s",
+      micrositeName := "Github4s",
       micrositeDescription := "Github API wrapper written in Scala",
       micrositeBaseUrl := "github4s",
       micrositeDocumentationUrl := "/github4s/docs.html",
       micrositeGithubOwner := "47deg",
       micrositeGithubRepo := "github4s",
-      includeFilter in Jekyll := "*.html" | "*.css" | "*.png" | "*.jpg" | "*.gif" | "*.js" | "*.swf" | "*.md"
+      micrositeAuthor := "Github4s contributors",
+      micrositeOrganizationHomepage := "https://github.com/47deg/github4s/blob/master/AUTHORS.md",
+      micrositeExtraMdFiles := Map(
+        file("CHANGELOG.md") -> ExtraMdFileConfig(
+          "changelog.md",
+          "page",
+          Map("title" -> "Changelog", "section" -> "changelog", "position" -> "2")
+        )
+      ),
+      includeFilter in Jekyll := "*.html" | "*.css" | "*.png" | "*.jpg" | "*.gif" | "*.js" | "*.swf" | "*.md",
+      scalacOptions in Tut ~= (_ filterNot Set("-Ywarn-unused-import", "-Xlint").contains)
     )
 
     lazy val testSettings = Seq(
@@ -36,18 +46,20 @@ object ProjectPlugin extends AutoPlugin {
     )
 
     lazy val commonCrossDeps = Seq(
-      %%("cats"),
+      %%("cats-core"),
+      %%("cats-free"),
+      %%("simulacrum"),
       %%("circe-core"),
       %%("circe-generic"),
       %%("circe-parser"),
       %%("base64"),
-      %%("scalatest") % "test"
+      %%("scalamockScalatest") % "test",
+      %%("scalatest")          % "test"
     )
 
     lazy val standardCommonDeps = Seq(
       libraryDependencies ++= Seq(
         "com.47deg"       %%% "freestyle" % "0.1.0-SNAPSHOT",
-        %("mockito-core") % "test",
         compilerPlugin(%%("paradise") cross CrossVersion.full)
       )
     )
@@ -64,8 +76,14 @@ object ProjectPlugin extends AutoPlugin {
 
     lazy val docsDependencies: Def.Setting[Seq[ModuleID]] = libraryDependencies += %%("scalatest")
 
-    lazy val scalazDependencies: Def.Setting[Seq[ModuleID]] = libraryDependencies += %%(
-      "scalaz-concurrent")
+    lazy val scalazDependencies: Def.Setting[Seq[ModuleID]] =
+      libraryDependencies += %%("scalaz-concurrent")
+
+    lazy val catsEffectDependencies: Seq[ModuleID] =
+      Seq(
+        %%("cats-effect"),
+        %%("scalatest") % "test"
+      )
   }
 
   override def projectSettings: Seq[Def.Setting[_]] =
@@ -81,6 +99,7 @@ object ProjectPlugin extends AutoPlugin {
         case "2.10" => Seq("-Xdivergence211")
         case _      => Nil
       }),
+      scalacOptions ~= (_ filterNot Set("-Xlint").contains),
       orgGithubTokenSetting := "GITHUB4S_ACCESS_TOKEN",
       orgBadgeListSetting := List(
         TravisBadge.apply(_),
@@ -92,10 +111,10 @@ object ProjectPlugin extends AutoPlugin {
         ScalaJSBadge.apply(_),
         GitHubIssuesBadge.apply(_)
       ),
-      orgSupportedScalaJSVersion := Some("0.6.15"),
+      orgSupportedScalaJSVersion := Some("0.6.20"),
       orgScriptTaskListSetting ++= List(
         (ScoverageKeys.coverageAggregate in Test).asRunnableItemFull,
-        (tut in ProjectRef(file("."), "docs")).asRunnableItem
+        "docs/tut".asRunnableItem
       ),
       coverageExcludedPackages := "<empty>;github4s\\.scalaz\\..*",
       // This is necessary to prevent packaging the BuildInfo with

@@ -17,7 +17,11 @@
 package github4s
 
 import cats.data.NonEmptyList
+import cats.instances.either._
+import cats.instances.list._
 import cats.syntax.either._
+import cats.syntax.list._
+import cats.syntax.traverse._
 import github4s.free.domain._
 import io.circe.Decoder.Result
 import io.circe._
@@ -46,16 +50,10 @@ object Decoders {
       )
   }
 
-  def readRepoUrls(c: HCursor): Either[DecodingFailure, List[Option[String]]] = {
-    RepoUrlKeys.allFields.foldLeft(Either.right[DecodingFailure, List[Option[String]]](List.empty)) {
-      case (Left(e), _) => Left(e)
-      case (Right(list), name) =>
-        c.downField(name).as[Option[String]] match {
-          case Left(e)         => Left(e)
-          case Right(maybeUrl) => Right(list :+ maybeUrl)
-        }
+  def readRepoUrls(c: HCursor): Either[DecodingFailure, List[Option[String]]] =
+    RepoUrlKeys.allFields.traverse { name ⇒
+      c.downField(name).as[Option[String]]
     }
-  }
 
   implicit val decodeStatusRepository: Decoder[StatusRepository] = {
     Decoder.instance { c ⇒
@@ -63,7 +61,7 @@ object Decoders {
         id          ← c.downField("id").as[Int]
         name        ← c.downField("name").as[String]
         full_name   ← c.downField("full_name").as[String]
-        owner       ← c.downField("owner").as[User]
+        owner       ← c.downField("owner").as[Option[User]]
         priv        ← c.downField("private").as[Boolean]
         description ← c.downField("description").as[Option[String]]
         fork        ← c.downField("fork").as[Boolean]
@@ -158,13 +156,20 @@ object Decoders {
             ssh_url = ssh_url,
             clone_url = clone_url,
             svn_url = svn_url,
-            otherUrls = (RepoUrlKeys.allFields zip repoUrls.flatten map {
-              case (urlName, value) => urlName -> value
-            }).toMap
+            otherUrls = (RepoUrlKeys.allFields zip repoUrls.flatten).toMap
           )
         )
     }
   }
+
+  implicit val decodePRStatus: Decoder[PullRequestReviewState] =
+    Decoder.decodeString.map {
+      case "APPROVED"          => PRRStateApproved
+      case "CHANGES_REQUESTED" => PRRStateChangesRequested
+      case "COMMENTED"         => PRRStateCommented
+      case "PENDING"           => PRRStatePending
+      case "DISMISSED"         => PRRStateDismissed
+    }
 
   implicit val decodeGist: Decoder[Gist] = Decoder.instance { c ⇒
     for {
@@ -181,23 +186,28 @@ object Decoders {
       )
   }
 
-  val emptyListDecodingFailure = DecodingFailure("Empty Response", Nil)
+  implicit val decodeStargazer: Decoder[Stargazer] =
+    Decoder[User].map(Stargazer(None, _)).or(Decoder.instance(c =>
+      for {
+        starred_at ← c.downField("starred_at").as[String]
+        user       ← c.downField("user").as[User]
+      } yield Stargazer(Some(starred_at), user)
+    ))
+
+  implicit val decodeStarredRepository: Decoder[StarredRepository] =
+    Decoder[Repository].map(StarredRepository(None, _)).or(Decoder.instance(c =>
+      for {
+        starred_at ← c.downField("starred_at").as[String]
+        repo       ← c.downField("repo").as[Repository]
+      } yield StarredRepository(Some(starred_at), repo)
+    ))
 
   implicit def decodeNonEmptyList[T](implicit D: Decoder[T]): Decoder[NonEmptyList[T]] = {
 
-    def decodeCursor(
-        partialList: Option[NonEmptyList[T]],
-        cursor: HCursor): Decoder.Result[NonEmptyList[T]] =
-      cursor.as[T] map { r ⇒
-        partialList map (_.concat(NonEmptyList(r, Nil))) getOrElse NonEmptyList(r, Nil)
-      }
-
     def decodeCursors(cursors: List[HCursor]): Result[NonEmptyList[T]] =
-      cursors.foldLeft[Decoder.Result[NonEmptyList[T]]](Left(emptyListDecodingFailure)) {
-        case (Right(list), cursor)                      => decodeCursor(Some(list), cursor)
-        case (Left(`emptyListDecodingFailure`), cursor) => decodeCursor(None, cursor)
-        case (Left(e), _)                               => Left(e)
-      }
+      cursors.toNel
+        .toRight(DecodingFailure("Empty Response", Nil))
+        .flatMap(nelCursors => nelCursors.traverse(_.as[T]))
 
     Decoder.instance { c ⇒
       c.as[T] match {
