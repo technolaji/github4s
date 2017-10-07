@@ -19,7 +19,6 @@ package github4s.api
 import github4s.GithubResponses.GHResponse
 import github4s._
 import github4s.free.domain._
-import Capture
 import github4s.util.URLEncoder
 import io.circe.syntax._
 import io.circe.generic.auto._

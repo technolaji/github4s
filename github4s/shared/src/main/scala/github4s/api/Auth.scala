@@ -18,14 +18,13 @@ package github4s.api
 
 import java.util.UUID
 
+import cats.implicits._
+import com.github.marklister.base64.Base64.Encoder
 import github4s.GithubResponses.{GHResponse, GHResult}
 import github4s.free.domain._
 import github4s.{GithubApiUrls, HttpClient, HttpRequestBuilderExtension}
 import io.circe.generic.auto._
 import io.circe.syntax._
-import cats.implicits._
-import Capture
-import com.github.marklister.base64.Base64.Encoder
 
 /** Factory to encapsulate calls related to Auth operations  */
 class Auth[C, M[_]](

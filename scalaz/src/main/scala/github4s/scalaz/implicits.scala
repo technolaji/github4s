@@ -28,7 +28,7 @@ import scalaz._
 
 object implicits extends HttpRequestBuilderExtensionJVM {
 
-  implicit val taskCaptureInstance :Capture[Task]= new Capture[Task] {
+  implicit val taskCaptureInstance: Capture[Task] = new Capture[Task] {
     override def capture[A](a: ⇒ A): Task[A] = Task.now(a)
   }
 
@@ -52,7 +52,7 @@ object implicits extends HttpRequestBuilderExtensionJVM {
 
     }
 
-  implicit val intInstanceTaskScalaJ : Interpreters[Task, HttpResponse[String]] =
+  implicit val intInstanceTaskScalaJ: Interpreters[Task, HttpResponse[String]] =
     new Interpreters[Task, HttpResponse[String]]
 
   private[this] def toScalazDisjunction[A, B](disj: Either[A, B]): A \/ B =

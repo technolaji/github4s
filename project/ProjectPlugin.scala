@@ -59,7 +59,7 @@ object ProjectPlugin extends AutoPlugin {
     )
 
     lazy val standardCommonDeps = Seq(
-      libraryDependencies += compilerPlugin(%%("paradise") cross CrossVersion.full)
+      libraryDependencies += compilerPlugin(%%("scalameta-paradise") cross CrossVersion.full)
     )
 
     lazy val jvmDeps = Seq(
