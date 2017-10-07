@@ -19,18 +19,80 @@ package github4s.free.algebra
 import github4s.GithubResponses._
 import github4s.free.domain.{Pagination, User}
 
+import github4s.GithubResponses.GHResponse
+import github4s.{GithubApiUrls, HttpClient, HttpRequestBuilderExtension}
+import github4s.free.domain.{Pagination, User}
+import io.circe.generic.auto._
+import github4s.free.algebra.UserOps
+import github4s.Config
+
 import freestyle._
 
 /**
  * Exposes Users operations as a Free monadic algebra that may be combined with other Algebras via
  * Coproduct
  */
-@free trait UserOps {
+object UserOps {
+  @free trait UserOpsM {
 
-  def getUser(username: String): FS[GHResponse[User]]
+    def getUser(username: String): FS[GHResponse[User]]
 
-  def getAuthUser: FS[GHResponse[User]]
+    def getAuthUser: FS[GHResponse[User]]
 
-  def getUsers(since: Int, pagination: Option[Pagination]): FS[GHResponse[List[User]]]
+    def getUsers(since: Int, pagination: Option[Pagination]): FS[GHResponse[List[User]]]
+
+  }
+
+  trait Implicits {
+    implicit def UserOpsMHandler[M[_]](implicit M: Monad[M]): UserOpsM.Handler[M] =
+      new UserOpsM.Handler[M] {
+        val httpClient = new HttpClient[C, M]
+
+        /**
+         * Get information for a particular user
+         *
+         * @param accessToken to identify the authenticated user
+         * @param headers     optional user headers to include in the request
+         * @param username    of the user to retrieve
+         * @return GHResponse[User] User details
+         */
+        def get(config: Config, username: String): M[GHResponse[User]] =
+          httpClient.get[User](config.accessToken, s"users/$username", config.headers)
+
+        /**
+         * Get information of the authenticated user
+         *
+         * @param accessToken to identify the authenticated user
+         * @param headers     optional user headers to include in the request
+         * @return GHResponse[User] User details
+         */
+        def getAuth(config: Config): M[GHResponse[User]] =
+          httpClient.get[User](config.accessToken, "user", config.headers)
+
+        /**
+         * Get users
+         *
+         * @param accessToken to identify the authenticated user
+         * @param headers     optional user headers to include in the request
+         * @param since       The integer ID of the last User that you've seen.
+         * @param pagination  Limit and Offset for pagination
+         * @return GHResponse[List[User] ] List of user's details
+         */
+        def getUsers(
+            config: Config,
+            since: Int,
+            pagination: Option[Pagination] = None): M[GHResponse[List[User]]] =
+          httpClient
+            .get[List[User]](
+              config.accessToken,
+              "users",
+              config.headers,
+              Map("since" → since.toString),
+              pagination)
+      }
+
+  }
+
+  object implicits extends Implicits
 
 }

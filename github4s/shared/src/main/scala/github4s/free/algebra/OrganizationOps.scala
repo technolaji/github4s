@@ -21,16 +21,29 @@ import cats.free.Free
 import github4s.GithubResponses._
 import github4s.free.domain.{Pagination, User}
 
+import freestyle._
+
 /**
  * Exposes Organization operations as a Free monadic algebra that may be combined with other
  * Algebras via Coproduct
  */
-@free trait OrganizationOps {
+object OrganizationOps {
+  @free trait OrganizationOpsM {
 
-  def listMembers(
-      org: String,
-      filter: Option[String] = None,
-      role: Option[String] = None,
-      pagination: Option[Pagination] = None): Free[F, GHResponse[List[User]]] =
-    Free.inject[OrganizationOp, F](ListMembers(org, filter, role, pagination, accessToken))
+    def listMembers(
+        org: String,
+        filter: Option[String] = None,
+        role: Option[String] = None,
+        pagination: Option[Pagination] = None): Free[F, GHResponse[List[User]]] =
+      Free.inject[OrganizationOp, F](ListMembers(org, filter, role, pagination, accessToken))
+  }
+
+  trait Implicits {
+    implicit def OrganizationOpsMHandler[M[_]](implicit M: Monad[M]): OrganizationOpsM.Handler[M] =
+      new OrganizationOpsM.Handler[M] {}
+
+  }
+
+  object implicits extends Implicits
+
 }

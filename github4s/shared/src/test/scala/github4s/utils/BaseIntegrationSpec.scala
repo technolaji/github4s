@@ -18,8 +18,9 @@ package github4s.utils
 
 import cats.syntax.either._
 import github4s.GithubResponses.{GHResponse, GHResult}
-import github4s.free.interpreters.{Capture, Interpreters}
+import github4s.free.interpreters.Interpreters
 import github4s.HttpRequestBuilderExtension
+import github4s.free.domain.Capture
 import org.scalatest.{Assertion, AsyncFlatSpec, Inspectors, Matchers}
 
 import scala.concurrent.{ExecutionContext, Future}

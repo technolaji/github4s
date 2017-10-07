@@ -19,7 +19,7 @@ package github4s.api
 import cats.data.NonEmptyList
 import github4s.GithubResponses.GHResponse
 import github4s.free.domain._
-import github4s.free.interpreters.Capture
+import Capture
 import github4s._
 import io.circe.syntax._
 import io.circe.generic.auto._

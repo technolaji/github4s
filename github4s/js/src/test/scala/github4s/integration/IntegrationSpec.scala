@@ -18,7 +18,8 @@ package github4s.integration
 
 import fr.hmil.roshttp.response.SimpleHttpResponse
 import github4s.HttpRequestBuilderExtension
-import github4s.free.interpreters.{Capture, Interpreters}
+import github4s.free.domain.Capture
+import github4s.free.interpreters.Interpreters
 import github4s.js.ImplicitsJS
 import github4s.utils.{BaseIntegrationSpec, TestUtilsJS}
 

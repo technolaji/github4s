@@ -21,26 +21,39 @@ import cats.free.Free
 import github4s.GithubResponses._
 import github4s.free.domain._
 
+import freestyle._
+
 /**
  * Exposes Activity operations as a Free monadic algebra that may be combined with other Algebras via
  * Coproduct
  */
-@free trait ActivityOps {
+object ActivityOps {
+  @free trait ActivityOpsM {
 
-  def setThreadSub(id: Int, subscribed: Boolean, ignored: Boolean): FS[GHResponse[Subscription]]
+    def setThreadSub(id: Int, subscribed: Boolean, ignored: Boolean): FS[GHResponse[Subscription]]
 
-  def listStargazers(
-      owner: String,
-      repo: String,
-      timeline: Boolean,
-      pagination: Option[Pagination] = None
-  ): FS[GHResponse[List[Stargazer]]]
+    def listStargazers(
+        owner: String,
+        repo: String,
+        timeline: Boolean,
+        pagination: Option[Pagination] = None
+    ): FS[GHResponse[List[Stargazer]]]
 
-  def listStarredRepositories(
-      username: String,
-      timeline: Boolean,
-      sort: Option[String] = None,
-      direction: Option[String] = None,
-      pagination: Option[Pagination] = None
-  ): FS[GHResponse[List[StarredRepository]]]
+    def listStarredRepositories(
+        username: String,
+        timeline: Boolean,
+        sort: Option[String] = None,
+        direction: Option[String] = None,
+        pagination: Option[Pagination] = None
+    ): FS[GHResponse[List[StarredRepository]]]
+  }
+
+  trait Implicits {
+    implicit def ActivityOpsMHandler[M[_]](implicit M: Monad[M]): ActivityOpsM.Handler[M] =
+      new ActivityOpsM.Handler[M] {}
+
+  }
+
+  object implicits extends Implicits
+
 }

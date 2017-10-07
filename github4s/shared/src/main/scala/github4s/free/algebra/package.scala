@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package github4s.cats.effect
+package github4s.free
 
-import cats.effect.IO
-import github4s.free.domain.Capture
+import io.circe.{Json, Printer}
 
-trait IOCaptureInstance {
-  implicit val ioCaptureInstance = new Capture[IO] {
-    override def capture[A](a: ⇒ A): IO[A] = IO.pure(a)
-  }
+package object algebra {
+
+  def dropNullPrint(json: Json): String =
+    Printer.noSpaces.copy(dropNullValues = true).pretty(json)
+
 }

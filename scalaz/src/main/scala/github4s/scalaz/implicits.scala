@@ -18,9 +18,10 @@ package github4s.scalaz
 
 import cats.MonadError
 import github4s.HttpRequestBuilderExtensionJVM
+import github4s.free.domain.Capture
 
 import scalaz.concurrent.Task
-import github4s.free.interpreters.{Capture, Interpreters}
+import github4s.free.interpreters.Interpreters
 
 import scalaj.http.HttpResponse
 import scalaz._

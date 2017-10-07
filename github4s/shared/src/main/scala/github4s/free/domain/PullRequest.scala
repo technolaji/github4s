@@ -78,44 +78,6 @@ sealed abstract class PRFilter(val name: String, val value: String)
   def tupled: (String, String) = name -> value
 }
 
-final case class ListPullRequests(
-    owner: String,
-    repo: String,
-    filters: List[PRFilter] = Nil,
-    accessToken: Option[String] = None
-)
-
-final case class ListPullRequestFiles(
-    owner: String,
-    repo: String,
-    number: Int,
-    accessToken: Option[String] = None
-)
-
-final case class CreatePullRequest(
-    owner: String,
-    repo: String,
-    newPullRequest: NewPullRequest,
-    head: String,
-    base: String,
-    maintainerCanModify: Option[Boolean] = Some(true),
-    accessToken: Option[String] = None
-)
-
-final case class ListPullRequestReviews(
-    owner: String,
-    repo: String,
-    pullRequest: Int,
-    accessToken: Option[String] = None
-)
-
-final case class GetPullRequestReview(
-    owner: String,
-    repo: String,
-    pullRequest: Int,
-    review: Int,
-    accessToken: Option[String] = None
-)
 sealed abstract class PRFilterState(override val value: String) extends PRFilter("state", value)
 case object PRFilterOpen                                        extends PRFilterState("open")
 case object PRFilterClosed                                      extends PRFilterState("closed")

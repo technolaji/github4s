@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package github4s.free
+package github4s
 
-import io.circe.{Json, Printer}
+import github4s.GithubResponses.GHResponse
+import io.circe.Decoder
 
-package object interpreters {
+import scala.language.higherKinds
 
-  def dropNullPrint(json: Json): String =
-    Printer.noSpaces.copy(dropNullValues = true).pretty(json)
+trait HttpRequestBuilderExtension[C, M[_]] {
+  def run[A](rb: HttpRequestBuilder[C, M])(implicit D: Decoder[A]): M[GHResponse[A]]
 
+  def runEmpty(rb: HttpRequestBuilder[C, M]): M[GHResponse[Unit]]
 }

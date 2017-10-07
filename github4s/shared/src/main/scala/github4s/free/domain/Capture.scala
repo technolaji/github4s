@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package github4s
+package github4s.free.domain
 
-import github4s.GithubResponses.GHResponse
-import io.circe.Decoder
+import simulacrum.typeclass
 
 import scala.language.higherKinds
 
-trait HttpClientExtension[C, M[_]] {
-  def run[A](rb: HttpRequestBuilder[C, M])(implicit D: Decoder[A]): M[GHResponse[A]]
-
-  def runEmpty(rb: HttpRequestBuilder[C, M]): M[GHResponse[Unit]]
+@typeclass
+trait Capture[M[_]] {
+  def capture[A](a: ⇒ A): M[A]
 }
+
