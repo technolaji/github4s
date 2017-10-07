@@ -39,7 +39,7 @@ class GitDataSpec extends BaseSpec {
     val gitData = new GitData[String, Id] {
       override val httpClient: HttpClient[String, Id] = httpClientMock
     }
-    gitData.reference(sampleToken, headerUserAgent, validRepoOwner, validRepoName, validRefSingle)
+    gitData.reference(sampleConfig, validRepoOwner, validRepoName, validRefSingle)
   }
 
   "GitData.createReference" should "call to httpClient.post with the right parameters" in {
@@ -115,7 +115,7 @@ class GitDataSpec extends BaseSpec {
       override val httpClient: HttpClient[String, Id] = httpClientMock
     }
 
-    gitData.commit(sampleToken, headerUserAgent, validRepoOwner, validRepoName, validCommitSha)
+    gitData.commit(sampleConfig, validRepoOwner, validRepoName, validCommitSha)
   }
 
   "GitData.createCommit" should "call to httpClient.post with the right parameters" in {

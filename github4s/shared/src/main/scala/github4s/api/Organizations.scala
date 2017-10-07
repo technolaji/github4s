@@ -33,8 +33,8 @@ class Organizations[C, M[_]](
   /**
    * List the users belonging to a specific organization
    *
-   * @param accessToken To identify the authenticated user
-   * @param headers Optional user headers to include in the request
+   * @param config accessToken (to identify the authenticated user) and headers (optional user
+   *               headers to include in the request)
    * @param org Organization for which we want to retrieve the members
    * @param filter To retrieve "all" or only "2fa_disabled" users
    * @param role To retrieve "all", only non-owners ("member") or only owners ("admin")
@@ -42,17 +42,16 @@ class Organizations[C, M[_]](
    * @return GHResponse with the list of users belonging to this organization
    */
   def listMembers(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       org: String,
       filter: Option[String] = None,
       role: Option[String] = None,
       pagination: Option[Pagination] = Some(httpClient.defaultPagination)
   ): M[GHResponse[List[User]]] =
     httpClient.get[List[User]](
-      accessToken,
+      config.accessToken,
       s"orgs/$org/members",
-      headers,
+      config.headers,
       Map(
         "filter" → filter,
         "role"   → role

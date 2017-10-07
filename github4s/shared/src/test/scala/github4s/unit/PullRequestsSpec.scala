@@ -37,7 +37,7 @@ class PullRequestsSpec extends BaseSpec {
     val pullRequests = new PullRequestInterpreter[String, Id] {
       override val httpClient: HttpClient[String, Id] = httpClientMock
     }
-    pullRequests.list(sampleToken, headerUserAgent, validRepoOwner, validRepoName, Nil)
+    pullRequests.list(sampleConfig, validRepoOwner, validRepoName, Nil)
   }
 
   "PullRequestInterpreter.listFiles" should "call to httpClient.get with the right parameters" in {

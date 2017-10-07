@@ -46,7 +46,7 @@ class ActivitiesSpec extends BaseSpec {
     val activities = new Activities[String, Id] {
       override val httpClient: HttpClient[String, Id] = httpClientMock
     }
-    activities.setThreadSub(sampleToken, headerUserAgent, validThreadId, true, false)
+    activities.setThreadSub(sampleConfig, validThreadId, true, false)
   }
 
   "Activity.listStargazers" should "call to httpClient.get with the right parameters" in {
@@ -62,7 +62,8 @@ class ActivitiesSpec extends BaseSpec {
     val activities = new Activities[String, Id] {
       override val httpClient: HttpClient[String, Id] = httpClientMock
     }
-    activities.listStargazers(sampleToken, headerUserAgent, validRepoOwner, validRepoName, false)
+    activities.listStargazers(sampleConfig, validRepoOwner, validRepoName,
+      false)
   }
 
   "Activity.listStarredRepositories" should "call to httpClient.get with the right parameters" in {
@@ -78,7 +79,7 @@ class ActivitiesSpec extends BaseSpec {
     val activities = new Activities[String, Id] {
       override val httpClient: HttpClient[String, Id] = httpClientMock
     }
-    activities.listStarredRepositories(sampleToken, headerUserAgent, validUsername, false)
+    activities.listStarredRepositories(sampleConfig, validUsername, false)
   }
 
 }

@@ -20,11 +20,13 @@ import com.github.marklister.base64.Base64._
 import github4s.free.domain._
 import java.util.UUID
 
+import github4s.Config
+
 trait TestData extends DummyGithubUrls {
 
   val sampleToken: Option[String]          = Some("token")
   val headerUserAgent: Map[String, String] = Map("user-agent" -> "github4s")
-
+  val sampleConfig:Config = Config(sampleToken, headerUserAgent)
   val validUsername   = "rafaparadela"
   val invalidUsername = "GHInvalidUserName"
   val invalidPassword = "invalidPassword"

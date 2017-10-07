@@ -37,7 +37,7 @@ class IssuesSpec extends BaseSpec {
     val issues = new Issues[String, Id] {
       override val httpClient: HttpClient[String, Id] = httpClientMock
     }
-    issues.list(sampleToken, headerUserAgent, validRepoOwner, validRepoName)
+    issues.list(sampleConfig, validRepoOwner, validRepoName)
   }
 
   "Issues.search" should "call htppClient.get with the right parameters" in {
@@ -53,7 +53,7 @@ class IssuesSpec extends BaseSpec {
     val issues = new Issues[String, Id] {
       override val httpClient: HttpClient[String, Id] = httpClientMock
     }
-    issues.search(sampleToken, headerUserAgent, "", validSearchParams)
+    issues.search(sampleConfig, "", validSearchParams)
   }
 
   "Issues.create" should "call httpClient.post with the right parameters" in {

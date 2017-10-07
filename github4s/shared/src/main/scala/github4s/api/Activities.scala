@@ -33,25 +33,24 @@ class Activities[C, M[_]](
 
   val httpClient = new HttpClient[C, M]
 
-  private val timelineHeader = ("Accept" -> "application/vnd.github.v3.star+json")
+  private val timelineHeader = "Accept" -> "application/vnd.github.v3.star+json"
 
   /**
    * Set a thread subscription
    *
-   * @param accessToken Token to identify the authenticated user
-   * @param headers Optional user headers to include in the request
+   * @param config accessToken (to identify the authenticated user) and headers (optional user
+   *               headers to include in the request)
    * @param id Conversation id for subscribe or unsubscribe
    * @param subscribed Determines if notifications should be received from this thread
    * @param ignored Determines if all notifications should be blocked from this thread
    */
   def setThreadSub(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       id: Int,
       subscribed: Boolean,
       ignored: Boolean): M[GHResponse[Subscription]] =
     httpClient.put[Subscription](
-      accessToken,
+      config.accessToken,
       s"notifications/threads/$id/subscription",
       headers,
       data = SubscriptionRequest(subscribed, ignored).asJson.noSpaces)
@@ -59,8 +58,8 @@ class Activities[C, M[_]](
   /**
    * List the users having starred a particular repository
    *
-   * @param accessToken To identify the authenticated user
-   * @param headers Optional user headers to include in the request
+   * @param config accessToken (to identify the authenticated user) and headers (optional user
+   *               headers to include in the request)
    * @param owner of the repo
    * @param repo name of the repo
    * @param timeline Whether or not to include the date at which point a user starred the repo
@@ -68,15 +67,14 @@ class Activities[C, M[_]](
    * @return GHResponse with the list of users starring this repo
    */
   def listStargazers(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       timeline: Boolean,
       pagination: Option[Pagination] = Some(httpClient.defaultPagination)
   ): M[GHResponse[List[Stargazer]]] =
     httpClient.get[List[Stargazer]](
-      accessToken,
+      config.accessToken,
       s"repos/$owner/$repo/stargazers",
       if (timeline) headers + timelineHeader else headers,
       pagination = pagination
@@ -85,8 +83,8 @@ class Activities[C, M[_]](
   /**
    * List the repositories starred by a particular user
    *
-   * @param accessToken To identify the authenticated user
-   * @param headers Optional user headers to include in the request
+   * @param config accessToken (to identify the authenticated user) and headers (optional user
+   *               headers to include in the request)
    * @param username User for which we want to retrieve the starred repositories
    * @param timeline Whether or not to include the date at which point a user starred the repo
    * @param sort How to sort the result, can be "created" (when the repo was starred) or "updated"
@@ -96,8 +94,7 @@ class Activities[C, M[_]](
    * @return GHResponse with the list of starred repositories for this user
    */
   def listStarredRepositories(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       username: String,
       timeline: Boolean,
       sort: Option[String] = None,
@@ -105,7 +102,7 @@ class Activities[C, M[_]](
       pagination: Option[Pagination] = Some(httpClient.defaultPagination)
   ): M[GHResponse[List[StarredRepository]]] =
     httpClient.get[List[StarredRepository]](
-      accessToken,
+      config.accessToken,
       s"users/$username/starred",
       if (timeline) headers + timelineHeader else headers,
       Map(

@@ -38,7 +38,7 @@ class OrganizationsSpec extends BaseSpec {
     val organizations = new Organizations[String, Id] {
       override val httpClient: HttpClient[String, Id] = httpClientMock
     }
-    organizations.listMembers(sampleToken, headerUserAgent, validRepoOwner)
+    organizations.listMembers(sampleConfig, validRepoOwner)
   }
 
 }

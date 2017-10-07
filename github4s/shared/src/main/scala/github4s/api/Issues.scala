@@ -17,7 +17,7 @@
 package github4s.api
 
 import github4s.GithubResponses.GHResponse
-import github4s.{GithubApiUrls, HttpClient, HttpRequestBuilderExtension}
+import github4s.{Config, GithubApiUrls, HttpClient, HttpRequestBuilderExtension}
 import github4s.free.domain._
 import github4s.free.interpreters.Capture
 import github4s.util.URLEncoder
@@ -42,18 +42,14 @@ class Issues[C, M[_]](
    * This endpoint may also return pull requests in the response. If an issue is a pull request,
    * the object will include a `pull_request` key.
    *
-   * @param accessToken to identify the authenticated user
-   * @param headers optional user headers to include in the request
+   * @param config accessToken (to identify the authenticated user) and headers (optional user
+   *               headers to include in the request)
    * @param owner of the repo
    * @param repo name of the repo
    * @return a GHResponse with the issue list.
    */
-  def list(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
-      owner: String,
-      repo: String): M[GHResponse[List[Issue]]] =
-    httpClient.get[List[Issue]](accessToken, s"repos/$owner/$repo/issues", headers)
+  def list(config: Config, owner: String, repo: String): M[GHResponse[List[Issue]]] =
+    httpClient.get[List[Issue]](config.accessToken, s"repos/$owner/$repo/issues", config.headers)
 
   /**
    * Search for issues
@@ -65,27 +61,30 @@ class Issues[C, M[_]](
    * This endpoint may also return pull requests in the response. If an issue is a pull request,
    * the object will include a `pull_request` key.
    *
-   * @param accessToken to identify the authenticated user
-   * @param headers optional user headers to include in the request
+   * @param config accessToken (to identify the authenticated user) and headers (optional user
+   *               headers to include in the request)
    * @param query the query string for the search
    * @param searchParams list of search params
    * @return a GHResponse with the result of the search.
    */
   def search(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       query: String,
       searchParams: List[SearchParam]): M[GHResponse[SearchIssuesResult]] = {
     val queryString = s"${URLEncoder.encode(query)}+${searchParams.map(_.value).mkString("+")}"
     httpClient
-      .get[SearchIssuesResult](accessToken, "search/issues", headers, Map("q" -> queryString))
+      .get[SearchIssuesResult](
+        config.accessToken,
+        "search/issues",
+        config.headers,
+        Map("q" -> queryString))
   }
 
   /**
    * Create an issue
    *
-   * @param accessToken to identify the authenticated user
-   * @param headers optional user headers to include in the request
+   * @param config accessToken (to identify the authenticated user) and headers (optional user
+   *               headers to include in the request)
    * @param owner of the repo
    * @param repo name of the repo
    * @param title The title of the issue.
@@ -95,8 +94,7 @@ class Issues[C, M[_]](
    * @param assignees Logins for Users to assign to this issue.
    */
   def create(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       title: String,
@@ -105,16 +103,16 @@ class Issues[C, M[_]](
       labels: List[String],
       assignees: List[String]): M[GHResponse[Issue]] =
     httpClient.post[Issue](
-      accessToken,
+      config.accessToken,
       s"repos/$owner/$repo/issues",
-      headers,
+      config.headers,
       data = NewIssueRequest(title, body, milestone, labels, assignees).asJson.noSpaces)
 
   /**
    * Edit an issue
    *
-   * @param accessToken to identify the authenticated user
-   * @param headers optional user headers to include in the request
+   * @param config accessToken (to identify the authenticated user) and headers (optional user
+   *               headers to include in the request)
    * @param owner of the repo
    * @param repo name of the repo
    * @param issue number
@@ -130,8 +128,7 @@ class Issues[C, M[_]](
    *                  Send an empty list to clear all assignees from the Issue.
    */
   def edit(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       issue: Int,
@@ -142,17 +139,18 @@ class Issues[C, M[_]](
       labels: List[String],
       assignees: List[String]): M[GHResponse[Issue]] =
     httpClient.patch[Issue](
-      accessToken,
+      config.accessToken,
       s"repos/$owner/$repo/issues/$issue",
-      headers,
-      data = EditIssueRequest(state, title, body, milestone, labels, assignees).asJson.noSpaces)
+      config.headers,
+      data = EditIssueRequest(state, title, body, milestone, labels, assignees).asJson.noSpaces
+    )
 
   /**
    *
    * Create a comment
    *
-   * @param accessToken to identify the authenticated user
-   * @param headers optional user headers to include in the request
+   * @param config accessToken (to identify the authenticated user) and headers (optional user
+   *               headers to include in the request)
    * @param owner of the repo
    * @param repo name of the repo
    * @param number Issue number
@@ -160,23 +158,22 @@ class Issues[C, M[_]](
    * @return a GHResponse with the created Comment
    */
   def createComment(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       number: Int,
       body: String): M[GHResponse[Comment]] =
     httpClient.post[Comment](
-      accessToken,
+      config.accessToken,
       s"repos/$owner/$repo/issues/$number/comments",
-      headers,
+      config.headers,
       CommentData(body).asJson.noSpaces)
 
   /**
    * Edit a comment
    *
-   * @param accessToken to identify the authenticated user
-   * @param headers optional user headers to include in the request
+   * @param config accessToken (to identify the authenticated user) and headers (optional user
+   *               headers to include in the request)
    * @param owner of the repo
    * @param repo name of the repo
    * @param id Comment id
@@ -184,35 +181,29 @@ class Issues[C, M[_]](
    * @return a GHResponse with the edited Comment
    */
   def editComment(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       id: Int,
       body: String): M[GHResponse[Comment]] =
     httpClient
       .patch[Comment](
-        accessToken,
+        config.accessToken,
         s"repos/$owner/$repo/issues/comments/$id",
-        headers,
+        config.headers,
         CommentData(body).asJson.noSpaces)
 
   /**
    * Delete a comment
    *
-   * @param accessToken to identify the authenticated user
-   * @param headers optional user headers to include in the request
+   * @param config accessToken (to identify the authenticated user) and headers (optional user
+   *               headers to include in the request)
    * @param owner of the repo
    * @param repo name of the repo
    * @param id Comment id
    * @return a unit GHResponse
    */
-  def deleteComment(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
-      owner: String,
-      repo: String,
-      id: Int): M[GHResponse[Unit]] =
-    httpClient.delete(accessToken, s"repos/$owner/$repo/issues/comments/$id", headers)
+  def deleteComment(config: Config, owner: String, repo: String, id: Int): M[GHResponse[Unit]] =
+    httpClient.delete(config.accessToken, s"repos/$owner/$repo/issues/comments/$id", config.headers)
 
 }

@@ -38,7 +38,7 @@ class UserSpec extends BaseSpec {
     val users = new Users[String, Id] {
       override val httpClient: HttpClient[String, Id] = httpClientMock
     }
-    users.get(sampleToken, headerUserAgent, validUsername)
+    users.get(sampleConfig, validUsername)
   }
 
   "User.getAuth" should "call to httpClient.get with the right parameters" in {
@@ -54,7 +54,7 @@ class UserSpec extends BaseSpec {
     val users = new Users[String, Id] {
       override val httpClient: HttpClient[String, Id] = httpClientMock
     }
-    users.getAuth(sampleToken, headerUserAgent)
+    users.getAuth(sampleConfig)
   }
 
   "User.getUsers" should "call to httpClient.get with the right parameters" in {
@@ -73,7 +73,7 @@ class UserSpec extends BaseSpec {
     val users = new Users[String, Id] {
       override val httpClient: HttpClient[String, Id] = httpClientMock
     }
-    users.getUsers(sampleToken, headerUserAgent, 1)
+    users.getUsers(sampleConfig, 1)
   }
 
 }

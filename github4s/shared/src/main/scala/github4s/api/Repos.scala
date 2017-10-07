@@ -37,40 +37,35 @@ class Repos[C, M[_]](
   /**
    * Get information of a particular repository
    *
-   * @param accessToken to identify the authenticated user
-   * @param headers optional user headers to include in the request
+   * @param config accessToken (to identify the authenticated user) and headers (optional user
+   *               headers to include in the request)
    * @param owner of the repo
    * @param repo name of the repo
    * @return GHResponse[Repository] repository details
    */
-  def get(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
-      owner: String,
-      repo: String): M[GHResponse[Repository]] =
-    httpClient.get[Repository](accessToken, s"repos/$owner/$repo", headers)
+  def get(config: Config, owner: String, repo: String): M[GHResponse[Repository]] =
+    httpClient.get[Repository](config.accessToken, s"repos/$owner/$repo", config.headers)
 
   /**
    * List the repositories for a particular organization
    *
-   * @param accessToken to identify the authenticated user
-   * @param headers optional user headers to include in the request
+   * @param config accessToken (to identify the authenticated user) and headers (optional user
+   *               headers to include in the request)
    * @param org organization for which we wish to retrieve the repositories
    * @param `type` visibility of the retrieved repositories, can be "all", "public", "private",
    * "forks", "sources" or "member"
    * @return GHResponse[List[Repository]] the list of repositories for this organization
    */
   def listOrgRepos(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       org: String,
       `type`: Option[String] = None,
       pagination: Option[Pagination] = Some(httpClient.defaultPagination)
   ): M[GHResponse[List[Repository]]] =
     httpClient.get[List[Repository]](
-      accessToken,
+      config.accessToken,
       s"orgs/$org/repos",
-      headers,
+      config.headers,
       params = `type`.map(t => Map("type" -> t)).getOrElse(Map.empty),
       pagination = pagination
     )
@@ -95,8 +90,8 @@ class Repos[C, M[_]](
    *   If the submodule repository is not hosted on github.com, the Git URLs (git_url and _links["git"])
    *   and the github.com URLs (html_url and _links["html"]) will have null values
    *
-   * @param accessToken to identify the authenticated user
-   * @param headers optional user headers to include in the request
+   * @param config accessToken (to identify the authenticated user) and headers (optional user
+   *               headers to include in the request)
    * @param owner of the repo
    * @param repo name of the repo
    * @param path the content path
@@ -104,23 +99,22 @@ class Repos[C, M[_]](
    * @return GHResponse with the content defails
    */
   def getContents(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       path: String,
       ref: Option[String] = None): M[GHResponse[NonEmptyList[Content]]] =
     httpClient.get[NonEmptyList[Content]](
-      accessToken,
+      config.accessToken,
       s"repos/$owner/$repo/contents/$path",
-      headers,
+      config.headers,
       params = ref map (r => Map("ref" -> r)) getOrElse Map.empty)
 
   /**
    * Retrieve the list of commits for a particular repo
    *
-   * @param accessToken to identify the authenticated user
-   * @param headers optional user headers to include in the request
+   * @param config accessToken (to identify the authenticated user) and headers (optional user
+   *               headers to include in the request)
    * @param owner of the repo
    * @param repo name of the repo
    * @param sha branch to start listing commits from
@@ -132,8 +126,7 @@ class Repos[C, M[_]](
    * @return GHResponse[List[Commit]\] List of commit's details
    */
   def listCommits(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       sha: Option[String] = None,
@@ -144,9 +137,9 @@ class Repos[C, M[_]](
       pagination: Option[Pagination] = Some(httpClient.defaultPagination)
   ): M[GHResponse[List[Commit]]] =
     httpClient.get[List[Commit]](
-      accessToken,
+      config.accessToken,
       s"repos/$owner/$repo/commits",
-      headers,
+      config.headers,
       Map(
         "sha"    → sha,
         "path"   → path,
@@ -163,24 +156,23 @@ class Repos[C, M[_]](
    * Fetch contributors list for the the specified repository,
    * sorted by the number of commits per contributor in descending order.
    *
-   * @param accessToken to identify the authenticated user
-   * @param headers optional user headers to include in the request
+   * @param config accessToken (to identify the authenticated user) and headers (optional user
+   *               headers to include in the request)
    * @param owner of the repo
    * @param repo name of the repo
    * @param anon Set to 1 or true to include anonymous contributors in results
    * @return GHResponse[List[User]\] List of contributors associated with the specified repository.
    */
   def listContributors(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       anon: Option[String] = None
   ): M[GHResponse[List[User]]] =
     httpClient.get[List[User]](
-      accessToken,
+      config.accessToken,
       s"repos/$owner/$repo/contributors",
-      headers,
+      config.headers,
       Map(
         "anon" → anon
       ).collect {
@@ -190,8 +182,8 @@ class Repos[C, M[_]](
   /**
    * Create a new release
    *
-   * @param accessToken to identify the authenticated user
-   * @param headers optional user headers to include in the request
+   * @param config accessToken (to identify the authenticated user) and headers (optional user
+   *               headers to include in the request)
    * @param owner of the repo
    * @param repo name of the repo
    * @param tagName the name of the tag.
@@ -208,8 +200,7 @@ class Repos[C, M[_]](
    * @return a GHResponse with Release
    */
   def createRelease(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       tagName: String,
@@ -219,53 +210,58 @@ class Repos[C, M[_]](
       draft: Option[Boolean] = None,
       prerelease: Option[Boolean] = None): M[GHResponse[Release]] =
     httpClient.post[Release](
-      accessToken,
+      config.accessToken,
       s"repos/$owner/$repo/releases",
-      headers,
+      config.headers,
       dropNullPrint(
-        NewReleaseRequest(tagName, name, body, targetCommitish, draft, prerelease).asJson))
+        NewReleaseRequest(tagName, name, body, targetCommitish, draft, prerelease).asJson)
+    )
 
   /**
    * Get the combined status for a specific ref
    *
-   * @param accessToken to identify the authenticated user
-   * @param headers optional user headers to include in the request
+   * @param config accessToken (to identify the authenticated user) and headers (optional user
+   *               headers to include in the request)
    * @param owner of the repo
    * @param repo name of the commit
    * @param ref commit SHA, branch name or tag name
    * @return a GHResponse with the combined status
    */
   def getStatus(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       ref: String): M[GHResponse[CombinedStatus]] =
-    httpClient.get[CombinedStatus](accessToken, s"repos/$owner/$repo/commits/$ref/status", headers)
+    httpClient.get[CombinedStatus](
+      config.accessToken,
+      s"repos/$owner/$repo/commits/$ref/status",
+      config.headers)
 
   /**
    * List statuses for a commit
    *
-   * @param accessToken to identify the authenticated user
-   * @param headers optional user headers to include in the request
+   * @param config accessToken (to identify the authenticated user) and headers (optional user
+   *               headers to include in the request)
    * @param owner of the repo
    * @param repo name of the repo
    * @param ref commit SHA, branch name or tag name
    * @return a GHResponse with the status list
    */
   def listStatuses(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       ref: String): M[GHResponse[List[Status]]] =
-    httpClient.get[List[Status]](accessToken, s"repos/$owner/$repo/commits/$ref/statuses", headers)
+    httpClient.get[List[Status]](
+      config.accessToken,
+      s"repos/$owner/$repo/commits/$ref/statuses",
+      config.headers)
 
   /**
    * Create a status
    *
-   * @param accessToken to identify the authenticated user
-   * @param headers optional user headers to include in the request
+   * @param config accessToken (to identify the authenticated user) and headers (optional user
+   *               headers to include in the request)
    * @param owner of the repo
    * @param repo name of the repo
    * @param sha commit sha to create the status on
@@ -276,8 +272,7 @@ class Repos[C, M[_]](
    * @return a GHResopnse with the created Status
    */
   def createStatus(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       sha: String,
@@ -286,8 +281,8 @@ class Repos[C, M[_]](
       description: Option[String],
       context: Option[String]): M[GHResponse[Status]] =
     httpClient.post[Status](
-      accessToken,
+      config.accessToken,
       s"repos/$owner/$repo/statuses/$sha",
-      headers,
+      config.headers,
       dropNullPrint(NewStatusRequest(state, target_url, description, context).asJson))
 }
