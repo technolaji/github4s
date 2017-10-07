@@ -29,14 +29,16 @@ object implicits
 
 trait FutureCaptureInstance {
   //Future Capture evidence:
-  implicit val futureCaptureInstance = new Capture[Future] {
+  implicit val futureCaptureInstance : Capture[Future]
+      {def capture[A](a : ⇒ A) : Future[A]} = new Capture[Future] {
     override def capture[A](a: ⇒ A): Future[A] = Future.successful(a)
   }
 }
 
 trait EvalInstances {
 
-  implicit val evalCaptureInstance = new Capture[Eval] {
+  implicit val evalCaptureInstance : Capture[Any]
+      {def capture[A](a : ⇒ A) : Any} = new Capture[Eval] {
     override def capture[A](a: ⇒ A): Eval[A] = Eval.later(a)
   }
 
@@ -69,7 +71,8 @@ trait EvalInstances {
 
 trait IdInstances {
 
-  implicit val idCaptureInstance = new Capture[Id] {
+  implicit val idCaptureInstance : Capture[Any]
+      {def capture[A](a : ⇒ A) : Any} = new Capture[Id] {
     override def capture[A](a: ⇒ A): Id[A] = idMonad.pure(a)
   }
 

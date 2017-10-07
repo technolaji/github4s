@@ -76,7 +76,7 @@ class HttpRequestBuilder[C, M[_]](
 
   def putMethod = new HttpRequestBuilder[C, M](url, Put, authHeader, data, params, headers)
 
-  def deleteMethod = new HttpRequestBuilder[C, M](url, Delete, authHeader, data, params, headers)
+  def deleteMethod() = new HttpRequestBuilder[C, M](url, Delete, authHeader, data, params, headers)
 
   def withAuth(accessToken: Option[String] = None) = {
     val authHeader = accessToken match {

@@ -31,12 +31,13 @@ class Interpreters[M[_], C](
     implicit C: Capture[M],
     httpClientImpl: HttpRequestBuilderExtension[C, M]) {
 
-  implicit val authInterpreter        = new AuthInterpreter[C, M]
-  implicit val gistsInterpreter       = new GistInterpreter[C, M]
-  implicit val gitDataInterpreter     = new GitDataInterpreter[C, M]
-  implicit val issuesInterpreter      = new IssueInterpreter[C, M]
-  implicit val pullRequestInterpreter = new PullRequestInterpreter[C, M]
-  implicit val repositoryInterpreter  = new RepositoryInterpreter[C, M]
-  implicit val statusInterpreter      = new StatusInterpreter[C, M]
-  implicit val usersInterpreter       = new UserInterpreter[C, M]
+  implicit val authInterpreter : AuthInterpreter[C, M] = new AuthInterpreter[C, M]
+  implicit val gistsInterpreter : GistInterpreter[C, M] = new GistInterpreter[C, M]
+  implicit val gitDataInterpreter : GitDataInterpreter[C, M] = new GitDataInterpreter[C, M]
+  implicit val issuesInterpreter : IssueInterpreter[C, M] = new IssueInterpreter[C, M]
+  implicit val pullRequestInterpreter : PullRequestInterpreter[C, M] = new PullRequestInterpreter
+      [C, M]
+  implicit val repositoryInterpreter : RepositoryInterpreter[C, M] = new RepositoryInterpreter[C, M]
+  implicit val statusInterpreter : StatusInterpreter[C, M] = new StatusInterpreter[C, M]
+  implicit val usersInterpreter : UserInterpreter[C, M] = new UserInterpreter[C, M]
 }

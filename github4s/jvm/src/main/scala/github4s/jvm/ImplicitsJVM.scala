@@ -29,10 +29,10 @@ trait ImplicitsJVM
     with FutureInstances
     with HttpRequestBuilderExtensionJVM {
 
-  implicit val intInstanceIdScalaJ = new Interpreters[Id, HttpResponse[String]]
-  implicit val intInstanceEvalScalaJ =
+  implicit val intInstanceIdScalaJ : Interpreters[Id, HttpResponse[String]] = new Interpreters[Id, HttpResponse[String]]
+  implicit val intInstanceEvalScalaJ : Interpreters[Eval, HttpResponse[String]] =
     new Interpreters[Eval, HttpResponse[String]]
-  implicit val intInstanceFutureScalaJ =
+  implicit val intInstanceFutureScalaJ : Interpreters[Future, HttpResponse[String]] =
     new Interpreters[Future, HttpResponse[String]]
 
 }
