@@ -16,6 +16,30 @@
 
 package github4s.free.domain
 
+final case class SetThreadSub(
+    id: Int,
+    subscribed: Boolean,
+    ignored: Boolean,
+    accessToken: Option[String] = None
+)
+
+final case class ListStargazers(
+    owner: String,
+    repo: String,
+    timeline: Boolean,
+    pagination: Option[Pagination] = None,
+    accessToken: Option[String] = None
+)
+
+final case class ListStarredRepositories(
+    username: String,
+    timeline: Boolean,
+    sort: Option[String] = None,
+    direction: Option[String] = None,
+    pagination: Option[Pagination] = None,
+    accessToken: Option[String] = None
+)
+
 case class Subscription(
     subscribed: Boolean,
     ignored: Boolean,

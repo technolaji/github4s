@@ -19,13 +19,13 @@ package github4s.unit
 import cats.Id
 import github4s.GithubResponses.{GHResponse, GHResult}
 import github4s.HttpClient
-import github4s.api.PullRequests
+import github4s.api.PullRequestInterpreter
 import github4s.free.domain._
 import github4s.utils.BaseSpec
 
 class PullRequestsSpec extends BaseSpec {
 
-  "PullRequests.list" should "call to httpClient.get with the right parameters" in {
+  "PullRequestInterpreter.list" should "call to httpClient.get with the right parameters" in {
 
     val response: GHResponse[List[PullRequest]] =
       Right(GHResult(List(pullRequest), okStatusCode, Map.empty))
@@ -34,13 +34,13 @@ class PullRequestsSpec extends BaseSpec {
       url = s"repos/$validRepoOwner/$validRepoName/pulls",
       response = response
     )
-    val pullRequests = new PullRequests[String, Id] {
+    val pullRequests = new PullRequestInterpreter[String, Id] {
       override val httpClient: HttpClient[String, Id] = httpClientMock
     }
     pullRequests.list(sampleToken, headerUserAgent, validRepoOwner, validRepoName, Nil)
   }
 
-  "PullRequests.listFiles" should "call to httpClient.get with the right parameters" in {
+  "PullRequestInterpreter.listFiles" should "call to httpClient.get with the right parameters" in {
 
     val response: GHResponse[List[PullRequestFile]] =
       Right(GHResult(List(pullRequestFile), okStatusCode, Map.empty))
@@ -49,7 +49,7 @@ class PullRequestsSpec extends BaseSpec {
       url = s"repos/$validRepoOwner/$validRepoName/pulls/$validPullRequestNumber/files",
       response = response
     )
-    val pullRequests = new PullRequests[String, Id] {
+    val pullRequests = new PullRequestInterpreter[String, Id] {
       override val httpClient: HttpClient[String, Id] = httpClientMock
     }
     pullRequests
@@ -82,7 +82,7 @@ class PullRequestsSpec extends BaseSpec {
       response = response
     )
 
-    val pullRequests = new PullRequests[String, Id] {
+    val pullRequests = new PullRequestInterpreter[String, Id] {
       override val httpClient: HttpClient[String, Id] = httpClientMock
     }
 
@@ -117,7 +117,7 @@ class PullRequestsSpec extends BaseSpec {
       response = response
     )
 
-    val pullRequests = new PullRequests[String, Id] {
+    val pullRequests = new PullRequestInterpreter[String, Id] {
       override val httpClient: HttpClient[String, Id] = httpClientMock
     }
 
@@ -142,7 +142,7 @@ class PullRequestsSpec extends BaseSpec {
       response = response
     )
 
-    val pullRequests = new PullRequests[String, Id] {
+    val pullRequests = new PullRequestInterpreter[String, Id] {
       override val httpClient: HttpClient[String, Id] = httpClientMock
     }
 
@@ -164,7 +164,7 @@ class PullRequestsSpec extends BaseSpec {
       response = response
     )
 
-    val pullRequests = new PullRequests[String, Id] {
+    val pullRequests = new PullRequestInterpreter[String, Id] {
       override val httpClient: HttpClient[String, Id] = httpClientMock
     }
 

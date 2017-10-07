@@ -24,7 +24,7 @@ import freestyle._
 
 class GHUsers[F[_]](implicit O: UserOps[F]) {
 
-  def get(username: String): FreeS[F, GHResponse[User]] = O.getUser(username )
+  def get(username: String): FreeS[F, GHResponse[User]] = O.getUser(username)
 
   def getAuth: FreeS[F, GHResponse[User]] = O.getAuthUser()
 
@@ -92,7 +92,7 @@ class GHRepos[F[_]](implicit O: RepositoryOps[F]) {
       targetCommitish,
       draft,
       prerelease,
-      )
+    )
 
   def getCombinedStatus(
       owner: String,
@@ -222,10 +222,7 @@ class GHIssues[F[_]](implicit O: IssueOps[F]) {
 
 class GHActivities(accessToken: Option[String] = None)(implicit O: ActivityOps[GitHub4s]) {
 
-  def setThreadSub(
-      id: Int,
-      subscribed: Boolean,
-      ignored: Boolean): GHIO[GHResponse[Subscription]] =
+  def setThreadSub(id: Int, subscribed: Boolean, ignored: Boolean): GHIO[GHResponse[Subscription]] =
     O.setThreadSub(id, subscribed, ignored, accessToken)
 
   def listStargazers(

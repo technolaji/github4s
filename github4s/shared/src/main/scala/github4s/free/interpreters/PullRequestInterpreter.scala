@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package github4s.api
+package github4s.free.interpreters
 
 import github4s.GithubResponses.GHResponse
+import github4s.free.algebra.PullRequestOps
 import github4s.free.domain._
-import github4s.free.interpreters.Capture
-import github4s.{Decoders, Encoders, GithubApiUrls, HttpClient, HttpRequestBuilderExtension}
+import github4s.{Config, Decoders, Encoders, GithubApiUrls, HttpClient, HttpRequestBuilderExtension}
 import github4s.util.URLEncoder
 import io.circe.generic.auto._
 import io.circe.syntax._
 
 import scala.language.higherKinds
 
-/** Factory to encapsulate calls related to PullRequests operations  */
-class PullRequests[C, M[_]](
+/** Factory to encapsulate calls related to PullRequestInterpreter operations  */
+class PullRequestInterpreter[C, M[_]](
     implicit urls: GithubApiUrls,
     C: Capture[M],
-    httpClientImpl: HttpRequestBuilderExtension[C, M]) {
+    httpClientImpl: HttpRequestBuilderExtension[C, M])
+    extends PullRequestOps.Handler[M] {
 
   import Decoders._
   import Encoders._
@@ -56,15 +57,14 @@ class PullRequests[C, M[_]](
    * @return a GHResponse with the pull request list.
    */
   def list(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       filters: List[PRFilter] = Nil): M[GHResponse[List[PullRequest]]] =
     httpClient.get[List[PullRequest]](
-      accessToken,
+      config.accessToken,
       s"repos/$owner/$repo/pulls",
-      headers,
+      config.headers,
       filters.map(_.tupled).toMap)
 
   /**
@@ -78,13 +78,15 @@ class PullRequests[C, M[_]](
    * @return a GHResponse with the list of files affected by the pull request identified by number.
    */
   def listFiles(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       number: Int): M[GHResponse[List[PullRequestFile]]] =
     httpClient
-      .get[List[PullRequestFile]](accessToken, s"repos/$owner/$repo/pulls/$number/files", headers)
+      .get[List[PullRequestFile]](
+        config.accessToken,
+        s"repos/$owner/$repo/pulls/$number/files",
+        config.headers)
 
   /**
    * Create a pull request
@@ -101,8 +103,7 @@ class PullRequests[C, M[_]](
    * @param maintainerCanModify Indicates whether maintainers can modify the pull request, Default:Some(true).
    */
   def create(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       newPullRequest: NewPullRequest,
@@ -116,7 +117,11 @@ class PullRequests[C, M[_]](
         CreatePullRequestIssue(issue, head, base, maintainerCanModify)
     }
     httpClient
-      .post[PullRequest](accessToken, s"repos/$owner/$repo/pulls", headers, data.asJson.noSpaces)
+      .post[PullRequest](
+        config.accessToken,
+        s"repos/$owner/$repo/pulls",
+        config.headers,
+        data.asJson.noSpaces)
   }
 
   /**
@@ -129,13 +134,14 @@ class PullRequests[C, M[_]](
    * @param pullRequest ID number of the PR to get reviews for.
    */
   def listReviews(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
-      pullRequest: Int): M[GHResponse[List[PullRequestReview]]] = {
-    httpClient.get[List[PullRequestReview]](accessToken, s"repos/$owner/$repo/pulls/$pullRequest/reviews", headers)
-  }
+      pullRequest: Int): M[GHResponse[List[PullRequestReview]]] =
+    httpClient.get[List[PullRequestReview]](
+      config.accessToken,
+      s"repos/$owner/$repo/pulls/$pullRequest/reviews",
+      config.headers)
 
   /**
    * Get a specific pull request review.
@@ -148,12 +154,13 @@ class PullRequests[C, M[_]](
    * @param review ID number of the review to retrieve.
    */
   def getReview(
-      accessToken: Option[String] = None,
-      headers: Map[String, String] = Map(),
+      config: Config,
       owner: String,
       repo: String,
       pullRequest: Int,
-      review: Int): M[GHResponse[PullRequestReview]] = {
-    httpClient.get[PullRequestReview](accessToken, s"repos/$owner/$repo/pulls/$pullRequest/reviews/$review", headers)
-  }
+      review: Int): M[GHResponse[PullRequestReview]] =
+    httpClient.get[PullRequestReview](
+      config.accessToken,
+      s"repos/$owner/$repo/pulls/$pullRequest/reviews/$review",
+      config.headers)
 }

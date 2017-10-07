@@ -29,7 +29,7 @@ import freestyle._
 
   def getUser(username: String): FS[GHResponse[User]]
 
-  def getAuthUser(): FS[GHResponse[User]]
+  def getAuthUser: FS[GHResponse[User]]
 
   def getUsers(since: Int, pagination: Option[Pagination]): FS[GHResponse[List[User]]]
 

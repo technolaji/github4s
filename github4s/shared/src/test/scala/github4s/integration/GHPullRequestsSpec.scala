@@ -24,7 +24,7 @@ import github4s.utils.BaseIntegrationSpec
 
 trait GHPullRequestsSpec[T] extends BaseIntegrationSpec[T] {
 
-  "PullRequests >> List" should "return a right response when valid repo is provided" in {
+  "PullRequestInterpreter >> List" should "return a right response when valid repo is provided" in {
     val response =
       Github(accessToken).pullRequests
         .list(validRepoOwner, validRepoName)
@@ -59,7 +59,7 @@ trait GHPullRequestsSpec[T] extends BaseIntegrationSpec[T] {
     testFutureIsLeft(response)
   }
 
-  "PullRequests >> ListFiles" should "return a right response when a valid repo is provided" in {
+  "PullRequestInterpreter >> ListFiles" should "return a right response when a valid repo is provided" in {
     val response =
       Github(accessToken).pullRequests
         .listFiles(validRepoOwner, validRepoName, validPullRequestNumber)
@@ -80,7 +80,7 @@ trait GHPullRequestsSpec[T] extends BaseIntegrationSpec[T] {
     testFutureIsLeft(response)
   }
 
-  "PullRequests >> ListReviews" should "return a right response when a valid pr is provided" in {
+  "PullRequestInterpreter >> ListReviews" should "return a right response when a valid pr is provided" in {
     val response =
       Github(accessToken).pullRequests
         .listReviews(validRepoOwner, validRepoName, validPullRequestNumber)
@@ -101,7 +101,7 @@ trait GHPullRequestsSpec[T] extends BaseIntegrationSpec[T] {
     testFutureIsLeft(response)
   }
 
-  "PullRequests >> GetReview" should "return a right response when a valid pr review is provided" in {
+  "PullRequestInterpreter >> GetReview" should "return a right response when a valid pr review is provided" in {
     val response =
       Github(accessToken).pullRequests
         .getReview(validRepoOwner, validRepoName, validPullRequestNumber, validPullRequestReviewNumber)

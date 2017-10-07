@@ -35,12 +35,12 @@ case class RefCommit(
     parents: List[RefInfo])
 
 case class Tag(
-  tag: String,
-  sha: String,
-  url: String,
-  message: String,
-  tagger: RefAuthor,
-  `object`: RefObject)
+    tag: String,
+    sha: String,
+    url: String,
+    message: String,
+    tagger: RefAuthor,
+    `object`: RefObject)
 
 case class RefAuthor(date: String, name: String, email: String)
 
@@ -52,7 +52,8 @@ sealed abstract class TreeData extends Product with Serializable {
 
 case class TreeDataSha(path: String, mode: String, `type`: String, sha: String) extends TreeData
 
-case class TreeDataBlob(path: String, mode: String, `type`: String, content: String) extends TreeData
+case class TreeDataBlob(path: String, mode: String, `type`: String, content: String)
+    extends TreeData
 
 case class TreeResult(
     override val sha: String,
@@ -68,7 +69,11 @@ case class TreeDataResult(
     sha: String,
     url: String)
 
-case class NewCommitRequest(message: String, tree: String, parents: List[String], author: Option[RefAuthor])
+case class NewCommitRequest(
+    message: String,
+    tree: String,
+    parents: List[String],
+    author: Option[RefAuthor])
 
 case class NewBlobRequest(content: String, encoding: Option[String])
 
@@ -78,4 +83,9 @@ case class CreateReferenceRequest(ref: String, sha: String)
 
 case class UpdateReferenceRequest(sha: String, force: Boolean)
 
-case class NewTagRequest(tag: String, message: String, `object`: String, `type`: String, tagger: Option[RefAuthor])
+case class NewTagRequest(
+    tag: String,
+    message: String,
+    `object`: String,
+    `type`: String,
+    tagger: Option[RefAuthor])

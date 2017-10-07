@@ -42,11 +42,7 @@ class StatusInterpreter[C, M[_]](
    * @param ref         commit SHA, branch name or tag name
    * @return a GHResponse with the combined status
    */
-  def get(
-      config: Config,
-      owner: String,
-      repo: String,
-      ref: String): M[GHResponse[CombinedStatus]] =
+  def get(config: Config, owner: String, repo: String, ref: String): M[GHResponse[CombinedStatus]] =
     httpClient
       .get[CombinedStatus](
         config.accessToken,

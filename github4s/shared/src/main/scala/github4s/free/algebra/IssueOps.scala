@@ -17,9 +17,7 @@
 package github4s.free.algebra
 
 import github4s.GithubResponses._
-import github4s.free.domain.{Issue, SearchIssuesResult, SearchParam}
-
-import freestyle._
+import github4s.free.domain.{Comment, Issue, SearchIssuesResult, SearchParam}
 
 /**
  * Exposes Issue operations as a Free monadic algebra that may be combined with other Algebras via
@@ -58,4 +56,25 @@ import freestyle._
       labels: List[String],
       assignees: List[String]
   ): FS[GHResponse[Issue]]
+
+  def createComment(
+      owner: String,
+      repo: String,
+      number: Int,
+      body: String
+  ): FS[GHResponse[Comment]]
+
+  def editComment(
+      owner: String,
+      repo: String,
+      id: Int,
+      body: String
+  ): FS[GHResponse[Comment]]
+
+  def deleteComment(
+      owner: String,
+      repo: String,
+      id: Int
+  ): FS[F, GHResponse[Unit]]
+
 }

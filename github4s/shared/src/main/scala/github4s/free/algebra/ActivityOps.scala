@@ -22,72 +22,25 @@ import github4s.GithubResponses._
 import github4s.free.domain._
 
 /**
- * Activities ops ADT
- */
-sealed trait ActivityOp[A]
-
-final case class SetThreadSub(
-    id: Int,
-    subscribed: Boolean,
-    ignored: Boolean,
-    accessToken: Option[String] = None
-) extends ActivityOp[GHResponse[Subscription]]
-
-final case class ListStargazers(
-    owner: String,
-    repo: String,
-    timeline: Boolean,
-    pagination: Option[Pagination] = None,
-    accessToken: Option[String] = None
-) extends ActivityOp[GHResponse[List[Stargazer]]]
-
-final case class ListStarredRepositories(
-    username: String,
-    timeline: Boolean,
-    sort: Option[String] = None,
-    direction: Option[String] = None,
-    pagination: Option[Pagination] = None,
-    accessToken: Option[String] = None
-) extends ActivityOp[GHResponse[List[StarredRepository]]]
-
-/**
  * Exposes Activity operations as a Free monadic algebra that may be combined with other Algebras via
  * Coproduct
  */
-class ActivityOps[F[_]](implicit I: InjectK[ActivityOp, F]) {
+@free trait ActivityOps {
 
-  def setThreadSub(
-      id: Int,
-      subscribed: Boolean,
-      ignored: Boolean,
-      accessToken: Option[String] = None): Free[F, GHResponse[Subscription]] =
-    Free.inject[ActivityOp, F](SetThreadSub(id, subscribed, ignored, accessToken))
+  def setThreadSub(id: Int, subscribed: Boolean, ignored: Boolean): FS[GHResponse[Subscription]]
 
   def listStargazers(
       owner: String,
       repo: String,
       timeline: Boolean,
-      pagination: Option[Pagination] = None,
-      accessToken: Option[String] = None): Free[F, GHResponse[List[Stargazer]]] =
-    Free.inject[ActivityOp, F](ListStargazers(owner, repo, timeline, pagination, accessToken))
+      pagination: Option[Pagination] = None
+  ): FS[GHResponse[List[Stargazer]]]
 
   def listStarredRepositories(
       username: String,
       timeline: Boolean,
       sort: Option[String] = None,
       direction: Option[String] = None,
-      pagination: Option[Pagination] = None,
-      accessToken: Option[String] = None): Free[F, GHResponse[List[StarredRepository]]] =
-    Free.inject[ActivityOp, F](
-      ListStarredRepositories(username, timeline, sort, direction, pagination, accessToken))
-}
-
-/**
- * Default implicit based DI factory from which instances of the ActivityOps may be obtained
- */
-object ActivityOps {
-
-  implicit def instance[F[_]](implicit I: InjectK[ActivityOp, F]): ActivityOps[F] =
-    new ActivityOps[F]
-
+      pagination: Option[Pagination] = None
+  ): FS[GHResponse[List[StarredRepository]]]
 }

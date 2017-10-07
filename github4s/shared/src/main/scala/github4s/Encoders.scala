@@ -33,5 +33,6 @@ object Encoders {
     case d: CreatePullRequestIssue => d.asJson
   }
 
-  implicit val encodePrrStatus: Encoder[PullRequestReviewState] = Encoder.encodeString.contramap(_.value)
+  implicit val encodePrrStatus: Encoder[PullRequestReviewState] =
+    Encoder.encodeString.contramap(_.value)
 }

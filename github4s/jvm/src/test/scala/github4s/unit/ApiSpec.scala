@@ -39,7 +39,7 @@ class ApiSpec
   val users         = new Users[HttpResponse[String], Id]
   val gists         = new Gists[HttpResponse[String], Id]
   val gitData       = new GitData[HttpResponse[String], Id]
-  val pullRequests  = new PullRequests[HttpResponse[String], Id]
+  val pullRequests  = new PullRequestInterpreter[HttpResponse[String], Id]
   val issues        = new Issues[HttpResponse[String], Id]
   val activities    = new Activities[HttpResponse[String], Id]
   val organizations = new Organizations[HttpResponse[String], Id]
@@ -657,7 +657,7 @@ class ApiSpec
     response should be('left)
   }
 
-  "PullRequests >> List" should "return the expected pull request list when valid repo is provided" in {
+  "PullRequestInterpreter >> List" should "return the expected pull request list when valid repo is provided" in {
     val response =
       pullRequests.list(accessToken, headerUserAgent, validRepoOwner, validRepoName)
     response should be('right)
@@ -673,7 +673,7 @@ class ApiSpec
     response should be('left)
   }
 
-  "PullRequests >> ListFiles" should "return the expected files when a valid repo is provided" in {
+  "PullRequestInterpreter >> ListFiles" should "return the expected files when a valid repo is provided" in {
     val response = pullRequests.listFiles(
       accessToken,
       headerUserAgent,
@@ -697,7 +697,7 @@ class ApiSpec
     response should be('left)
   }
 
-  "PullRequests >> Create PullRequestData" should "return the pull request when a valid data is provided" in {
+  "PullRequestInterpreter >> Create PullRequestData" should "return the pull request when a valid data is provided" in {
     val response = pullRequests.create(
       accessToken,
       headerUserAgent,
@@ -720,7 +720,7 @@ class ApiSpec
     response should be('left)
   }
 
-  "PullRequests >> Create PullRequestIssue" should "return the pull request when a valid data is provided" in {
+  "PullRequestInterpreter >> Create PullRequestIssue" should "return the pull request when a valid data is provided" in {
     val response = pullRequests.create(
       accessToken,
       headerUserAgent,
@@ -743,7 +743,7 @@ class ApiSpec
     response should be('left)
   }
 
-  "PullRequests >> List PullRequestReviews" should "return a list of reviews when valid data is provided" in {
+  "PullRequestInterpreter >> List PullRequestReviews" should "return a list of reviews when valid data is provided" in {
     val response = pullRequests.listReviews(
       accessToken,
       headerUserAgent,
@@ -762,7 +762,7 @@ class ApiSpec
     response should be('left)
   }
 
-  "PullRequests >> Get PullRequestReview" should "return a single review when valid data is provided" in {
+  "PullRequestInterpreter >> Get PullRequestReview" should "return a single review when valid data is provided" in {
     val response = pullRequests.getReview(
       accessToken,
       headerUserAgent,

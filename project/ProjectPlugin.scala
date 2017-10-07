@@ -48,6 +48,7 @@ object ProjectPlugin extends AutoPlugin {
     lazy val commonCrossDeps = Seq(
       %%("cats-core"),
       %%("cats-free"),
+      %%("freestyle"),
       %%("simulacrum"),
       %%("circe-core"),
       %%("circe-generic"),
@@ -58,10 +59,7 @@ object ProjectPlugin extends AutoPlugin {
     )
 
     lazy val standardCommonDeps = Seq(
-      libraryDependencies ++= Seq(
-        "com.47deg"       %%% "freestyle" % "0.1.0-SNAPSHOT",
-        compilerPlugin(%%("paradise") cross CrossVersion.full)
-      )
+      libraryDependencies += compilerPlugin(%%("paradise") cross CrossVersion.full)
     )
 
     lazy val jvmDeps = Seq(
