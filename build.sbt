@@ -3,6 +3,7 @@ pgpPublicRing := file(s"$gpgFolder/pubring.gpg")
 pgpSecretRing := file(s"$gpgFolder/secring.gpg")
 
 lazy val root = (project in file("."))
+  .dependsOn(github4sJVM, github4sJS, scalaz, catsEffectJVM, catsEffectJS, docs)
   .aggregate(github4sJVM, github4sJS, scalaz, catsEffectJVM, catsEffectJS, docs)
   .settings(noPublishSettings: _*)
 
