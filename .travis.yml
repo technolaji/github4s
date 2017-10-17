@@ -27,12 +27,7 @@ before_script:
   - sudo chmod +x /usr/local/bin/sbt
 
 script:
-- sbt ++$TRAVIS_SCALA_VERSION test:fastOptJS
-- sbt ++$TRAVIS_SCALA_VERSION orgScriptCI
-
-after_success:
-- bash <(curl -s https://codecov.io/bash)
-- sbt ++$TRAVIS_SCALA_VERSION orgAfterCISuccess
+- sbt ++$TRAVIS_SCALA_VERSION "github4sJS/testOnly github4s.unit.IssuesSpec"
 
 before_cache:
   - du -h -d 1 $HOME/.ivy2/cache
