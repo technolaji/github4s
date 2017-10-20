@@ -52,6 +52,7 @@ object ProjectPlugin extends AutoPlugin {
       %%("circe-core"),
       %%("circe-generic"),
       %%("circe-parser"),
+      %%("freestyle"),
       %%("base64"),
       %%("scalamockScalatest") % "test",
       %%("scalatest")          % "test"
