@@ -1,5 +1,14 @@
 # Changelog
 
+## 11/08/2017 - Version 0.17.0
+
+Release changes:
+
+* Bumps sbt-org-policies in order to fix docs autopublishing issue ([#168](https://github.com/47deg/github4s/pull/168))
+* Bump sbt-org-policies to 0.8.7 to benefit from cats 1.0.0-RC1 & co ([#176](https://github.com/47deg/github4s/pull/176))
+* Bump Travis' Scala version to 2.12.4 ([#177](https://github.com/47deg/github4s/pull/177))
+
+
 ## 09/25/2017 - Version 0.16.0
 
 Release changes:
