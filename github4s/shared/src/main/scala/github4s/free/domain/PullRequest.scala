@@ -50,7 +50,7 @@ case class PullRequestFile(
     blob_url: String,
     raw_url: String,
     contents_url: String,
-    patch: String,
+    patch: Option[String],
     previous_filename: Option[String])
 sealed trait CreatePullRequest {
   def head: String

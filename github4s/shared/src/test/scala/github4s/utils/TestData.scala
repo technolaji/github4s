@@ -208,7 +208,7 @@ trait TestData extends DummyGithubUrls {
     blob_url = githubApiUrl,
     raw_url = githubApiUrl,
     contents_url = githubApiUrl,
-    patch = "",
+    patch = None,
     previous_filename = None
   )
 
