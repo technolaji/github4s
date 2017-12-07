@@ -71,6 +71,18 @@ trait GHPullRequestsSpec[T] extends BaseIntegrationSpec[T] {
     })
   }
 
+  "PullRequests >> ListFiles" should "return a right response when a valid repo is provided and not all files have 'patch'" in {
+    val response =
+      Github(None).pullRequests
+        .listFiles("scala", "scala", 4877)
+        .execFuture[T](headerUserAgent)
+
+    testFutureIsRight[List[PullRequestFile]](response, { r =>
+      r.result.nonEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    })
+  }
+
   it should "return error when an invalid repo name is passed" in {
     val response =
       Github(accessToken).pullRequests
