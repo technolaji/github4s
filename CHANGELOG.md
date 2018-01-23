@@ -1,5 +1,19 @@
 # Changelog
 
+## 01/23/2018 - Version 0.18.0
+
+Release changes:
+
+* Bump ruby version in travis to fix travis build ([#182](https://github.com/47deg/github4s/pull/182))
+* Make status' id a Long ([#183](https://github.com/47deg/github4s/pull/183))
+* Make PullRequestFile#patch an Option[String] ([#181](https://github.com/47deg/github4s/pull/181))
+* Fixes Travis file ([#190](https://github.com/47deg/github4s/pull/190))
+* Bump sbt-org-policies to 0.8.22 to benefit from cats 1.0.1 and circe 0.9.1 ([#192](https://github.com/47deg/github4s/pull/192))
+* Get a single issue ([#191](https://github.com/47deg/github4s/pull/191))
+* Fetch issue comments ([#188](https://github.com/47deg/github4s/pull/188))
+* Release version 0.18.0 ([#193](https://github.com/47deg/github4s/pull/193))
+
+
 ## 11/08/2017 - Version 0.17.0
 
 Release changes:
