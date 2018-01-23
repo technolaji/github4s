@@ -167,6 +167,27 @@ See [the API doc](https://developer.github.com/v3/search/#search-issues) for ful
 
 ## Comments
 
+### List comments
+
+You can list comments of an issue with the following parameters:
+
+ - the repository coordinates (`owner` and `name` of the repository).
+ - `number`: The issue number.
+
+ To list comment:
+
+```tut:silent
+val commentList = Github(accessToken).issues.listComments("47deg", "github4s", 123)
+commentList.exec[cats.Id, HttpResponse[String]]() match {
+  case Left(e) => println(s"Something went wrong: ${e.getMessage}")
+  case Right(r) => println(r.result)
+}
+```
+
+The `result` on the right is the corresponding [List[Comment]][issue-scala]
+
+See [the API doc](https://developer.github.com/v3/issues/comments/#list-comments-on-an-issue) for full reference.
+
 ### Create a comment
 
 You can create a comment for an issue with the following parameters:

@@ -937,6 +937,37 @@ class ApiSpec
     }
   }
 
+  "Issues >> ListComments" should "return the expected issue comments when a valid issue number is provided" in {
+    val response =
+      issues.listComments(
+        accessToken,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        validIssueNumber)
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.result.nonEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    }
+  }
+  it should "return an error if an invalid issue number is provided" in {
+    val response =
+      issues.listComments(
+        accessToken,
+        headerUserAgent,
+        validRepoOwner,
+        validRepoName,
+        invalidIssueNumber)
+    response should be('left)
+  }
+  it should "return an error if no tokens are provided" in {
+    val response =
+      issues.listComments(None, headerUserAgent, validRepoOwner, validRepoName, validIssueNumber)
+    response should be('left)
+  }
+
   "Issues >> Create a Comment" should "return the comment created when a valid issue number is provided" in {
     val response =
       issues.createComment(

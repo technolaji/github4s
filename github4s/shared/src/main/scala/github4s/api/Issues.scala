@@ -173,6 +173,24 @@ class Issues[C, M[_]](
       data = EditIssueRequest(state, title, body, milestone, labels, assignees).asJson.noSpaces)
 
   /**
+   * List comments to an Issue
+   *
+   * @param accessToken to identify the authenticated user
+   * @param headers optional user headers to include in the request
+   * @param owner of the repo
+   * @param repo name of the repo
+   * @param number Issue number
+   * @return a GHResponse with the comment list of the Issue.
+   */
+  def listComments(
+      accessToken: Option[String] = None,
+      headers: Map[String, String] = Map(),
+      owner: String,
+      repo: String,
+      number: Int): M[GHResponse[List[Comment]]] =
+    httpClient.get[List[Comment]](accessToken, s"repos/$owner/$repo/issues/$number/comments", headers)
+
+  /**
    *
    * Create a comment
    *

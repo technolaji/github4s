@@ -759,6 +759,31 @@ trait MockGithubApiServer extends MockServerService with FakeResponses with Test
         .withQueryStringParameters(new Parameter("q", s".*$nonExistentSearchQuery.*"))
         .withHeader("Authorization", tokenHeader))
     .respond(response.withStatusCode(okStatusCode).withBody(searchIssuesEmptyResponse))
+  
+  //Issues >> List comments of an Issue
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/issues/$validIssueNumber/comments")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(okStatusCode).withBody(listCommentsValidResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/issues/$invalidIssueNumber/comments")
+        .withHeader("Authorization", tokenHeader))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
+
+  mockServer
+    .when(
+      request
+        .withMethod("GET")
+        .withPath(s"/repos/$validRepoOwner/$validRepoName/issues/$validIssueNumber/comments")
+        .withHeader(not("Authorization")))
+    .respond(response.withStatusCode(notFoundStatusCode).withBody(notFoundResponse))
 
   //Issues >> Create a comment
   mockServer

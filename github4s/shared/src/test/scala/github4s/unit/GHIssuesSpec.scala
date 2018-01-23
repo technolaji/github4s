@@ -121,6 +121,19 @@ class GHIssuesSpec extends BaseSpec {
         List.empty)
   }
 
+  "Issues.ListComments" should "call to IssuesOps with the right parameters" in {
+    val response: Free[GitHub4s, GHResponse[List[Comment]]] =
+      Free.pure(Right(GHResult(List(comment), okStatusCode, Map.empty)))
+
+    val commentOps = mock[IssueOpsTest]
+    (commentOps.listComments _)
+      .expects(validRepoOwner, validRepoName, validIssueNumber, sampleToken)
+      .returns(response)
+
+    val ghIssues = new GHIssues(sampleToken)(commentOps)
+    ghIssues.listComments(validRepoOwner, validRepoName, validIssueNumber)
+  }
+
   "Issues.CreateComment" should "call to IssueOps with the right parameters" in {
 
     val response: Free[GitHub4s, GHResponse[Comment]] =

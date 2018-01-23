@@ -144,6 +144,26 @@ class IssuesSpec extends BaseSpec {
       List.empty)
   }
 
+  "Issues.ListComment" should "call httpClient.get with the right parameters" in {
+    val response: GHResponse[List[Comment]] =
+      Right(GHResult(List(comment), okStatusCode, Map.empty))
+
+    val httpClientMock = httpClientMockGet[List[Comment]](
+      url = s"repos/$validRepoOwner/$validRepoName/issues/$validIssueNumber/comments",
+      response = response
+    )
+
+    val issues = new Issues[String, Id] {
+      override val httpClient: HttpClient[String, Id] = httpClientMock
+    }
+    issues.listComments(
+      sampleToken,
+      headerUserAgent,
+      validRepoOwner,
+      validRepoName,
+      validIssueNumber)
+  }
+
   "Issue.CreateComment" should "call to httpClient.post with the right parameters" in {
 
     val response: GHResponse[Comment] =

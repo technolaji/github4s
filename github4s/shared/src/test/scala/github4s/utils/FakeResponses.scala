@@ -2070,6 +2070,70 @@ trait FakeResponses {
       |  "body": "We should take some time to update the docs and the microsite to reflect the changes that have been included in the library, maybe splitting the docs in several sections for the JVM and JS case uses."
       |}""".stripMargin
 
+  val listCommentsValidResponse =
+    """
+      |[
+      |  {
+      |    "url": "https://api.github.com/repos/47deg/github4s/issues/comments/300130363",
+      |    "html_url": "https://github.com/47deg/github4s/issues/48#issuecomment-300130363",
+      |    "issue_url": "https://api.github.com/repos/47deg/github4s/issues/48",
+      |    "id": 300130363,
+      |    "user": {
+      |      "login": "47degdev",
+      |      "id": 5580770,
+      |      "avatar_url": "https://avatars3.githubusercontent.com/u/5580770?v=4",
+      |      "gravatar_id": "",
+      |      "url": "https://api.github.com/users/47degdev",
+      |      "html_url": "https://github.com/47degdev",
+      |      "followers_url": "https://api.github.com/users/47degdev/followers",
+      |      "following_url": "https://api.github.com/users/47degdev/following{/other_user}",
+      |      "gists_url": "https://api.github.com/users/47degdev/gists{/gist_id}",
+      |      "starred_url": "https://api.github.com/users/47degdev/starred{/owner}{/repo}",
+      |      "subscriptions_url": "https://api.github.com/users/47degdev/subscriptions",
+      |      "organizations_url": "https://api.github.com/users/47degdev/orgs",
+      |      "repos_url": "https://api.github.com/users/47degdev/repos",
+      |      "events_url": "https://api.github.com/users/47degdev/events{/privacy}",
+      |      "received_events_url": "https://api.github.com/users/47degdev/received_events",
+      |      "type": "User",
+      |      "site_admin": false
+      |    },
+      |    "created_at": "2017-05-09T10:59:27Z",
+      |    "updated_at": "2017-05-09T10:59:27Z",
+      |    "author_association": "CONTRIBUTOR",
+      |    "body": "the comment"
+      |  },
+      |  {
+      |    "url": "https://api.github.com/repos/47deg/github4s/issues/comments/300130514",
+      |    "html_url": "https://github.com/47deg/github4s/issues/48#issuecomment-300130514",
+      |    "issue_url": "https://api.github.com/repos/47deg/github4s/issues/48",
+      |    "id": 300130514,
+      |    "user": {
+      |      "login": "47degdev",
+      |      "id": 5580770,
+      |      "avatar_url": "https://avatars3.githubusercontent.com/u/5580770?v=4",
+      |      "gravatar_id": "",
+      |      "url": "https://api.github.com/users/47degdev",
+      |      "html_url": "https://github.com/47degdev",
+      |      "followers_url": "https://api.github.com/users/47degdev/followers",
+      |      "following_url": "https://api.github.com/users/47degdev/following{/other_user}",
+      |      "gists_url": "https://api.github.com/users/47degdev/gists{/gist_id}",
+      |      "starred_url": "https://api.github.com/users/47degdev/starred{/owner}{/repo}",
+      |      "subscriptions_url": "https://api.github.com/users/47degdev/subscriptions",
+      |      "organizations_url": "https://api.github.com/users/47degdev/orgs",
+      |      "repos_url": "https://api.github.com/users/47degdev/repos",
+      |      "events_url": "https://api.github.com/users/47degdev/events{/privacy}",
+      |      "received_events_url": "https://api.github.com/users/47degdev/received_events",
+      |      "type": "User",
+      |      "site_admin": false
+      |    },
+      |    "created_at": "2017-05-09T11:00:18Z",
+      |    "updated_at": "2017-05-09T11:00:18Z",
+      |    "author_association": "CONTRIBUTOR",
+      |    "body": "the comment"
+      |  }
+      |]
+    """.stripMargin
+
   val searchIssuesValidResponse =
     """{
       |  "total_count": 1,
