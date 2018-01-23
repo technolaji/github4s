@@ -164,6 +164,13 @@ class GHIssues(accessToken: Option[String] = None)(implicit O: IssueOps[GitHub4s
   ): GHIO[GHResponse[List[Issue]]] =
     O.listIssues(owner, repo, accessToken)
 
+  def getIssue(
+      owner: String,
+      repo: String,
+      number: Int
+  ): GHIO[GHResponse[Issue]] =
+    O.getIssue(owner, repo, number, accessToken)
+
   def searchIssues(
       query: String,
       searchParams: List[SearchParam]

@@ -804,6 +804,26 @@ class ApiSpec
     response should be('left)
   }
 
+  "Issues >> Get" should "return the expected issue when a valid owner/repo is provided" in {
+    val response =
+      issues.get(accessToken, headerUserAgent, validRepoOwner, validRepoName, validIssueNumber)
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.statusCode shouldBe okStatusCode
+    }
+  }
+  it should "return an error if an invalid issue number is provided" in {
+    val response =
+      issues.get(accessToken, headerUserAgent, validRepoOwner, validRepoName, invalidIssueNumber)
+    response should be('left)
+  }
+  it should "return an error if no tokens are provided" in {
+    val response =
+      issues.get(None, headerUserAgent, validRepoOwner, validRepoName, validIssueNumber)
+    response should be('left)
+  }
+
   "Issues >> Create" should "return the created issue if valid data is provided" in {
     val response = issues.create(
       accessToken,

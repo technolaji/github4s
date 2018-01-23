@@ -40,6 +40,21 @@ class IssuesSpec extends BaseSpec {
     issues.list(sampleToken, headerUserAgent, validRepoOwner, validRepoName)
   }
 
+  "Issues.get" should "call httpClient.get with the right parameters" in {
+    val response: GHResponse[Issue] =
+      Right(GHResult(issue, okStatusCode, Map.empty))
+
+    val httpClientMock = httpClientMockGet[Issue](
+      url = s"repos/$validRepoOwner/$validRepoName/issues/$validIssueNumber",
+      response = response
+    )
+
+    val issues = new Issues[String, Id] {
+      override val httpClient: HttpClient[String, Id] = httpClientMock
+    }
+    issues.get(sampleToken, headerUserAgent, validRepoOwner, validRepoName, validIssueNumber)
+  }
+
   "Issues.search" should "call htppClient.get with the right parameters" in {
     val response: GHResponse[SearchIssuesResult] =
       Right(GHResult(searchIssuesResult, okStatusCode, Map.empty))

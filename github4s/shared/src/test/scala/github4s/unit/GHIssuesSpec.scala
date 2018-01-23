@@ -37,6 +37,18 @@ class GHIssuesSpec extends BaseSpec {
     ghIssues.listIssues(validRepoOwner, validRepoName)
   }
 
+  "GHIssues.getIssue" should "call to IssuesOps with the right parameters" in {
+    val response: Free[GitHub4s, GHResponse[Issue]] =
+      Free.pure(Right(GHResult(issue, okStatusCode, Map.empty)))
+
+    val issuesOps = mock[IssueOpsTest]
+    (issuesOps.getIssue _)
+      .expects(validRepoOwner, validRepoName, validIssueNumber, sampleToken)
+      .returns(response)
+    val ghIssues = new GHIssues(sampleToken)(issuesOps)
+    ghIssues.getIssue(validRepoOwner, validRepoName, validIssueNumber)
+  }
+
   "GHIssues.searchIssues" should "call to IssuesOps with the right parameters" in {
     val response: Free[GitHub4s, GHResponse[SearchIssuesResult]] =
       Free.pure(Right(GHResult(searchIssuesResult, okStatusCode, Map.empty)))

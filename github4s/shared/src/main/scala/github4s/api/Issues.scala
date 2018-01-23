@@ -56,6 +56,31 @@ class Issues[C, M[_]](
     httpClient.get[List[Issue]](accessToken, s"repos/$owner/$repo/issues", headers)
 
   /**
+   * Get a single issue of a repository
+   *
+   * Note: In the past, pull requests and issues were more closely aligned than they are now.
+   * As far as the API is concerned, every pull request is an issue, but not every issue is a
+   * pull request.
+   *
+   * This endpoint may also return pull requests in the response. If an issue is a pull request,
+   * the object will include a `pull_request` key.
+   *
+   * @param accessToken to identify the authenticated user
+   * @param headers optional user headers to include in the request
+   * @param owner of the repo
+   * @param repo name of the repo
+   * @param number Issue number
+   * @return a GHResponse with the issue list.
+   */
+  def get(
+      accessToken: Option[String] = None,
+      headers: Map[String, String] = Map(),
+      owner: String,
+      repo: String,
+      number: Int): M[GHResponse[Issue]] =
+    httpClient.get[Issue](accessToken, s"repos/$owner/$repo/issues/$number", headers)
+
+  /**
    * Search for issues
    *
    * Note: In the past, pull requests and issues were more closely aligned than they are now.

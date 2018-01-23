@@ -90,7 +90,7 @@ See [the API doc](https://developer.github.com/v3/issues/#edit-an-issue) for ful
 
 ### List issues 
 
-You can also list issues for a repository through `listIssues`; it take as arguments:
+You can also list issues for a repository through `listIssues`; it takes as arguments:
 
 - the repository coordinates (`owner` and `name` of the repository).
 
@@ -111,6 +111,29 @@ contain pull requests as Github considers pull requests as issues.
 See [the API doc](https://developer.github.com/v3/issues/#list-issues-for-a-repository)
 for full reference.
 
+### Get a single issue
+
+You can also get a single issue of a repository through `getIssue`; it takes as arguments:
+
+- the repository coordinates (`owner` and `name` of the repository).
+- `number`: The issue number.
+
+To get a single issue from a repository:
+
+```tut:silent
+val issue = Github(accessToken).issues.getIssue("47deg", "github4s", 123)
+
+issue.exec[cats.Id, HttpResponse[String]]() match {
+  case Left(e) => println(s"Something went wrong: ${e.getMessage}")
+  case Right(r) => println(r.result)
+}
+```
+
+The `result` on the right is the corresponding [Issue][issue-scala]. Note that it will
+return pull requests as Github considers pull requests as issues.
+
+See [the API doc](https://developer.github.com/v3/issues/#get-a-single-issue)
+for full reference.
 
 ### Search issues
 

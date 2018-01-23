@@ -1791,6 +1791,125 @@ trait FakeResponses {
       |  }
       |]""".stripMargin
 
+  val getIssueValidResponse =
+    """
+      |{
+      |  "url": "https://api.github.com/repos/47deg/github4s/issues/48",
+      |  "repository_url": "https://api.github.com/repos/47deg/github4s",
+      |  "labels_url": "https://api.github.com/repos/47deg/github4s/issues/48/labels{/name}",
+      |  "comments_url": "https://api.github.com/repos/47deg/github4s/issues/48/comments",
+      |  "events_url": "https://api.github.com/repos/47deg/github4s/issues/48/events",
+      |  "html_url": "https://github.com/47deg/github4s/issues/48",
+      |  "id": 198471647,
+      |  "number": 48,
+      |  "title": "Sample Title",
+      |  "user": {
+      |    "login": "fedefernandez",
+      |    "id": 720923,
+      |    "avatar_url": "https://avatars0.githubusercontent.com/u/720923?v=4",
+      |    "gravatar_id": "",
+      |    "url": "https://api.github.com/users/fedefernandez",
+      |    "html_url": "https://github.com/fedefernandez",
+      |    "followers_url": "https://api.github.com/users/fedefernandez/followers",
+      |    "following_url": "https://api.github.com/users/fedefernandez/following{/other_user}",
+      |    "gists_url": "https://api.github.com/users/fedefernandez/gists{/gist_id}",
+      |    "starred_url": "https://api.github.com/users/fedefernandez/starred{/owner}{/repo}",
+      |    "subscriptions_url": "https://api.github.com/users/fedefernandez/subscriptions",
+      |    "organizations_url": "https://api.github.com/users/fedefernandez/orgs",
+      |    "repos_url": "https://api.github.com/users/fedefernandez/repos",
+      |    "events_url": "https://api.github.com/users/fedefernandez/events{/privacy}",
+      |    "received_events_url": "https://api.github.com/users/fedefernandez/received_events",
+      |    "type": "User",
+      |    "site_admin": false
+      |  },
+      |  "labels": [
+      |  {
+      |    "id": 337667889,
+      |    "url": "https://api.github.com/repos/47deg/github4s/labels/bug",
+      |    "name": "bug",
+      |    "color": "fc2929",
+      |    "default": true
+      |  },
+      |  {
+      |    "id": 511000525,
+      |    "url": "https://api.github.com/repos/47deg/github4s/labels/code%20review",
+      |    "name": "code review",
+      |    "color": "ededed",
+      |    "default": false
+      |  }
+      |  ],
+      |  "state": "closed",
+      |  "locked": false,
+      |  "assignee": {
+      |    "login": "rafaparadela",
+      |    "id": 315070,
+      |    "avatar_url": "https://avatars3.githubusercontent.com/u/315070?v=4",
+      |    "gravatar_id": "",
+      |    "url": "https://api.github.com/users/rafaparadela",
+      |    "html_url": "https://github.com/rafaparadela",
+      |    "followers_url": "https://api.github.com/users/rafaparadela/followers",
+      |    "following_url": "https://api.github.com/users/rafaparadela/following{/other_user}",
+      |    "gists_url": "https://api.github.com/users/rafaparadela/gists{/gist_id}",
+      |    "starred_url": "https://api.github.com/users/rafaparadela/starred{/owner}{/repo}",
+      |    "subscriptions_url": "https://api.github.com/users/rafaparadela/subscriptions",
+      |    "organizations_url": "https://api.github.com/users/rafaparadela/orgs",
+      |    "repos_url": "https://api.github.com/users/rafaparadela/repos",
+      |    "events_url": "https://api.github.com/users/rafaparadela/events{/privacy}",
+      |    "received_events_url": "https://api.github.com/users/rafaparadela/received_events",
+      |    "type": "User",
+      |    "site_admin": false
+      |  },
+      |  "assignees": [
+      |  {
+      |    "login": "rafaparadela",
+      |    "id": 315070,
+      |    "avatar_url": "https://avatars3.githubusercontent.com/u/315070?v=4",
+      |    "gravatar_id": "",
+      |    "url": "https://api.github.com/users/rafaparadela",
+      |    "html_url": "https://github.com/rafaparadela",
+      |    "followers_url": "https://api.github.com/users/rafaparadela/followers",
+      |    "following_url": "https://api.github.com/users/rafaparadela/following{/other_user}",
+      |    "gists_url": "https://api.github.com/users/rafaparadela/gists{/gist_id}",
+      |    "starred_url": "https://api.github.com/users/rafaparadela/starred{/owner}{/repo}",
+      |    "subscriptions_url": "https://api.github.com/users/rafaparadela/subscriptions",
+      |    "organizations_url": "https://api.github.com/users/rafaparadela/orgs",
+      |    "repos_url": "https://api.github.com/users/rafaparadela/repos",
+      |    "events_url": "https://api.github.com/users/rafaparadela/events{/privacy}",
+      |    "received_events_url": "https://api.github.com/users/rafaparadela/received_events",
+      |    "type": "User",
+      |    "site_admin": false
+      |  }
+      |  ],
+      |  "milestone": null,
+      |  "comments": 2,
+      |  "created_at": "2017-01-03T13:12:55Z",
+      |  "updated_at": "2018-01-09T18:45:33Z",
+      |  "closed_at": "2017-01-03T13:13:30Z",
+      |  "author_association": "CONTRIBUTOR",
+      |  "body": "Sample Body",
+      |  "closed_by": {
+      |    "login": "fedefernandez",
+      |    "id": 720923,
+      |    "avatar_url": "https://avatars0.githubusercontent.com/u/720923?v=4",
+      |    "gravatar_id": "",
+      |    "url": "https://api.github.com/users/fedefernandez",
+      |    "html_url": "https://github.com/fedefernandez",
+      |    "followers_url": "https://api.github.com/users/fedefernandez/followers",
+      |    "following_url": "https://api.github.com/users/fedefernandez/following{/other_user}",
+      |    "gists_url": "https://api.github.com/users/fedefernandez/gists{/gist_id}",
+      |    "starred_url": "https://api.github.com/users/fedefernandez/starred{/owner}{/repo}",
+      |    "subscriptions_url": "https://api.github.com/users/fedefernandez/subscriptions",
+      |    "organizations_url": "https://api.github.com/users/fedefernandez/orgs",
+      |    "repos_url": "https://api.github.com/users/fedefernandez/repos",
+      |    "events_url": "https://api.github.com/users/fedefernandez/events{/privacy}",
+      |    "received_events_url": "https://api.github.com/users/fedefernandez/received_events",
+      |    "type": "User",
+      |    "site_admin": false
+      |  }
+      |}
+    """.stripMargin
+
+
   val listReviewsValidResponse =
     """
       |[

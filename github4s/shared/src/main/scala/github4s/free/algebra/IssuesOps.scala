@@ -32,6 +32,13 @@ final case class ListIssues(
     accessToken: Option[String] = None
 ) extends IssueOp[GHResponse[List[Issue]]]
 
+final case class GetIssue(
+    owner: String,
+    repo: String,
+    number: Int,
+    accessToken: Option[String] = None
+) extends IssueOp[GHResponse[Issue]]
+
 final case class SearchIssues(
     query: String,
     searchParams: List[SearchParam],
@@ -97,6 +104,14 @@ class IssueOps[F[_]](implicit I: InjectK[IssueOp, F]) {
       accessToken: Option[String] = None
   ): Free[F, GHResponse[List[Issue]]] =
     Free.inject[IssueOp, F](ListIssues(owner, repo, accessToken))
+
+  def getIssue(
+      owner: String,
+      repo: String,
+      number: Int,
+      accessToken: Option[String] = None
+  ): Free[F, GHResponse[Issue]] =
+    Free.inject[IssueOp, F](GetIssue(owner, repo, number, accessToken))
 
   def searchIssues(
       query: String,

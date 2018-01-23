@@ -187,6 +187,8 @@ class Interpreters[M[_], C](
         fa match {
           case ListIssues(owner, repo, accessToken) ⇒
             issues.list(accessToken, headers, owner, repo)
+          case GetIssue(owner, repo, number, accessToken) ⇒
+            issues.get(accessToken, headers, owner, repo, number)
           case SearchIssues(query, searchParams, accessToken) ⇒
             issues.search(accessToken, headers, query, searchParams)
           case CreateIssue(owner, repo, title, body, milestone, labels, assignees, accessToken) ⇒
