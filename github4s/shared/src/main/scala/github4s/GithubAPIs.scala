@@ -118,7 +118,7 @@ class GHRepos(accessToken: Option[String] = None)(implicit O: RepositoryOps[GitH
     O.createStatus(owner, repo, sha, state, target_url, description, context, accessToken)
 }
 
-class GHAuth(accessToken: Option[String] = None)(implicit O: AuthOps[GitHub4s]) {
+class GHAuth(accessToken: Option[String] = None)(implicit O: AuthorizationOps[GitHub4s]) {
 
   def newAuth(
       username: String,

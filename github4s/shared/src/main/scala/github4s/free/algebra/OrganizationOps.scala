@@ -16,46 +16,28 @@
 
 package github4s.free.algebra
 
-import cats.InjectK
 import cats.free.Free
+import freestyle.free.free
 import github4s.GithubResponses._
 import github4s.free.domain.{Pagination, User}
-
-/**
- * Organizations ops ADT
- */
-sealed trait OrganizationOp[A]
-
-final case class ListMembers(
-    org: String,
-    filter: Option[String] = None,
-    role: Option[String] = None,
-    pagination: Option[Pagination] = None,
-    accessToken: Option[String] = None
-) extends OrganizationOp[GHResponse[List[User]]]
 
 /**
  * Exposes Organization operations as a Free monadic algebra that may be combined with other
  * Algebras via Coproduct
  */
-class OrganizationOps[F[_]](implicit I: InjectK[OrganizationOp, F]) {
-
-  def listMembers(
-      org: String,
-      filter: Option[String] = None,
-      role: Option[String] = None,
-      pagination: Option[Pagination] = None,
-      accessToken: Option[String] = None): Free[F, GHResponse[List[User]]] =
-    Free.inject[OrganizationOp, F](
-      ListMembers(org, filter, role, pagination, accessToken))
-}
-
-/**
- * Default implicit based DI factory from which instances of the OrganizationOps may be obtained
- */
 object OrganizationOps {
+  @free trait OrganizationOpsM {
 
-  implicit def instance[F[_]](implicit I: InjectK[OrganizationOp, F]): OrganizationOps[F] =
-    new OrganizationOps[F]
+    def listMembers(
+        org: String,
+        filter: Option[String] = None,
+        role: Option[String] = None,
+        pagination: Option[Pagination] = None,
+        accessToken: Option[String] = None): Free[F, GHResponse[List[User]]] =
+      Free.inject[OrganizationOp, F](ListMembers(org, filter, role, pagination, accessToken))
+  }
 
+  trait Implicits {}
+
+  object implicits extends Implicits
 }

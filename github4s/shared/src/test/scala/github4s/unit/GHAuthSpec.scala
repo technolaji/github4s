@@ -30,7 +30,7 @@ class GHAuthSpec extends BaseSpec {
     val response: Free[GitHub4s, GHResponse[Authorization]] =
       Free.pure(Right(GHResult(authorization, okStatusCode, Map.empty)))
 
-    val authOps = mock[AuthOpsTest]
+    val authOps = mock[AuthorizationOpsTest]
     (authOps.newAuth _)
       .expects(
         validUsername,
@@ -56,7 +56,7 @@ class GHAuthSpec extends BaseSpec {
     val response: Free[GitHub4s, GHResponse[OAuthToken]] =
       Free.pure(Right(GHResult(oAuthToken, okStatusCode, Map.empty)))
 
-    val authOps = mock[AuthOpsTest]
+    val authOps = mock[AuthorizationOpsTest]
     (authOps.getAccessToken _)
       .expects(validClientId, invalidClientSecret, validCode, validRedirectUri, validAuthState)
       .returns(response)
