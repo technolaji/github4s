@@ -53,12 +53,13 @@ object ProjectPlugin extends AutoPlugin {
       %%("circe-generic"),
       %%("circe-parser"),
       %%("base64"),
+      %%("frees-core"),
       %%("scalamockScalatest") % "test",
       %%("scalatest")          % "test"
     )
 
     lazy val standardCommonDeps = Seq(
-      libraryDependencies += compilerPlugin(%%("paradise") cross CrossVersion.full)
+      libraryDependencies += compilerPlugin(%%("scalameta-paradise") cross CrossVersion.full)
     )
 
     lazy val jvmDeps = Seq(
