@@ -17,16 +17,19 @@
 package github4s.free.algebra
 
 import cats.data.NonEmptyList
-import cats.free.Free
-import freestyle.free.free
+import cats.~>
+import freestyle.free._
 import github4s.GithubResponses._
-import github4s.free.domain._
+import github4s.api.GitData
+import github4s.free.adt.GitDataOp._
+import github4s.free.domain.GitData._
 
 /**
  * Exposes Git Data operations as a Free monadic algebra that may be combined with other Algebras via
  * Coproduct
  */
 object GitDataOps {
+
   @free trait GitDataOpsM {
 
     def getReference(
@@ -34,8 +37,7 @@ object GitDataOps {
         repo: String,
         ref: String,
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[NonEmptyList[Ref]]] =
-      Free.inject[GitDataOp, F](GetReference(owner, repo, ref, accessToken))
+    ): FS[GHResponse[NonEmptyList[Ref]]]
 
     def createReference(
         owner: String,
@@ -43,8 +45,7 @@ object GitDataOps {
         ref: String,
         sha: String,
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[Ref]] =
-      Free.inject[GitDataOp, F](CreateReference(owner, repo, ref, sha, accessToken))
+    ): FS[GHResponse[Ref]]
 
     def updateReference(
         owner: String,
@@ -53,16 +54,14 @@ object GitDataOps {
         sha: String,
         force: Boolean,
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[Ref]] =
-      Free.inject[GitDataOp, F](UpdateReference(owner, repo, ref, sha, force, accessToken))
+    ): FS[GHResponse[Ref]]
 
     def getCommit(
         owner: String,
         repo: String,
         sha: String,
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[RefCommit]] =
-      Free.inject[GitDataOp, F](GetCommit(owner, repo, sha, accessToken))
+    ): FS[GHResponse[RefCommit]]
 
     def createCommit(
         owner: String,
@@ -72,9 +71,7 @@ object GitDataOps {
         parents: List[String],
         author: Option[RefAuthor],
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[RefCommit]] =
-      Free.inject[GitDataOp, F](
-        CreateCommit(owner, repo, message, tree, parents, author, accessToken))
+    ): FS[GHResponse[RefCommit]]
 
     def createBlob(
         owner: String,
@@ -82,8 +79,7 @@ object GitDataOps {
         content: String,
         encoding: Option[String],
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[RefInfo]] =
-      Free.inject[GitDataOp, F](CreateBlob(owner, repo, content, encoding, accessToken))
+    ): FS[GHResponse[RefInfo]]
 
     def createTree(
         owner: String,
@@ -91,8 +87,7 @@ object GitDataOps {
         baseTree: Option[String],
         treeDataList: List[TreeData],
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[TreeResult]] =
-      Free.inject[GitDataOp, F](CreateTree(owner, repo, baseTree, treeDataList, accessToken))
+    ): FS[GHResponse[TreeResult]]
 
     def createTag(
         owner: String,
@@ -103,12 +98,52 @@ object GitDataOps {
         objectType: String,
         author: Option[RefAuthor],
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[Tag]] =
-      Free.inject[GitDataOp, F](
-        CreateTag(owner, repo, tag, message, objectSha, objectType, author, accessToken))
+    ): FS[GHResponse[Tag]]
   }
 
-  trait Implicits {}
+  trait Implicits {
+
+    /**
+     * Lifts Git Ops to an effect capturing Monad such as Task via natural transformations
+     */
+    def gitDataOpsInterpreter: GitDataOp ~> K =
+      new (GitDataOp ~> K) {
+
+        val gitData = new GitData()
+
+        def apply[A](fa: GitDataOp[A]): K[A] = Kleisli[M, Map[String, String], A] { headers =>
+          fa match {
+            case GetReference(owner, repo, ref, accessToken) ⇒
+              gitData.reference(accessToken, headers, owner, repo, ref)
+            case CreateReference(owner, repo, ref, sha, accessToken) ⇒
+              gitData.createReference(accessToken, headers, owner, repo, ref, sha)
+            case UpdateReference(owner, repo, ref, sha, force, accessToken) ⇒
+              gitData.updateReference(accessToken, headers, owner, repo, ref, sha, force)
+            case GetCommit(owner, repo, sha, accessToken) ⇒
+              gitData.commit(accessToken, headers, owner, repo, sha)
+            case CreateCommit(owner, repo, message, tree, parents, author, accessToken) ⇒
+              gitData
+                .createCommit(accessToken, headers, owner, repo, message, tree, parents, author)
+            case CreateBlob(owner, repo, content, encoding, accessToken) ⇒
+              gitData.createBlob(accessToken, headers, owner, repo, content, encoding)
+            case CreateTree(owner, repo, baseTree, treeDataList, accessToken) ⇒
+              gitData.createTree(accessToken, headers, owner, repo, baseTree, treeDataList)
+            case CreateTag(owner, repo, tag, message, objectSha, objectType, author, accessToken) ⇒
+              gitData.createTag(
+                accessToken,
+                headers,
+                owner,
+                repo,
+                tag,
+                message,
+                objectSha,
+                objectType,
+                author)
+          }
+        }
+      }
+
+  }
 
   object implicits extends Implicits
 }

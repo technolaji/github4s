@@ -17,18 +17,25 @@
 package github4s.free.adt
 
 import github4s.GithubResponses.GHResponse
-import github4s.free.domain.{Pagination, User}
+import github4s.free.domain._
+import github4s.free.domain.User._
 
 /**
  * Users ops ADT
  */
-sealed trait UserOp[A]
+object UserOp {
 
-final case class GetUser(username: String, accessToken: Option[String] = None)
-    extends UserOp[GHResponse[User]]
-final case class GetAuthUser(accessToken: Option[String] = None) extends UserOp[GHResponse[User]]
-final case class GetUsers(
-    since: Int,
-    pagination: Option[Pagination] = None,
-    accessToken: Option[String] = None)
-    extends UserOp[GHResponse[List[User]]]
+  sealed trait UserOp[A]
+
+  final case class GetUser(username: String, accessToken: Option[String] = None)
+      extends UserOp[GHResponse[User]]
+
+  final case class GetAuthUser(accessToken: Option[String] = None) extends UserOp[GHResponse[User]]
+
+  final case class GetUsers(
+      since: Int,
+      pagination: Option[Pagination] = None,
+      accessToken: Option[String] = None)
+      extends UserOp[GHResponse[List[User]]]
+
+}

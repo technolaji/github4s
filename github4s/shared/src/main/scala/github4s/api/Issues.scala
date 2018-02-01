@@ -17,9 +17,9 @@
 package github4s.api
 
 import github4s.GithubResponses.GHResponse
+import github4s.free.Capture
 import github4s.{GithubApiUrls, HttpClient, HttpRequestBuilderExtension}
 import github4s.free.domain._
-import github4s.free.interpreters.Capture
 import github4s.util.URLEncoder
 import io.circe.syntax._
 import io.circe.generic.auto._
@@ -188,7 +188,8 @@ class Issues[C, M[_]](
       owner: String,
       repo: String,
       number: Int): M[GHResponse[List[Comment]]] =
-    httpClient.get[List[Comment]](accessToken, s"repos/$owner/$repo/issues/$number/comments", headers)
+    httpClient
+      .get[List[Comment]](accessToken, s"repos/$owner/$repo/issues/$number/comments", headers)
 
   /**
    *

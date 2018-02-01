@@ -17,32 +17,34 @@
 package github4s.free.algebra
 
 import cats.data.NonEmptyList
-import cats.free.Free
-import freestyle.free.free
+import cats.~>
+import freestyle.free._
 import github4s.GithubResponses.GHResponse
+import github4s.api.Repos
+import github4s.free.adt.RepositoryOp._
 import github4s.free.domain._
+import github4s.free.domain.Repository._
 
 /**
  * Exposes Repositories operations as a Free monadic algebra that may be combined with other Algebras via
  * Coproduct
  */
 object RepositoryOps {
+
   @free trait RepositoryOpsM {
 
     def getRepo(
         owner: String,
         repo: String,
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[Repository]] =
-      Free.inject[RepositoryOp, F](GetRepo(owner, repo, accessToken))
+    ): FS[GHResponse[Repository]]
 
     def listOrgRepos(
         org: String,
         `type`: Option[String] = None,
         pagination: Option[Pagination] = None,
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[List[Repository]]] =
-      Free.inject[RepositoryOp, F](ListOrgRepos(org, `type`, pagination, accessToken))
+    ): FS[GHResponse[List[Repository]]]
 
     def getContents(
         owner: String,
@@ -50,8 +52,7 @@ object RepositoryOps {
         path: String,
         ref: Option[String] = None,
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[NonEmptyList[Content]]] =
-      Free.inject[RepositoryOp, F](GetContents(owner, repo, path, ref, accessToken))
+    ): FS[GHResponse[NonEmptyList[Content]]]
 
     def listCommits(
         owner: String,
@@ -63,17 +64,14 @@ object RepositoryOps {
         until: Option[String] = None,
         pagination: Option[Pagination] = None,
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[List[Commit]]] =
-      Free.inject[RepositoryOp, F](
-        ListCommits(owner, repo, sha, path, author, since, until, pagination, accessToken))
+    ): FS[GHResponse[List[Commit]]]
 
     def listContributors(
         owner: String,
         repo: String,
         anon: Option[String] = None,
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[List[User]]] =
-      Free.inject[RepositoryOp, F](ListContributors(owner, repo, anon, accessToken))
+    ): FS[GHResponse[List[User]]]
 
     def createRelease(
         owner: String,
@@ -85,34 +83,21 @@ object RepositoryOps {
         draft: Option[Boolean] = None,
         prerelease: Option[Boolean] = None,
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[Release]] =
-      Free.inject[RepositoryOp, F](
-        CreateRelease(
-          owner,
-          repo,
-          tagName,
-          name,
-          body,
-          targetCommitish,
-          draft,
-          prerelease,
-          accessToken))
+    ): FS[GHResponse[Release]]
 
     def getCombinedStatus(
         owner: String,
         repo: String,
         ref: String,
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[CombinedStatus]] =
-      Free.inject[RepositoryOp, F](GetCombinedStatus(owner, repo, ref, accessToken))
+    ): FS[GHResponse[CombinedStatus]]
 
     def listStatuses(
         owner: String,
         repo: String,
         ref: String,
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[List[Status]]] =
-      Free.inject[RepositoryOp, F](ListStatuses(owner, repo, ref, accessToken))
+    ): FS[GHResponse[List[Status]]]
 
     def createStatus(
         owner: String,
@@ -123,12 +108,87 @@ object RepositoryOps {
         description: Option[String],
         context: Option[String],
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[Status]] =
-      Free.inject[RepositoryOp, F](
-        CreateStatus(owner, repo, sha, state, target_url, description, context, accessToken))
+    ): FS[GHResponse[Status]]
   }
 
-  trait Implicits {}
+  trait Implicits {
+
+    /**
+     * Lifts Repository Ops to an effect capturing Monad such as Task via natural transformations
+     */
+    def repositoryOpsInterpreter: RepositoryOp ~> K = new (RepositoryOp ~> K) {
+
+      val repos = new Repos()
+
+      def apply[A](fa: RepositoryOp[A]): K[A] = Kleisli[M, Map[String, String], A] { headers =>
+        fa match {
+          case GetRepo(owner, repo, accessToken) ⇒ repos.get(accessToken, headers, owner, repo)
+          case ListOrgRepos(org, tipe, pagination, accessToken) ⇒
+            repos.listOrgRepos(accessToken, headers, org, tipe, pagination)
+          case GetContents(owner, repo, path, ref, accessToken) ⇒
+            repos.getContents(accessToken, headers, owner, repo, path, ref)
+          case ListCommits(owner, repo, sha, path, author, since, until, pagination, accessToken) ⇒
+            repos.listCommits(
+              accessToken,
+              headers,
+              owner,
+              repo,
+              sha,
+              path,
+              author,
+              since,
+              until,
+              pagination)
+          case ListContributors(owner, repo, anon, accessToken) ⇒
+            repos.listContributors(accessToken, headers, owner, repo, anon)
+          case CreateRelease(
+              owner,
+              repo,
+              tagName,
+              name,
+              body,
+              targetCommitish,
+              draft,
+              prerelease,
+              accessToken) =>
+            repos.createRelease(
+              accessToken,
+              headers,
+              owner,
+              repo,
+              tagName,
+              name,
+              body,
+              targetCommitish,
+              draft,
+              prerelease)
+          case GetCombinedStatus(owner, repo, ref, accessToken) ⇒
+            repos.getStatus(accessToken, headers, owner, repo, ref)
+          case ListStatuses(owner, repo, ref, accessToken) ⇒
+            repos.listStatuses(accessToken, headers, owner, repo, ref)
+          case CreateStatus(
+              owner,
+              repo,
+              sha,
+              state,
+              target_url,
+              description,
+              context,
+              accessToken) ⇒
+            repos.createStatus(
+              accessToken,
+              headers,
+              owner,
+              repo,
+              sha,
+              state,
+              target_url,
+              description,
+              context)
+        }
+      }
+    }
+  }
 
   object implicits extends Implicits
 }

@@ -19,8 +19,16 @@ package github4s
 import cats.data.NonEmptyList
 import github4s.GithubResponses.{GHIO, GHResponse}
 import github4s.app._
-import github4s.free.algebra._
 import github4s.free.domain._
+import github4s.free.domain.Activity._
+import github4s.free.domain.Authorization._
+import github4s.free.domain.Gist._
+import github4s.free.domain.GitData._
+import github4s.free.domain.Issue._
+import github4s.free.domain.PullRequest._
+import github4s.free.domain.Repository._
+import github4s.free.domain.SearchParam._
+import github4s.free.domain.User._
 
 class GHUsers(accessToken: Option[String] = None)(implicit O: UserOps[GitHub4s]) {
 
@@ -235,10 +243,7 @@ class GHIssues(accessToken: Option[String] = None)(implicit O: IssueOps[GitHub4s
 
 class GHActivities(accessToken: Option[String] = None)(implicit O: ActivityOps[GitHub4s]) {
 
-  def setThreadSub(
-      id: Int,
-      subscribed: Boolean,
-      ignored: Boolean): GHIO[GHResponse[Subscription]] =
+  def setThreadSub(id: Int, subscribed: Boolean, ignored: Boolean): GHIO[GHResponse[Subscription]] =
     O.setThreadSub(id, subscribed, ignored, accessToken)
 
   def listStargazers(

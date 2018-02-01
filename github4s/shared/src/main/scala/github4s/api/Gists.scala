@@ -21,7 +21,7 @@ import github4s._
 import io.circe.generic.auto._
 import io.circe.syntax._
 import github4s.GithubResponses.GHResponse
-import github4s.free.interpreters.Capture
+import github4s.free.Capture
 
 import scala.language.higherKinds
 

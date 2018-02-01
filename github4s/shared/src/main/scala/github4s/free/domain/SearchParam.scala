@@ -16,73 +16,77 @@
 
 package github4s.free.domain
 
-sealed trait SearchParam {
-  protected def paramName: String
-  protected def paramValue: String
-  def value: String = s"$paramName:$paramValue"
-}
+object SearchParam {
 
-sealed trait IssueType extends SearchParam {
-  override def paramName: String = "type"
-}
+  sealed trait SearchParam {
+    protected def paramName: String
+    protected def paramValue: String
+    def value: String = s"$paramName:$paramValue"
+  }
 
-case object IssueTypeIssue extends IssueType {
-  override def paramValue: String = "issue"
-}
+  sealed trait IssueType extends SearchParam {
+    override def paramName: String = "type"
+  }
 
-case object IssueTypePullRequest extends IssueType {
-  override def paramValue: String = "pr"
-}
+  case object IssueTypeIssue extends IssueType {
+    override def paramValue: String = "issue"
+  }
 
-case class SearchIn(values: Set[SearchInValue]) extends SearchParam {
-  override def paramName: String  = "in"
-  override def paramValue: String = values.map(_.value).mkString(",")
-}
+  case object IssueTypePullRequest extends IssueType {
+    override def paramValue: String = "pr"
+  }
 
-sealed trait SearchInValue {
-  def value: String
-}
+  case class SearchIn(values: Set[SearchInValue]) extends SearchParam {
+    override def paramName: String  = "in"
+    override def paramValue: String = values.map(_.value).mkString(",")
+  }
 
-case object SearchInTitle extends SearchInValue {
-  override def value: String = "title"
-}
+  sealed trait SearchInValue {
+    def value: String
+  }
 
-case object SearchInBody extends SearchInValue {
-  override def value: String = "body"
-}
+  case object SearchInTitle extends SearchInValue {
+    override def value: String = "title"
+  }
 
-case object SearchInComments extends SearchInValue {
-  override def value: String = "comments"
-}
+  case object SearchInBody extends SearchInValue {
+    override def value: String = "body"
+  }
 
-sealed trait IssueState extends SearchParam {
-  override def paramName: String = "state"
-}
+  case object SearchInComments extends SearchInValue {
+    override def value: String = "comments"
+  }
 
-case object IssueStateOpen extends IssueState {
-  override def paramValue: String = "open"
-}
+  sealed trait IssueState extends SearchParam {
+    override def paramName: String = "state"
+  }
 
-case object IssueStateClosed extends IssueState {
-  override def paramValue: String = "closed"
-}
+  case object IssueStateOpen extends IssueState {
+    override def paramValue: String = "open"
+  }
 
-case class LabelParam(label: String, exclude: Boolean = false) extends SearchParam {
-  override def paramName: String = s"${if (exclude) "-" else ""}state"
+  case object IssueStateClosed extends IssueState {
+    override def paramValue: String = "closed"
+  }
 
-  override def paramValue: String = label
-}
+  case class LabelParam(label: String, exclude: Boolean = false) extends SearchParam {
+    override def paramName: String = s"${if (exclude) "-" else ""}state"
 
-sealed trait OwnerParam extends SearchParam
+    override def paramValue: String = label
+  }
 
-case class OwnerParamOwnedByUser(user: String) extends OwnerParam {
-  override def paramName: String = "user"
+  sealed trait OwnerParam extends SearchParam
 
-  override def paramValue: String = user
-}
+  case class OwnerParamOwnedByUser(user: String) extends OwnerParam {
+    override def paramName: String = "user"
 
-case class OwnerParamInRepository(repo: String) extends OwnerParam {
-  override def paramName: String = "repo"
+    override def paramValue: String = user
+  }
 
-  override def paramValue: String = repo
+  case class OwnerParamInRepository(repo: String) extends OwnerParam {
+    override def paramName: String = "repo"
+
+    override def paramValue: String = repo
+  }
+
 }

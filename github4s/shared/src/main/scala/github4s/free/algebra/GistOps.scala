@@ -16,27 +16,47 @@
 
 package github4s.free.algebra
 
-import cats.free.Free
-import freestyle.free.free
+import cats.~>
+import freestyle.free._
 import github4s.GithubResponses._
-import github4s.free.domain.{Gist, GistFile}
+import github4s.api.Gists
+import github4s.free.adt.GistOp._
+import github4s.free.domain.Gist._
 
 /**
  * Exposes Gists operations as a Free monadic algebra that may be combined with other Algebras via
  * Coproduct
  */
 object GistOps {
+
   @free trait GistOpsM {
     def newGist(
         description: String,
         public: Boolean,
         files: Map[String, GistFile],
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[Gist]] =
-      Free.inject[GistOp, F](NewGist(description, public, files, accessToken))
+    ): FS[GHResponse[Gist]]
   }
 
-  trait Implicits {}
+  trait Implicits {
+
+    /**
+     * Lifts Gist Ops to an effect capturing Monad such as Task via natural transformations
+     */
+    def gistOpsInterpreter: GistOp ~> K =
+      new (GistOp ~> K) {
+
+        val gists = new Gists()
+
+        def apply[A](fa: GistOp[A]): K[A] = Kleisli[M, Map[String, String], A] { headers =>
+          fa match {
+            case NewGist(description, public, files, accessToken) ⇒
+              gists.newGist(description, public, files, headers, accessToken)
+          }
+        }
+      }
+
+  }
 
   object implicits extends Implicits
 }

@@ -18,7 +18,9 @@ package github4s
 
 import cats.instances.FutureInstances
 import cats.{Eval, FlatMap, Id, Monad, MonadError}
+import github4s.free.Capture
 import github4s.free.interpreters._
+
 import scala.concurrent.Future
 
 object implicits

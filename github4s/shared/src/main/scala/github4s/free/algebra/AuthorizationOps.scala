@@ -16,16 +16,19 @@
 
 package github4s.free.algebra
 
-import cats.free.Free
-import freestyle.free.free
+import cats.~>
+import freestyle.free._
 import github4s.GithubResponses._
-import github4s.free.domain.{Authorization, Authorize, OAuthToken}
+import github4s.api.Auth
+import github4s.free.adt.AuthorizationOp._
+import github4s.free.domain.Authorization._
 
 /**
  * Exposes Auths operations as a Free monadic algebra that may be combined with other Algebras via
  * Coproduct
  */
 object AuthorizationOps {
+
   @free trait AuthorizationOpsM {
 
     def newAuth(
@@ -35,15 +38,13 @@ object AuthorizationOps {
         note: String,
         client_id: String,
         client_secret: String
-    ): Free[F, GHResponse[Authorization]] =
-      Free.inject[AuthOp, F](NewAuth(username, password, scopes, note, client_id, client_secret))
+    ): FS[GHResponse[Authorization]]
 
     def authorizeUrl(
         client_id: String,
         redirect_uri: String,
         scopes: List[String]
-    ): Free[F, GHResponse[Authorize]] =
-      Free.inject[AuthOp, F](AuthorizeUrl(client_id, redirect_uri, scopes))
+    ): FS[GHResponse[Authorize]]
 
     def getAccessToken(
         client_id: String,
@@ -51,12 +52,33 @@ object AuthorizationOps {
         code: String,
         redirect_uri: String,
         state: String
-    ): Free[F, GHResponse[OAuthToken]] =
-      Free.inject[AuthOp, F](GetAccessToken(client_id, client_secret, code, redirect_uri, state))
+    ): FS[GHResponse[OAuthToken]]
 
   }
 
-  trait Implicits {}
+  trait Implicits {
+
+    /**
+     * Lifts Auth Ops to an effect capturing Monad such as Task via natural transformations
+     */
+    def AuthorizationOpsInterpreter: AuthorizationOp ~> K =
+      new (AuthorizationOp ~> K) {
+
+        val auth = new Auth()
+
+        def apply[A](fa: AuthorizationOp[A]): K[A] = Kleisli[M, Map[String, String], A] { headers =>
+          fa match {
+            case NewAuth(username, password, scopes, note, client_id, client_secret) ⇒
+              auth.newAuth(username, password, scopes, note, client_id, client_secret, headers)
+            case AuthorizeUrl(client_id, redirect_uri, scopes) ⇒
+              auth.authorizeUrl(client_id, redirect_uri, scopes)
+            case GetAccessToken(client_id, client_secret, code, redirect_uri, state) ⇒
+              auth.getAccessToken(client_id, client_secret, code, redirect_uri, state, headers)
+          }
+        }
+      }
+
+  }
 
   object implicits extends Implicits
 }

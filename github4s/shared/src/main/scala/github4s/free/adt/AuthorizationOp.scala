@@ -17,32 +17,36 @@
 package github4s.free.adt
 
 import github4s.GithubResponses.GHResponse
-import github4s.free.domain.{Authorization, Authorize, OAuthToken}
+import github4s.free.domain.Authorization._
 
 /**
  * Auths ops ADT
  */
-sealed trait AuthOp[A]
+object AuthorizationOp {
 
-final case class NewAuth(
-    username: String,
-    password: String,
-    scopes: List[String],
-    note: String,
-    client_id: String,
-    client_secret: String
-) extends AuthOp[GHResponse[Authorization]]
+  sealed trait AuthorizationOp[A]
 
-final case class AuthorizeUrl(
-    client_id: String,
-    redirect_uri: String,
-    scopes: List[String]
-) extends AuthOp[GHResponse[Authorize]]
+  final case class NewAuth(
+      username: String,
+      password: String,
+      scopes: List[String],
+      note: String,
+      client_id: String,
+      client_secret: String
+  ) extends AuthorizationOp[GHResponse[Authorization]]
 
-final case class GetAccessToken(
-    client_id: String,
-    client_secret: String,
-    code: String,
-    redirect_uri: String,
-    state: String
-) extends AuthOp[GHResponse[OAuthToken]]
+  final case class AuthorizeUrl(
+      client_id: String,
+      redirect_uri: String,
+      scopes: List[String]
+  ) extends AuthorizationOp[GHResponse[Authorize]]
+
+  final case class GetAccessToken(
+      client_id: String,
+      client_secret: String,
+      code: String,
+      redirect_uri: String,
+      state: String
+  ) extends AuthorizationOp[GHResponse[OAuthToken]]
+
+}

@@ -16,25 +16,28 @@
 
 package github4s.free.domain
 
-case class Subscription(
-    subscribed: Boolean,
-    ignored: Boolean,
-    reason: Option[String],
-    created_at: String,
-    url: String,
-    thread_url: String)
+object Activity {
 
-case class SubscriptionRequest(
-    subscribed: Boolean,
-    ignored: Boolean
-)
+  case class Subscription(
+      subscribed: Boolean,
+      ignored: Boolean,
+      reason: Option[String],
+      created_at: String,
+      url: String,
+      thread_url: String)
 
-case class Stargazer(
-    starred_at: Option[String],
-    user: User
-)
+  case class SubscriptionRequest(
+      subscribed: Boolean,
+      ignored: Boolean
+  )
 
-case class StarredRepository(
-    starred_at: Option[String],
-    repo: Repository
-)
+  case class Stargazer(
+      starred_at: Option[String],
+      user: User
+  )
+
+  case class StarredRepository(
+      starred_at: Option[String],
+      repo: Repository
+  )
+}

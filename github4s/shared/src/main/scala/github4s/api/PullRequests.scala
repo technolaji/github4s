@@ -17,8 +17,8 @@
 package github4s.api
 
 import github4s.GithubResponses.GHResponse
+import github4s.free.Capture
 import github4s.free.domain._
-import github4s.free.interpreters.Capture
 import github4s.{Decoders, Encoders, GithubApiUrls, HttpClient, HttpRequestBuilderExtension}
 import github4s.util.URLEncoder
 import io.circe.generic.auto._
@@ -133,9 +133,11 @@ class PullRequests[C, M[_]](
       headers: Map[String, String] = Map(),
       owner: String,
       repo: String,
-      pullRequest: Int): M[GHResponse[List[PullRequestReview]]] = {
-    httpClient.get[List[PullRequestReview]](accessToken, s"repos/$owner/$repo/pulls/$pullRequest/reviews", headers)
-  }
+      pullRequest: Int): M[GHResponse[List[PullRequestReview]]] =
+    httpClient.get[List[PullRequestReview]](
+      accessToken,
+      s"repos/$owner/$repo/pulls/$pullRequest/reviews",
+      headers)
 
   /**
    * Get a specific pull request review.
@@ -153,7 +155,9 @@ class PullRequests[C, M[_]](
       owner: String,
       repo: String,
       pullRequest: Int,
-      review: Int): M[GHResponse[PullRequestReview]] = {
-    httpClient.get[PullRequestReview](accessToken, s"repos/$owner/$repo/pulls/$pullRequest/reviews/$review", headers)
-  }
+      review: Int): M[GHResponse[PullRequestReview]] =
+    httpClient.get[PullRequestReview](
+      accessToken,
+      s"repos/$owner/$repo/pulls/$pullRequest/reviews/$review",
+      headers)
 }

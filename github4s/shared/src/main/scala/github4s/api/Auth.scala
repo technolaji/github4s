@@ -24,8 +24,8 @@ import github4s.{GithubApiUrls, HttpClient, HttpRequestBuilderExtension}
 import io.circe.generic.auto._
 import io.circe.syntax._
 import cats.implicits._
-import github4s.free.interpreters.Capture
 import com.github.marklister.base64.Base64.Encoder
+import github4s.free.Capture
 
 /** Factory to encapsulate calls related to Auth operations  */
 class Auth[C, M[_]](

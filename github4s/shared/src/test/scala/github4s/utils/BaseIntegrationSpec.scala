@@ -18,13 +18,18 @@ package github4s.utils
 
 import cats.syntax.either._
 import github4s.GithubResponses.{GHResponse, GHResult}
-import github4s.free.interpreters.{Capture, Interpreters}
+import github4s.free.interpreters.Interpreters
 import github4s.HttpRequestBuilderExtension
+import github4s.free.Capture
 import org.scalatest.{Assertion, AsyncFlatSpec, Inspectors, Matchers}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class BaseIntegrationSpec[T] extends AsyncFlatSpec with Matchers with Inspectors with TestData {
+abstract class BaseIntegrationSpec[T]
+    extends AsyncFlatSpec
+    with Matchers
+    with Inspectors
+    with TestData {
 
   override implicit val executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global

@@ -16,16 +16,19 @@
 
 package github4s.free.algebra
 
-import cats.free.Free
-import freestyle.free.free
+import cats.~>
+import freestyle.free._
 import github4s.GithubResponses._
-import github4s.free.domain._
+import github4s.api.PullRequests
+import github4s.free.adt.PullRequestOp._
+import github4s.free.domain.PullRequest._
 
 /**
  * Exposes Pull Request operations as a Free monadic algebra that may be combined with other
  * Algebras via Coproduct
  */
 object PullRequestOps {
+
   @free trait PullRequestOpsM {
 
     def listPullRequests(
@@ -33,16 +36,14 @@ object PullRequestOps {
         repo: String,
         filters: List[PRFilter] = Nil,
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[List[PullRequest]]] =
-      Free.inject[PullRequestOp, F](ListPullRequests(owner, repo, filters, accessToken))
+    ): FS[GHResponse[List[PullRequest]]]
 
     def listPullRequestFiles(
         owner: String,
         repo: String,
         number: Int,
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[List[PullRequestFile]]] =
-      Free.inject[PullRequestOp, F](ListPullRequestFiles(owner, repo, number, accessToken))
+    ): FS[GHResponse[List[PullRequestFile]]]
 
     def createPullRequest(
         owner: String,
@@ -52,35 +53,65 @@ object PullRequestOps {
         base: String,
         maintainerCanModify: Option[Boolean] = Some(true),
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[PullRequest]] =
-      Free.inject[PullRequestOp, F](
-        CreatePullRequest(
-          owner,
-          repo,
-          newPullRequest,
-          head,
-          base,
-          maintainerCanModify,
-          accessToken))
+    ): FS[GHResponse[PullRequest]]
 
     def listPullRequestReviews(
         owner: String,
         repo: String,
         pullRequest: Int,
-        accessToken: Option[String] = None): Free[F, GHResponse[List[PullRequestReview]]] =
-      Free.inject[PullRequestOp, F](ListPullRequestReviews(owner, repo, pullRequest, accessToken))
+        accessToken: Option[String] = None): FS[GHResponse[List[PullRequestReview]]]
 
     def getPullRequestReview(
         owner: String,
         repo: String,
         pullRequest: Int,
         review: Int,
-        accessToken: Option[String] = None): Free[F, GHResponse[PullRequestReview]] =
-      Free.inject[PullRequestOp, F](
-        GetPullRequestReview(owner, repo, pullRequest, review, accessToken))
+        accessToken: Option[String] = None): FS[GHResponse[PullRequestReview]]
   }
 
-  trait Implicits {}
+  trait Implicits {
+
+    /**
+     * Lifts PullRequest Ops to an effect capturing Monad such as Task via natural transformations
+     */
+    def pullRequestOpsInterpreter: PullRequestOp ~> K =
+      new (PullRequestOp ~> K) {
+
+        val pullRequests = new PullRequests()
+
+        def apply[A](fa: PullRequestOp[A]): K[A] = Kleisli[M, Map[String, String], A] { headers =>
+          fa match {
+            case ListPullRequests(owner, repo, filters, accessToken) ⇒
+              pullRequests.list(accessToken, headers, owner, repo, filters)
+            case ListPullRequestFiles(owner, repo, number, accessToken) ⇒
+              pullRequests.listFiles(accessToken, headers, owner, repo, number)
+            case CreatePullRequest(
+                owner,
+                repo,
+                newPullRequest,
+                head,
+                base,
+                maintainerCanModify,
+                accessToken) ⇒
+              pullRequests
+                .create(
+                  accessToken,
+                  headers,
+                  owner,
+                  repo,
+                  newPullRequest,
+                  head,
+                  base,
+                  maintainerCanModify)
+            case ListPullRequestReviews(owner, repo, pullRequest, accessToken) ⇒
+              pullRequests.listReviews(accessToken, headers, owner, repo, pullRequest)
+            case GetPullRequestReview(owner, repo, pullRequest, review, accessToken) ⇒
+              pullRequests.getReview(accessToken, headers, owner, repo, pullRequest, review)
+          }
+        }
+      }
+
+  }
 
   object implicits extends Implicits
 }

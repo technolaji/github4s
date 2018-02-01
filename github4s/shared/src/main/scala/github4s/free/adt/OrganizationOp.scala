@@ -17,17 +17,22 @@
 package github4s.free.adt
 
 import github4s.GithubResponses.GHResponse
-import github4s.free.domain.{Pagination, User}
+import github4s.free.domain._
+import github4s.free.domain.User._
 
 /**
  * Organizations ops ADT
  */
-sealed trait OrganizationOp[A]
+object OrganizationOp {
 
-final case class ListMembers(
-    org: String,
-    filter: Option[String] = None,
-    role: Option[String] = None,
-    pagination: Option[Pagination] = None,
-    accessToken: Option[String] = None
-) extends OrganizationOp[GHResponse[List[User]]]
+  sealed trait OrganizationOp[A]
+
+  final case class ListMembers(
+      org: String,
+      filter: Option[String] = None,
+      role: Option[String] = None,
+      pagination: Option[Pagination] = None,
+      accessToken: Option[String] = None
+  ) extends OrganizationOp[GHResponse[List[User]]]
+
+}

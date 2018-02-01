@@ -16,16 +16,20 @@
 
 package github4s.free.algebra
 
-import cats.free.Free
-import freestyle.free.free
+import cats.~>
+import freestyle.free._
 import github4s.GithubResponses._
-import github4s.free.domain.{Pagination, User}
+import github4s.api.Organizations
+import github4s.free.adt.OrganizationOp._
+import github4s.free.domain._
+import github4s.free.domain.User._
 
 /**
  * Exposes Organization operations as a Free monadic algebra that may be combined with other
  * Algebras via Coproduct
  */
 object OrganizationOps {
+
   @free trait OrganizationOpsM {
 
     def listMembers(
@@ -33,11 +37,28 @@ object OrganizationOps {
         filter: Option[String] = None,
         role: Option[String] = None,
         pagination: Option[Pagination] = None,
-        accessToken: Option[String] = None): Free[F, GHResponse[List[User]]] =
-      Free.inject[OrganizationOp, F](ListMembers(org, filter, role, pagination, accessToken))
+        accessToken: Option[String] = None): FS[GHResponse[List[User]]]
   }
 
-  trait Implicits {}
+  trait Implicits {
+
+    /**
+     * Lifts Organization Ops to an effect capturing Monad such as Task via natural transformations
+     */
+    def organizationOpsInterpreter: OrganizationOp ~> K =
+      new (OrganizationOp ~> K) {
+
+        val organizations = new Organizations()
+
+        def apply[A](fa: OrganizationOp[A]): K[A] = Kleisli[M, Map[String, String], A] { headers =>
+          fa match {
+            case ListMembers(org, filter, role, pagination, accessToken) ⇒
+              organizations.listMembers(accessToken, headers, org, filter, role, pagination)
+          }
+        }
+      }
+
+  }
 
   object implicits extends Implicits
 }

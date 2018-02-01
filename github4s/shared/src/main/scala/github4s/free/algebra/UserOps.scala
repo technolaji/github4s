@@ -16,33 +16,54 @@
 
 package github4s.free.algebra
 
-import cats.free.Free
-import freestyle.free.free
+import cats.~>
+import freestyle.free._
 import github4s.GithubResponses._
-import github4s.free.domain.{Pagination, User}
+import github4s.api.Users
+import github4s.free.adt.UserOp._
+import github4s.free.domain._
+import github4s.free.domain.User._
 
 /**
  * Exposes Users operations as a Free monadic algebra that may be combined with other Algebras via
  * Coproduct
  */
 object UserOps {
+
   @free trait UserOpsM {
 
-    def getUser(username: String, accessToken: Option[String] = None): Free[F, GHResponse[User]] =
-      Free.inject[UserOp, F](GetUser(username, accessToken))
+    def getUser(username: String, accessToken: Option[String] = None): FS[GHResponse[User]]
 
-    def getAuthUser(accessToken: Option[String] = None): Free[F, GHResponse[User]] =
-      Free.inject[UserOp, F](GetAuthUser(accessToken))
+    def getAuthUser(accessToken: Option[String] = None): FS[GHResponse[User]]
 
     def getUsers(
         since: Int,
         pagination: Option[Pagination] = None,
-        accessToken: Option[String] = None): Free[F, GHResponse[List[User]]] =
-      Free.inject[UserOp, F](GetUsers(since, pagination, accessToken))
+        accessToken: Option[String] = None): FS[GHResponse[List[User]]]
 
   }
 
-  trait Implicits {}
+  trait Implicits {
+
+    /**
+     * Lifts User Ops to an effect capturing Monad such as Task via natural transformations
+     */
+    def userOpsInterpreter: UserOp ~> K =
+      new (UserOp ~> K) {
+
+        val users = new Users()
+
+        def apply[A](fa: UserOp[A]): K[A] = Kleisli[M, Map[String, String], A] { headers =>
+          fa match {
+            case GetUser(username, accessToken) ⇒ users.get(accessToken, headers, username)
+            case GetAuthUser(accessToken)       ⇒ users.getAuth(accessToken, headers)
+            case GetUsers(since, pagination, accessToken) ⇒
+              users.getUsers(accessToken, headers, since, pagination)
+          }
+        }
+      }
+
+  }
 
   object implicits extends Implicits
 }

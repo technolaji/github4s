@@ -22,7 +22,7 @@ import io.circe.parser._
 
 import scalaj.http._
 import cats.implicits._
-import github4s.free.interpreters.Capture
+import github4s.free.Capture
 
 trait HttpRequestBuilderExtensionJVM {
 

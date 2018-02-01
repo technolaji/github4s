@@ -17,16 +17,20 @@
 package github4s.free.adt
 
 import github4s.GithubResponses.GHResponse
-import github4s.free.domain.{Gist, GistFile}
+import github4s.free.domain.Gist._
 
 /**
  * Gist ops ADT
  */
-sealed trait GistOp[A]
+object GistOp {
 
-final case class NewGist(
-    description: String,
-    public: Boolean,
-    files: Map[String, GistFile],
-    accessToken: Option[String] = None
-) extends GistOp[GHResponse[Gist]]
+  sealed trait GistOp[A]
+
+  final case class NewGist(
+      description: String,
+      public: Boolean,
+      files: Map[String, GistFile],
+      accessToken: Option[String] = None
+  ) extends GistOp[GHResponse[Gist]]
+
+}

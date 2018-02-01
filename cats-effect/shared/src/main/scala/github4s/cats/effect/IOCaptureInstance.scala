@@ -17,7 +17,7 @@
 package github4s.cats.effect
 
 import cats.effect.IO
-import github4s.free.interpreters.Capture
+import github4s.free.Capture
 
 trait IOCaptureInstance {
   implicit val ioCaptureInstance = new Capture[IO] {

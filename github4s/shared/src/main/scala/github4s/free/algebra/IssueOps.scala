@@ -16,39 +16,40 @@
 
 package github4s.free.algebra
 
-import cats.free.Free
-import freestyle.free.free
+import cats.~>
+import freestyle.free._
 import github4s.GithubResponses._
-import github4s.free.domain.{Comment, Issue, SearchIssuesResult, SearchParam}
+import github4s.api.Issues
+import github4s.free.adt.IssueOp._
+import github4s.free.domain.SearchParam._
+import github4s.free.domain.Issue._
 
 /**
  * Exposes Issue operations as a Free monadic algebra that may be combined with other Algebras via
  * Coproduct
  */
 object IssueOps {
+
   @free trait IssueOpsM {
 
     def listIssues(
         owner: String,
         repo: String,
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[List[Issue]]] =
-      Free.inject[IssueOp, F](ListIssues(owner, repo, accessToken))
+    ): FS[GHResponse[List[Issue]]]
 
     def getIssue(
         owner: String,
         repo: String,
         number: Int,
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[Issue]] =
-      Free.inject[IssueOp, F](GetIssue(owner, repo, number, accessToken))
+    ): FS[GHResponse[Issue]]
 
     def searchIssues(
         query: String,
         searchParams: List[SearchParam],
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[SearchIssuesResult]] =
-      Free.inject[IssueOp, F](SearchIssues(query, searchParams, accessToken))
+    ): FS[GHResponse[SearchIssuesResult]]
 
     def createIssue(
         owner: String,
@@ -59,9 +60,7 @@ object IssueOps {
         labels: List[String],
         assignees: List[String],
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[Issue]] =
-      Free.inject[IssueOp, F](
-        CreateIssue(owner, repo, title, body, milestone, labels, assignees, accessToken))
+    ): FS[GHResponse[Issue]]
 
     def editIssue(
         owner: String,
@@ -74,27 +73,14 @@ object IssueOps {
         labels: List[String],
         assignees: List[String],
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[Issue]] =
-      Free.inject[IssueOp, F](
-        EditIssue(
-          owner,
-          repo,
-          issue,
-          state,
-          title,
-          body,
-          milestone,
-          labels,
-          assignees,
-          accessToken))
+    ): FS[GHResponse[Issue]]
 
     def listComments(
         owner: String,
         repo: String,
         number: Int,
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[List[Comment]]] =
-      Free.inject[IssueOp, F](ListComments(owner, repo, number, accessToken))
+    ): FS[GHResponse[List[Comment]]]
 
     def createComment(
         owner: String,
@@ -102,8 +88,7 @@ object IssueOps {
         number: Int,
         body: String,
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[Comment]] =
-      Free.inject[IssueOp, F](CreateComment(owner, repo, number, body, accessToken))
+    ): FS[GHResponse[Comment]]
 
     def editComment(
         owner: String,
@@ -111,19 +96,81 @@ object IssueOps {
         id: Int,
         body: String,
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[Comment]] =
-      Free.inject[IssueOp, F](EditComment(owner, repo, id, body, accessToken))
+    ): FS[GHResponse[Comment]]
 
     def deleteComment(
         owner: String,
         repo: String,
         id: Int,
         accessToken: Option[String] = None
-    ): Free[F, GHResponse[Unit]] =
-      Free.inject[IssueOp, F](DeleteComment(owner, repo, id, accessToken))
+    ): FS[GHResponse[Unit]]
   }
 
-  trait Implicits {}
+  trait Implicits {
+
+    /**
+     * Lifts Issue Ops to an effect capturing Monad such as Task via natural transformations
+     */
+    def issueOpsInterpreter: IssueOp ~> K =
+      new (IssueOp ~> K) {
+
+        val issues = new Issues()
+
+        def apply[A](fa: IssueOp[A]): K[A] = Kleisli[M, Map[String, String], A] { headers =>
+          fa match {
+            case ListIssues(owner, repo, accessToken) ⇒
+              issues.list(accessToken, headers, owner, repo)
+            case GetIssue(owner, repo, number, accessToken) ⇒
+              issues.get(accessToken, headers, owner, repo, number)
+            case SearchIssues(query, searchParams, accessToken) ⇒
+              issues.search(accessToken, headers, query, searchParams)
+            case CreateIssue(owner, repo, title, body, milestone, labels, assignees, accessToken) ⇒
+              issues
+                .create(
+                  accessToken,
+                  headers,
+                  owner,
+                  repo,
+                  title,
+                  body,
+                  milestone,
+                  labels,
+                  assignees)
+            case EditIssue(
+                owner,
+                repo,
+                issue,
+                state,
+                title,
+                body,
+                milestone,
+                labels,
+                assignees,
+                accessToken) ⇒
+              issues.edit(
+                accessToken,
+                headers,
+                owner,
+                repo,
+                issue,
+                state,
+                title,
+                body,
+                milestone,
+                labels,
+                assignees)
+            case ListComments(owner, repo, number, accessToken) ⇒
+              issues.listComments(accessToken, headers, owner, repo, number)
+            case CreateComment(owner, repo, number, body, accessToken) ⇒
+              issues.createComment(accessToken, headers, owner, repo, number, body)
+            case EditComment(owner, repo, id, body, accessToken) ⇒
+              issues.editComment(accessToken, headers, owner, repo, id, body)
+            case DeleteComment(owner, repo, id, accessToken) ⇒
+              issues.deleteComment(accessToken, headers, owner, repo, id)
+          }
+        }
+      }
+  }
 
   object implicits extends Implicits
 }
