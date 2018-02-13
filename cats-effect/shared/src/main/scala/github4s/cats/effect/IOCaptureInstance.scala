@@ -21,6 +21,6 @@ import github4s.free.interpreters.Capture
 
 trait IOCaptureInstance {
   implicit val ioCaptureInstance = new Capture[IO] {
-    override def capture[A](a: ⇒ A): IO[A] = IO.pure(a)
+    override def capture[A](a: ⇒ A): IO[A] = IO(a)
   }
 }

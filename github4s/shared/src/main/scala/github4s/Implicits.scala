@@ -19,7 +19,7 @@ package github4s
 import cats.instances.FutureInstances
 import cats.{Eval, FlatMap, Id, Monad, MonadError}
 import github4s.free.interpreters._
-import scala.concurrent.Future
+import scala.concurrent.{Future, ExecutionContext}
 
 object implicits
     extends FutureCaptureInstance
@@ -29,8 +29,8 @@ object implicits
 
 trait FutureCaptureInstance {
   //Future Capture evidence:
-  implicit val futureCaptureInstance = new Capture[Future] {
-    override def capture[A](a: ⇒ A): Future[A] = Future.successful(a)
+  implicit def futureCaptureInstance(implicit ec: ExecutionContext) = new Capture[Future] {
+    override def capture[A](a: ⇒ A): Future[A] = Future(a)
   }
 }
 
