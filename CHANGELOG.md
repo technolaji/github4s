@@ -1,5 +1,13 @@
 # Changelog
 
+## 02/14/2018 - Version 0.18.1
+
+Release changes:
+
+* Fix Capture instances for IO and Future ([#195](https://github.com/47deg/github4s/pull/195))
+* Release 0.18.1 ([#196](https://github.com/47deg/github4s/pull/196))
+
+
 ## 01/23/2018 - Version 0.18.0
 
 Release changes:
