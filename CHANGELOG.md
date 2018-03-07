@@ -1,5 +1,13 @@
 # Changelog
 
+## 03/07/2018 - Version 0.18.2
+
+Release changes:
+
+* Add pagination support for PullRequest ops ([#198](https://github.com/47deg/github4s/pull/198))
+* Releases 0.18.2 ([#199](https://github.com/47deg/github4s/pull/199))
+
+
 ## 02/14/2018 - Version 0.18.1
 
 Release changes:
