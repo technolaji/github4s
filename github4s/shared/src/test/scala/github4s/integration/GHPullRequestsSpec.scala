@@ -27,7 +27,7 @@ trait GHPullRequestsSpec[T] extends BaseIntegrationSpec[T] {
   "PullRequests >> List" should "return a right response when valid repo is provided" in {
     val response =
       Github(accessToken).pullRequests
-        .list(validRepoOwner, validRepoName)
+        .list(validRepoOwner, validRepoName, pagination = Some(Pagination(1, 10)))
         .execFuture[T](headerUserAgent)
 
     testFutureIsRight[List[PullRequest]](response, { r =>
