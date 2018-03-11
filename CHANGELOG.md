@@ -1,5 +1,13 @@
 # Changelog
 
+## 03/11/2018 - Version 0.18.3
+
+Release changes:
+
+* # Make `body: Option[String]` ([#200](https://github.com/47deg/github4s/pull/200))
+* Release 0.18.3 ([#201](https://github.com/47deg/github4s/pull/201))
+
+
 ## 03/07/2018 - Version 0.18.2
 
 Release changes:
