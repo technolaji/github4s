@@ -1,5 +1,14 @@
 # Changelog
 
+## 04/10/2018 - Version 0.18.4
+
+Release changes:
+
+* Keep circe decoders dry ([#202](https://github.com/47deg/github4s/pull/202))
+* Change param so we are filtering by label ([#204](https://github.com/47deg/github4s/pull/204))
+* Release 0.18.4 ([#205](https://github.com/47deg/github4s/pull/205))
+
+
 ## 03/11/2018 - Version 0.18.3
 
 Release changes:
