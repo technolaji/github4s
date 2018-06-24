@@ -1,5 +1,18 @@
 # Changelog
 
+## 06/24/2018 - Version 0.18.5
+
+Release changes:
+
+* List labels endpoint ([#206](https://github.com/47deg/github4s/pull/206))
+* Bump Scala version to 2.12.6 in travis.yml ([#208](https://github.com/47deg/github4s/pull/208))
+* Fix cats-effect JS tests flakiness ([#209](https://github.com/47deg/github4s/pull/209))
+* Add support for the add labels endpoint ([#207](https://github.com/47deg/github4s/pull/207))
+* Add support for the remove label endpoint ([#210](https://github.com/47deg/github4s/pull/210))
+* Add support for the get pull request endpoint ([#211](https://github.com/47deg/github4s/pull/211))
+* Release 0.18.5 ([#212](https://github.com/47deg/github4s/pull/212))
+
+
 ## 04/10/2018 - Version 0.18.4
 
 Release changes:
