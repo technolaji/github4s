@@ -48,7 +48,7 @@ an <a href="https://github.com/47deg/github4s/blob/master/github4s/shared/src/ma
 <p>The previously mentioned implicit classes carry out of the box
 instances for working with <a href="https://github.com/scalaj/scalaj-http">scalaj</a> (for JVM-compatible apps) and <a href="https://github.com/hmil/RosHTTP">roshttp</a> (for
 scala-js-compatible apps). Take into account that in the latter case, you can only use <code class="highlighter-rouge">Future</code> and
-<code class="highlighter-rouge">cats.effect.IO</code> (if you pull in the <code class="highlighter-rouge">github4s-cats-effect</code> dependency) in place of <code class="highlighter-rouge">M[_]</code>.</p>
+<code class="highlighter-rouge">cats.effect.Async</code> (if you pull in the <code class="highlighter-rouge">github4s-cats-effect</code> dependency) in place of <code class="highlighter-rouge">M[_]</code>.</p>
 
 <p>A few examples follow with different <code class="highlighter-rouge">MonadError[M, Throwable]</code>.</p>
 
@@ -115,9 +115,9 @@ scala-js-compatible apps). Take into account that in the latter case, you can on
 
 <p>Note that you’ll need a dependency to the <code class="highlighter-rouge">github4s-scalaz</code> pacakge to leverage <code class="highlighter-rouge">scalaz.Task</code>.</p>
 
-<h3 id="using-catseffectio">Using <code class="highlighter-rouge">cats.effect.IO</code></h3>
+<h3 id="using-catseffectasync-sync">Using <code class="highlighter-rouge">cats.effect.{Async, Sync}</code></h3>
 
-<p>On the JVM:</p>
+<p>On the JVM, you can use any <code class="highlighter-rouge">cats.effect.Sync</code>, here we’re using <code class="highlighter-rouge">cats.effect.IO</code>:</p>
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">cats.effect.IO</span>
 <span class="k">import</span> <span class="nn">github4s.cats.effect.jvm.Implicits._</span>
 
@@ -128,7 +128,7 @@ scala-js-compatible apps). Take into account that in the latter case, you can on
 </code></pre>
 </div>
 
-<p>Using scala-js:</p>
+<p>Using scala-js, you can use any <code class="highlighter-rouge">cats.effect.Async</code>, here we’re using <code class="highlighter-rouge">cats.effect.IO</code>:</p>
 <div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">import</span> <span class="nn">github4s.cats.effect.js.Implicits._</span>
 <span class="k">import</span> <span class="nn">fr.hmil.roshttp.response.SimpleHttpResponse</span>
 
@@ -143,7 +143,7 @@ scala-js-compatible apps). Take into account that in the latter case, you can on
 </div>
 
 <p>Note that you’ll need a dependency to the <code class="highlighter-rouge">github4s-cats-effect</code> package to leverage
-<code class="highlighter-rouge">cats.effect.IO</code>.</p>
+cats-effect integration.</p>
 
 <h2 id="specifying-custom-headers">Specifying custom headers</h2>
 
