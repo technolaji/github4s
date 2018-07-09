@@ -1,5 +1,13 @@
 # Changelog
 
+## 07/09/2018 - Version 0.18.6
+
+Release changes:
+
+* Abstract away from cats-effect IO ([#214](https://github.com/47deg/github4s/pull/214))
+* Release 0.18.6 ([#215](https://github.com/47deg/github4s/pull/215))
+
+
 ## 06/24/2018 - Version 0.18.5
 
 Release changes:
