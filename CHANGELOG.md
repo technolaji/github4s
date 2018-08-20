@@ -1,5 +1,15 @@
 # Changelog
 
+## 08/20/2018 - Version 0.18.7
+
+Release changes:
+
+* Add dashing as an application using github4s ([#216](https://github.com/47deg/github4s/pull/216))
+* Add listCollaborators method ([#218](https://github.com/47deg/github4s/pull/218))
+* add get tree api implementation ([#217](https://github.com/47deg/github4s/pull/217))
+* Release 0.18.7 ([#219](https://github.com/47deg/github4s/pull/219))
+
+
 ## 07/09/2018 - Version 0.18.6
 
 Release changes:
