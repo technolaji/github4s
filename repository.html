@@ -9,6 +9,7 @@ with Github4s, you can interact with:</p>
       <li><a href="#get-a-repository">Get a repository</a></li>
       <li><a href="#list-organization-repositories">List organization repositories</a></li>
       <li><a href="#list-contributors">List contributors</a></li>
+      <li><a href="#list-collaborators">List collaborators</a></li>
     </ul>
   </li>
   <li><a href="#commits">Commits</a>
@@ -118,7 +119,7 @@ sorted by the number of commits per contributor in descending order.</p>
 
 <ul>
   <li>the repository coordinates (<code class="highlighter-rouge">owner</code> and <code class="highlighter-rouge">name</code> of the repository).</li>
-  <li><code class="highlighter-rouge">anom</code> Set to 1 or true to include anonymous contributors in results.</li>
+  <li><code class="highlighter-rouge">anon</code> Set to 1 or true to include anonymous contributors in results.</li>
 </ul>
 
 <p>To list contributors:</p>
@@ -136,6 +137,33 @@ sorted by the number of commits per contributor in descending order.</p>
 <p>The <code class="highlighter-rouge">result</code> on the right is the corresponding <a href="https://github.com/47deg/github4s/blob/master/github4s/shared/src/main/scala/github4s/free/domain/User.scala">List[User]</a>.</p>
 
 <p>See <a href="https://developer.github.com/v3/repos/#list-contributors">the API doc</a> for full
+reference.</p>
+
+<h3 id="list-collaborators">List collaborators</h3>
+
+<p>List collaborators in the specified repository.</p>
+
+<p>You can list collaborators using <code class="highlighter-rouge">listCollaborators</code>, it takes as arguments:</p>
+
+<ul>
+  <li>the repository coordinates (<code class="highlighter-rouge">owner</code> and <code class="highlighter-rouge">name</code> of the repository).</li>
+  <li><code class="highlighter-rouge">affiliation</code>, one of <code class="highlighter-rouge">outside</code>, <code class="highlighter-rouge">direct</code>, or <code class="highlighter-rouge">all</code> (default <code class="highlighter-rouge">all</code>).
+For more information take a look at <a href="https://developer.github.com/v3/repos/collaborators/#parameters">the API doc</a>.</li>
+</ul>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">listCollaborators</span> <span class="k">=</span>
+  <span class="nc">Github</span><span class="o">(</span><span class="n">accessToken</span><span class="o">).</span><span class="n">repos</span><span class="o">.</span><span class="n">listCollaborators</span><span class="o">(</span><span class="s">"47deg"</span><span class="o">,</span> <span class="s">"github4s"</span><span class="o">,</span> <span class="nc">Some</span><span class="o">(</span><span class="s">"all"</span><span class="o">))</span>
+
+<span class="n">listCollaborators</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">cats.Id</span>, <span class="kt">HttpResponse</span><span class="o">[</span><span class="kt">String</span><span class="o">]]()</span> <span class="k">match</span> <span class="o">{</span>
+  <span class="k">case</span> <span class="nc">Left</span><span class="o">(</span><span class="n">e</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">println</span><span class="o">(</span><span class="n">s</span><span class="s">"Something went wrong: ${e.getMessage}"</span><span class="o">)</span>
+  <span class="k">case</span> <span class="nc">Right</span><span class="o">(</span><span class="n">r</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">println</span><span class="o">(</span><span class="n">r</span><span class="o">.</span><span class="n">result</span><span class="o">)</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">result</code> on the right is the corresponding <a href="https://github.com/47deg/github4s/blob/master/github4s/shared/src/main/scala/github4s/free/domain/User.scala">List[User]</a>.</p>
+
+<p>See <a href="https://developer.github.com/v3/repos/collaborators/#list-collaborators">the API doc</a> for full
 reference.</p>
 
 <h2 id="commits">Commits</h2>

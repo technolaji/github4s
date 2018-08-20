@@ -10,6 +10,7 @@ with Github4s, you can:</p>
   <li><a href="#get-a-commit">Get a Commit</a></li>
   <li><a href="#create-a-commit">Create a Commit</a></li>
   <li><a href="#create-a-blob">Create a Blob</a></li>
+  <li><a href="#get-a-tree">Get a Tree</a></li>
   <li><a href="#create-a-tree">Create a Tree</a></li>
   <li><a href="#create-a-tag">Create a Tag</a></li>
 </ul>
@@ -213,6 +214,29 @@ We can even assume that all the Git commands or methods provided by the API
 are just tools to navigate this tree and to manipulate it.</p>
 
 <p>In the following sections, we’ll see how Github4s provides methods to wrap the Git API.</p>
+
+<h3 id="get-a-tree">Get a Tree</h3>
+
+<p>You can get a tree using <code class="highlighter-rouge">getTree</code>; it takes as arguments:</p>
+
+<ul>
+  <li>the repository coordinates (<code class="highlighter-rouge">owner</code> and <code class="highlighter-rouge">name</code> of the repository).</li>
+  <li><code class="highlighter-rouge">sha</code>: the sha of the commit.</li>
+  <li><code class="highlighter-rouge">recursive</code>: flag whether to get the tree recursively.</li>
+</ul>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">val</span> <span class="n">getCommit</span> <span class="k">=</span> <span class="nc">Github</span><span class="o">(</span><span class="n">accessToken</span><span class="o">).</span><span class="n">gitData</span><span class="o">.</span><span class="n">getTree</span><span class="o">(</span><span class="s">"47deg"</span><span class="o">,</span> <span class="s">"github4s"</span><span class="o">,</span> <span class="s">"d3b048c1f500ee5450e5d7b3d1921ed3e7645891"</span><span class="o">,</span><span class="kc">true</span><span class="o">)</span>
+
+<span class="n">getCommit</span><span class="o">.</span><span class="n">exec</span><span class="o">[</span><span class="kt">cats.Id</span>, <span class="kt">HttpResponse</span><span class="o">[</span><span class="kt">String</span><span class="o">]]()</span> <span class="k">match</span> <span class="o">{</span>
+  <span class="k">case</span> <span class="nc">Left</span><span class="o">(</span><span class="n">e</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">println</span><span class="o">(</span><span class="n">s</span><span class="s">"Something went wrong: ${e.getMessage}"</span><span class="o">)</span>
+  <span class="k">case</span> <span class="nc">Right</span><span class="o">(</span><span class="n">r</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">println</span><span class="o">(</span><span class="n">r</span><span class="o">.</span><span class="n">result</span><span class="o">)</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">result</code> on the right is the corresponding <a href="https://github.com/47deg/github4s/blob/master/github4s/shared/src/main/scala/github4s/free/domain/GitData.scala">TreeResult</a>.</p>
+
+<p>See <a href="https://developer.github.com/v3/git/trees/#get-a-tree">the API doc</a> for full reference.</p>
 
 <h3 id="create-a-tree">Create a Tree</h3>
 
