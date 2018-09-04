@@ -21,7 +21,7 @@ For Scala.jvm:
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "com.47deg" %% "github4s" % "0.18.7"
+libraryDependencies += "com.47deg" %% "github4s" % "0.18.8"
 ```
 
 [comment]: # (End Replace)
@@ -31,7 +31,7 @@ For Scala.js:
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "com.47deg" %%% "github4s" % "0.18.7"
+libraryDependencies += "com.47deg" %%% "github4s" % "0.18.8"
 ```
 
 [comment]: # (End Replace)
