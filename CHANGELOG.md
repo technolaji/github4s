@@ -1,5 +1,12 @@
 # Changelog
 
+## 10/04/2018 - Version 0.19.0
+
+Release changes:
+
+* Bump sbt-org-policies to 0.9.4 ([#223](https://github.com/47deg/github4s/pull/223))
+
+
 ## 09/04/2018 - Version 0.18.8
 
 Release changes:
