@@ -50,6 +50,11 @@ case class RepoStatus(
     has_pages: Boolean
 )
 
+case class Language(
+    name: String,
+    bytes: Int
+)
+
 case class RepoUrls(
     url: String,
     html_url: String,

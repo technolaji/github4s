@@ -16,18 +16,23 @@
 
 package github4s.api
 
+import github4s._
+
+import cats._
 import cats.data.NonEmptyList
 import github4s.GithubResponses.GHResponse
 import github4s.free.domain._
 import github4s.free.interpreters.Capture
 import github4s._
+import io.circe._
 import io.circe.syntax._
 import io.circe.generic.auto._
 
 /** Factory to encapsulate calls related to Repositories operations  */
 class Repos[C, M[_]](
     implicit urls: GithubApiUrls,
-    C: Capture[M],
+  C: Capture[M],
+  F: Functor[M],
     httpClientImpl: HttpRequestBuilderExtension[C, M]) {
 
   import Decoders._
@@ -186,6 +191,44 @@ class Repos[C, M[_]](
       ).collect {
         case (key, Some(value)) ⇒ key → value
       })
+
+  /**
+    * Fetch language list for the the specified repository.
+    *
+    * @param accessToken to identify the authenticated user
+    * @param headers optional user headers to include in the request
+    * @param owner of the repo
+    * @param repo name of the repo
+    * @param anon Set to 1 or true to include anonymous contributors in results
+    * @return GHResponse[List[Language]\] List of languages used in the specified repository.
+    */
+  def listLanguages(
+    accessToken: Option[String] = None,
+    headers: Map[String, String] = Map(),
+    owner: String,
+    repo: String,
+    anon: Option[String] = None
+  ): M[GHResponse[List[Language]]] =
+    F.map(
+      httpClient.get[JsonObject](
+        accessToken,
+        s"repos/$owner/$repo/languages",
+        headers,
+        Map(
+          "anon" → anon
+        ).collect {
+          case (key, Some(value)) ⇒ key → value
+        })
+    )((resp) => {
+      println("RESP " + resp)
+
+      resp match {
+        case Right(GithubResponses.GHResult(j, status, headers)) =>
+          Right(GithubResponses.GHResult(List.empty[Language], status, headers))
+        case Left(e) =>
+          Left(e)
+      }
+    })
 
   /**
    * Fetch list of collaborators for the specified repository.

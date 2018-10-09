@@ -71,6 +71,12 @@ class GHRepos(accessToken: Option[String] = None)(implicit O: RepositoryOps[GitH
   ): GHIO[GHResponse[List[User]]] =
     O.listContributors(owner, repo, anon, accessToken)
 
+  def listLanguages(
+    owner: String,
+    repo: String,
+    anon: Option[String] = None
+  ): GHIO[GHResponse[List[Language]]] =
+    O.listLanguages(owner, repo, anon, accessToken)
 
   def listCollaborators(
       owner: String,

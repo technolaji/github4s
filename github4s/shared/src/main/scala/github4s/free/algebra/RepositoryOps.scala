@@ -67,6 +67,13 @@ final case class ListContributors(
     accessToken: Option[String] = None
 ) extends RepositoryOp[GHResponse[List[User]]]
 
+final case class ListLanguages(
+    owner: String,
+    repo: String,
+    anon: Option[String] = None,
+    accessToken: Option[String] = None
+) extends RepositoryOp[GHResponse[List[Language]]]
+
 final case class ListCollaborators(
     owner: String,
     repo: String,
@@ -162,6 +169,14 @@ class RepositoryOps[F[_]](implicit I: InjectK[RepositoryOp, F]) {
       accessToken: Option[String] = None
   ): Free[F, GHResponse[List[User]]] =
     Free.inject[RepositoryOp, F](ListContributors(owner, repo, anon, accessToken))
+
+  def listLanguages(
+    owner: String,
+    repo: String,
+    anon: Option[String] = None,
+    accessToken: Option[String] = None
+  ): Free[F, GHResponse[List[Language]]] =
+    Free.inject[RepositoryOp, F](ListLanguages(owner, repo, anon, accessToken))
 
   def listCollaborators(
       owner: String,

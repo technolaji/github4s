@@ -81,6 +81,8 @@ class Interpreters[M[_], C](
             pagination)
         case ListContributors(owner, repo, anon, accessToken) ⇒
           repos.listContributors(accessToken, headers, owner, repo, anon)
+        case ListLanguages(owner, repo, anon, accessToken) ⇒
+          repos.listLanguages(accessToken, headers, owner, repo, anon)
         case ListCollaborators(owner, repo, affiliation, accessToken) =>
           repos.listCollaborators(accessToken, headers, owner, repo, affiliation)
         case CreateRelease(

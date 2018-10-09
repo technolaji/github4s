@@ -172,6 +172,28 @@ class ReposSpec extends BaseSpec {
     )
   }
 
+  "Repos.listLanguages" should "call to httpClient.get with the right parameters" in {
+
+    val response: GHResponse[List[Language]] =
+      Right(GHResult(List.empty[Language], okStatusCode, Map.empty))
+
+    val httpClientMock = httpClientMockGet[List[Language]](
+      url = s"repos/$validRepoOwner/$validRepoName/languages",
+      response = response
+    )
+
+    val repos = new Repos[String, Id] {
+      override val httpClient: HttpClient[String, Id] = httpClientMock
+    }
+
+    repos.listLanguages(
+      accessToken = sampleToken,
+      headers = headerUserAgent,
+      owner = validRepoOwner,
+      repo = validRepoName
+    )
+  }
+
   "Repos.listCollaborators" should "call to httpClient.get with the right parameters" in {
 
     val response: GHResponse[List[User]] =
