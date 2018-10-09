@@ -31,8 +31,8 @@ import io.circe.generic.auto._
 /** Factory to encapsulate calls related to Repositories operations  */
 class Repos[C, M[_]](
     implicit urls: GithubApiUrls,
-  C: Capture[M],
-  F: Functor[M],
+    C: Capture[M],
+    F: Functor[M],
     httpClientImpl: HttpRequestBuilderExtension[C, M]) {
 
   import Decoders._
@@ -220,11 +220,16 @@ class Repos[C, M[_]](
           case (key, Some(value)) ⇒ key → value
         })
     )((resp) => {
-      println("RESP " + resp)
 
       resp match {
         case Right(GithubResponses.GHResult(j, status, headers)) =>
-          Right(GithubResponses.GHResult(List.empty[Language], status, headers))
+          Right(GithubResponses.GHResult(
+            j.toList.map({
+              case (l, b) => Language(l, b.toString.toInt)
+            }),
+            status,
+            headers
+          ))
         case Left(e) =>
           Left(e)
       }
