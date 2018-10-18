@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package github4s.cats.effect.jvm
+package github4s.effect.jvm
 
-import cats.effect.IO
+import cats._
+import cats.data._
+import cats.implicits._
+import github4s.effect.tagless._
+import cats.tagless.implicits._
+import cats.effect._
 import github4s.Github
 import github4s.Github._
-import github4s.cats.effect.jvm.Implicits._
+import github4s.effect.jvm.Implicits._
 import org.scalatest.{FlatSpec, Matchers}
 import scalaj.http.HttpResponse
 
@@ -47,5 +52,16 @@ class CatsEffectJVMSpec extends FlatSpec with Matchers {
 
     val res = response.unsafeRunSync
     res.isLeft shouldBe true
+  }
+
+  "program" should "run" in {
+    import scala.concurrent.ExecutionContext
+    implicit val ec: ExecutionContext = ExecutionContext.Implicits.global
+    implicit val cs: ContextShift[IO] = IO.contextShift(ec)
+
+    val io     = program[IO]("47deg", "github4s")
+    val result = io.unsafeRunSync
+
+    result.productArity shouldBe 2
   }
 }

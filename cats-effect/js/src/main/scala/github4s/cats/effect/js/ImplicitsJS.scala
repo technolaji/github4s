@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package github4s.cats.effect.js
+package github4s.effect.js
 
 import cats.effect.Async
 import fr.hmil.roshttp.response.SimpleHttpResponse
 import github4s.HttpRequestBuilderExtensionJS
-import github4s.cats.effect.{AsyncHttpRequestBuilderExtensionJS, SyncCaptureInstance}
+import github4s.effect.{AsyncHttpRequestBuilderExtensionJS, SyncCaptureInstance}
 import github4s.free.interpreters.Interpreters
 import github4s.implicits._
 

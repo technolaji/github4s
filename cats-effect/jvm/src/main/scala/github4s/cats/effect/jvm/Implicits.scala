@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-package github4s.cats.effect.jvm
+package github4s.effect.jvm
 
 object Implicits extends ImplicitsJVM

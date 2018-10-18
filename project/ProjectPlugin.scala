@@ -76,9 +76,14 @@ object ProjectPlugin extends AutoPlugin {
     lazy val scalazDependencies: Def.Setting[Seq[ModuleID]] =
       libraryDependencies += %%("scalaz-concurrent")
 
+
     lazy val catsEffectDependencies: Seq[ModuleID] =
       Seq(
-        %%("cats-effect"),
+        "org.typelevel" %% "cats-effect" % "1.0.0",
+        "org.http4s" %% "http4s-dsl" % "0.19.0",
+        "org.http4s" %% "http4s-blaze-client" % "0.19.0",
+        "org.http4s" %% "http4s-circe" % "0.19.0",
+        "org.typelevel" %% "cats-tagless-macros" % "0.1.0",
         %%("scalatest") % "test"
       )
 

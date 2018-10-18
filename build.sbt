@@ -36,12 +36,16 @@ lazy val scalaz = (project in file("scalaz"))
   .dependsOn(github4sJVM)
 
 lazy val catsEffect = (crossProject in file("cats-effect"))
-  .settings(moduleName := "github4s-cats-effect")
+  .settings(
+    moduleName := "github4s-cats-effect",
+    addCompilerPlugin(
+      ("org.scalameta" % "paradise" % "3.0.0-M11").cross(CrossVersion.full)
+    ))
   .crossDepSettings(catsEffectDependencies: _*)
   .jsSettings(sharedJsSettings: _*)
   .jsSettings(testSettings: _*)
   .dependsOn(github4s)
-
+   
 lazy val catsEffectJVM = catsEffect.jvm
 lazy val catsEffectJS  = catsEffect.js
 
