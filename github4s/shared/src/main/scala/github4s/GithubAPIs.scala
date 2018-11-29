@@ -448,3 +448,13 @@ class GHOrganizations(accessToken: Option[String] = None)(implicit O: Organizati
     O.listOutsideCollaborators(org, filter, pagination, accessToken)
 
 }
+
+class GHWebhooks(accessToken: Option[String] = None) (implicit O: WebhookOps[GitHub4s]) {
+
+  def listWebhooks(
+     owner: String,
+     repo: String
+     ):GHIO[GHResponse[List[Webhook]]] =
+    O.listWebhooks(accessToken, owner, repo)
+
+}
