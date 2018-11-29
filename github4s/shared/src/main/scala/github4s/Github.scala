@@ -40,6 +40,7 @@ class Github(accessToken: Option[String] = None) {
   lazy val gitData       = new GHGitData(accessToken)
   lazy val pullRequests  = new GHPullRequests(accessToken)
   lazy val organizations = new GHOrganizations(accessToken)
+  lazy val webhooks      = new GHWebhooks(accessToken)
 
 }
 
