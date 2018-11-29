@@ -33,15 +33,15 @@ trait Capture[M[_]] {
 }
 
 class Interpreters[M[_], C](
-    implicit A: ApplicativeError[M, Throwable],
-    C: Capture[M],
-    httpClientImpl: HttpRequestBuilderExtension[C, M]) {
+                             implicit A: ApplicativeError[M, Throwable],
+                             C: Capture[M],
+                             httpClientImpl: HttpRequestBuilderExtension[C, M]) {
 
   type K[A] = Kleisli[M, Map[String, String], A]
 
   implicit def interpreters(
-      implicit A: MonadError[M, Throwable]
-  ): GitHub4s ~> K = {
+                             implicit A: MonadError[M, Throwable]
+                           ): GitHub4s ~> K = {
     val c01interpreter: COGH01 ~> K = repositoryOpsInterpreter or userOpsInterpreter
     val c02interpreter: COGH02 ~> K = gistOpsInterpreter or c01interpreter
     val c03interpreter: COGH03 ~> K = issueOpsInterpreter or c02interpreter
@@ -49,13 +49,14 @@ class Interpreters[M[_], C](
     val c05interpreter: COGH05 ~> K = gitDataOpsInterpreter or c04interpreter
     val c06interpreter: COGH06 ~> K = pullRequestOpsInterpreter or c05interpreter
     val c07interpreter: COGH07 ~> K = activityOpsInterpreter or c06interpreter
-    val all: GitHub4s ~> K          = organizationOpsInterpreter or c07interpreter
+    val c08interpreter: COGH08 ~> K = webhookOpsInterpreter or c07interpreter
+    val all: GitHub4s ~> K = organizationOpsInterpreter or c08interpreter
     all
   }
 
   /**
-   * Lifts Repository Ops to an effect capturing Monad such as Task via natural transformations
-   */
+    * Lifts Repository Ops to an effect capturing Monad such as Task via natural transformations
+    */
   def repositoryOpsInterpreter: RepositoryOp ~> K = new (RepositoryOp ~> K) {
 
     val repos = new Repos()
@@ -86,15 +87,15 @@ class Interpreters[M[_], C](
         case ListCollaborators(owner, repo, affiliation, accessToken) =>
           repos.listCollaborators(accessToken, headers, owner, repo, affiliation)
         case CreateRelease(
-            owner,
-            repo,
-            tagName,
-            name,
-            body,
-            targetCommitish,
-            draft,
-            prerelease,
-            accessToken) =>
+        owner,
+        repo,
+        tagName,
+        name,
+        body,
+        targetCommitish,
+        draft,
+        prerelease,
+        accessToken) =>
           repos.createRelease(
             accessToken,
             headers,
@@ -126,8 +127,8 @@ class Interpreters[M[_], C](
   }
 
   /**
-   * Lifts User Ops to an effect capturing Monad such as Task via natural transformations
-   */
+    * Lifts User Ops to an effect capturing Monad such as Task via natural transformations
+    */
   def userOpsInterpreter: UserOp ~> K =
     new (UserOp ~> K) {
 
@@ -136,7 +137,7 @@ class Interpreters[M[_], C](
       def apply[A](fa: UserOp[A]): K[A] = Kleisli[M, Map[String, String], A] { headers =>
         fa match {
           case GetUser(username, accessToken) ⇒ users.get(accessToken, headers, username)
-          case GetAuthUser(accessToken)       ⇒ users.getAuth(accessToken, headers)
+          case GetAuthUser(accessToken) ⇒ users.getAuth(accessToken, headers)
           case GetUsers(since, pagination, accessToken) ⇒
             users.getUsers(accessToken, headers, since, pagination)
         }
@@ -144,8 +145,8 @@ class Interpreters[M[_], C](
     }
 
   /**
-   * Lifts Auth Ops to an effect capturing Monad such as Task via natural transformations
-   */
+    * Lifts Auth Ops to an effect capturing Monad such as Task via natural transformations
+    */
   def authOpsInterpreter: AuthOp ~> K =
     new (AuthOp ~> K) {
 
@@ -164,8 +165,8 @@ class Interpreters[M[_], C](
     }
 
   /**
-   * Lifts Gist Ops to an effect capturing Monad such as Task via natural transformations
-   */
+    * Lifts Gist Ops to an effect capturing Monad such as Task via natural transformations
+    */
   def gistOpsInterpreter: GistOp ~> K =
     new (GistOp ~> K) {
 
@@ -180,8 +181,8 @@ class Interpreters[M[_], C](
     }
 
   /**
-   * Lifts Issue Ops to an effect capturing Monad such as Task via natural transformations
-   */
+    * Lifts Issue Ops to an effect capturing Monad such as Task via natural transformations
+    */
   def issueOpsInterpreter: IssueOp ~> K =
     new (IssueOp ~> K) {
 
@@ -199,16 +200,16 @@ class Interpreters[M[_], C](
             issues
               .create(accessToken, headers, owner, repo, title, body, milestone, labels, assignees)
           case EditIssue(
-              owner,
-              repo,
-              issue,
-              state,
-              title,
-              body,
-              milestone,
-              labels,
-              assignees,
-              accessToken) ⇒
+          owner,
+          repo,
+          issue,
+          state,
+          title,
+          body,
+          milestone,
+          labels,
+          assignees,
+          accessToken) ⇒
             issues.edit(
               accessToken,
               headers,
@@ -242,8 +243,8 @@ class Interpreters[M[_], C](
     }
 
   /**
-   * Lifts Activity Ops to an effect capturing Monad such as Task via natural transformations
-   */
+    * Lifts Activity Ops to an effect capturing Monad such as Task via natural transformations
+    */
   def activityOpsInterpreter: ActivityOp ~> K =
     new (ActivityOp ~> K) {
 
@@ -256,7 +257,7 @@ class Interpreters[M[_], C](
           case ListStargazers(owner, repo, timeline, pagination, accessToken) ⇒
             activities.listStargazers(accessToken, headers, owner, repo, timeline, pagination)
           case ListStarredRepositories(
-              username, timeline, sort, direction, pagination, accessToken) ⇒
+          username, timeline, sort, direction, pagination, accessToken) ⇒
             activities.listStarredRepositories(
               accessToken, headers, username, timeline, sort, direction, pagination)
         }
@@ -264,8 +265,8 @@ class Interpreters[M[_], C](
     }
 
   /**
-   * Lifts Git Ops to an effect capturing Monad such as Task via natural transformations
-   */
+    * Lifts Git Ops to an effect capturing Monad such as Task via natural transformations
+    */
   def gitDataOpsInterpreter: GitDataOp ~> K =
     new (GitDataOp ~> K) {
 
@@ -305,8 +306,8 @@ class Interpreters[M[_], C](
     }
 
   /**
-   * Lifts PullRequest Ops to an effect capturing Monad such as Task via natural transformations
-   */
+    * Lifts PullRequest Ops to an effect capturing Monad such as Task via natural transformations
+    */
   def pullRequestOpsInterpreter: PullRequestOp ~> K =
     new (PullRequestOp ~> K) {
 
@@ -321,13 +322,13 @@ class Interpreters[M[_], C](
           case ListPullRequestFiles(owner, repo, number, accessToken, pagination) ⇒
             pullRequests.listFiles(accessToken, headers, owner, repo, number, pagination)
           case CreatePullRequest(
-              owner,
-              repo,
-              newPullRequest,
-              head,
-              base,
-              maintainerCanModify,
-              accessToken) ⇒
+          owner,
+          repo,
+          newPullRequest,
+          head,
+          base,
+          maintainerCanModify,
+          accessToken) ⇒
             pullRequests
               .create(
                 accessToken,
@@ -347,8 +348,8 @@ class Interpreters[M[_], C](
     }
 
   /**
-   * Lifts Organization Ops to an effect capturing Monad such as Task via natural transformations
-   */
+    * Lifts Organization Ops to an effect capturing Monad such as Task via natural transformations
+    */
   def organizationOpsInterpreter: OrganizationOp ~> K =
     new (OrganizationOp ~> K) {
 
@@ -363,5 +364,23 @@ class Interpreters[M[_], C](
         }
       }
     }
+
+
+  /**
+    * Lifts Webhook Ops to an effect capturing Monad such as Task via natural transformations
+    */
+  def webhookOpsInterpreter: WebhookOp ~> K =
+    new (WebhookOp ~> K) {
+
+      val webhooks = new Webhooks()
+
+      def apply[A](fa: WebhookOp[A]): K[A] = Kleisli[M, Map[String, String], A] { headers =>
+        fa match {
+          case ListWebhooks(accessToken, owner, repo) ⇒
+            webhooks.listWebhooks(accessToken, headers, owner, repo)
+        }
+      }
+    }
+
 
 }
