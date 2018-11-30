@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package github4s.free.domain
 
 case class Config(
@@ -29,18 +28,32 @@ case class LastResponse(
                          message: String
                        )
 
+//case class Webhook(
+//                    `type`: String,
+//                    id: Int,
+//                    name: String,
+//                    active: Boolean,
+//                    events: Seq[String],
+//                    config: Option[Config],
+//                    updated_at: String,
+//                    created_at: String,
+//                    url: String,
+//                    test_url: String,
+//                    ping_url: String,
+//                    last_response: Option[LastResponse]
+//                  )
 case class Webhook(
                     `type`: String,
                     id: Int,
                     name: String,
                     active: Boolean,
                     events: Seq[String],
-                    config: Config,
+                    config: Option[Config],
                     updated_at: String,
                     created_at: String,
                     url: String,
                     test_url: String,
                     ping_url: String,
-                    last_response: LastResponse
+                    last_response: Option[LastResponse]
                   )
 
