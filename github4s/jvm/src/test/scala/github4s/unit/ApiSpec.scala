@@ -43,6 +43,7 @@ class ApiSpec
   val issues        = new Issues[HttpResponse[String], Id]
   val activities    = new Activities[HttpResponse[String], Id]
   val organizations = new Organizations[HttpResponse[String], Id]
+  val webhooks      = new Webhooks[HttpResponse[String], Id]
 
   "Auth >> NewAuth" should "return a valid token when valid credential is provided" in {
     val response = auth.newAuth(
@@ -1443,6 +1444,34 @@ class ApiSpec
     val response =
       organizations.listOutsideCollaborators(accessToken, headerUserAgent, invalidOrganizationName)
     response should be('left)
+  }
+
+
+  "Webhooks >> listWebhooks" should "return the expected statuses when a valid owner and repo name are provided" in {
+    val response =
+      webhooks.listWebhooks(accessToken, headerUserAgent, validRepoOwner, validRepoName)
+    response should be('right)
+
+    response.toOption map { r ⇒
+      r.result.nonEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    }
+  }
+
+  it should "return an error if no tokens are provided" in {
+    val response =
+      webhooks.listWebhooks(None, headerUserAgent, validRepoOwner, validRepoName)
+    response should be('left)
+  }
+
+  it should "return an error if an invalid ref is passed" in {
+    val response =
+      webhooks.listWebhooks(accessToken, headerUserAgent, validRepoOwner, invalidRepoName)
+    response should be('left)
+    response.toOption map { r ⇒
+      r.result.isEmpty shouldBe true
+      r.statusCode shouldBe okStatusCode
+    }
   }
 
 }

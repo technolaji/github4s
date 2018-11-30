@@ -33,6 +33,7 @@ class IntegrationSpec
     with GHReposSpec[HttpResponse[String]]
     with GHUsersSpec[HttpResponse[String]]
     with GHActivitiesSpec[HttpResponse[String]]
+    with GHWebhooksSpec[HttpResponse[String]]
     with ImplicitsJVM
     with TestUtilsJVM {
 

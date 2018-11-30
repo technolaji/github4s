@@ -1713,6 +1713,36 @@ trait FakeResponses {
       |  }
       |]""".stripMargin
 
+  val listWebhooksValidResponse =
+    """
+       |[
+       |
+       |    {
+       |      "type": "Repository",
+       |      "id": 64772520,
+       |      "name": "web",
+       |      "active": true,
+       |      "events": [
+       |      "*"
+       |      ],
+       |      "config": {
+       |        "content_type": "json",
+       |        "insecure_ssl": "0",
+       |        "url": "http://422f2774.ngrok.io/payload"
+       |      },
+       |      "updated_at": "2018-11-22T14:01:07Z",
+       |      "created_at": "2018-11-22T13:04:37Z",
+       |      "url": "https://api.github.com/repos/mabiodun-mdsol/testRepo/hooks/64772520",
+       |      "test_url": "https://api.github.com/repos/mabiodun-mdsol/testRepo/hooks/64772520/test",
+       |      "ping_url": "https://api.github.com/repos/mabiodun-mdsol/testRepo/hooks/64772520/pings",
+       |      "last_response": {
+       |        "code": 200,
+       |        "status": "active",
+       |        "message": "OK"
+       |      }
+       |    }
+       |]""".stripMargin
+
   val createStatusValidResponse =
     """
       |{
@@ -2306,18 +2336,18 @@ trait FakeResponses {
 
   val getStargazerValidResponse =
     s"""
-      |{
-      |  "starred_at": "2012-03-01T13:02:21Z",
-      |  "user": $getUserValidResponse
-      |}
+       |{
+       |  "starred_at": "2012-03-01T13:02:21Z",
+       |  "user": $getUserValidResponse
+       |}
     """.stripMargin
 
   val getStarredRepoValidResponse =
     s"""
-      |{
-      |  "starred_at": "2012-03-01T13:02:21Z",
-      |  "repo": $getRepoResponse
-      |}
+       |{
+       |  "starred_at": "2012-03-01T13:02:21Z",
+       |  "repo": $getRepoResponse
+       |}
     """.stripMargin
 
   val getStarredReposValidResponse = s"[$getStarredRepoValidResponse]"

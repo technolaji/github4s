@@ -384,4 +384,32 @@ trait TestData extends DummyGithubUrls {
     html_url = "",
     pull_request_url = ""
   )
+
+
+  val webhook = Webhook(
+    `type` = "repository",
+    id = 1,
+    name = "web",
+    active = true,
+    events = Seq("*"),
+    config = Some(config),
+    updated_at = "2011-04-10T20:09:31Z",
+    created_at = "2011-04-10T20:09:31Z",
+    url = "https://api.github.com/repos/octocat/Hello-World/hooks/1",
+    test_url = "https://api.github.com/repos/octocat/Hello-World/hooks/1/test",
+    ping_url = "https://api.github.com/repos/octocat/Hello-World/hooks/1/pings",
+    last_response = Some(lastResponse)
+  )
+
+  val lastResponse = LastResponse(
+    code = 200,
+    status = "active",
+    message = "OK"
+  )
+
+  val config = Config(
+    content_type = "json",
+    insecure_ssl = "0",
+    url = "localhost:8080/forwarding"
+  )
 }

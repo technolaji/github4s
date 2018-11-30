@@ -157,5 +157,6 @@ trait BaseSpec extends FlatSpec with Matchers with TestData with IdInstances wit
   class UserOpsTest         extends UserOps[GitHub4s]
   class GistOpsTest         extends GistOps[GitHub4s]
   class OrganizationOpsTest extends OrganizationOps[GitHub4s]
+  class WebhookOpsTest      extends WebhookOps[GitHub4s]
 
 }
